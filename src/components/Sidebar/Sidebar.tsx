@@ -36,12 +36,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ pathname }) => {
       <MenuGroup type="none" mt="xsmall">
         <StyledRouterLink to={ROUTES.API_ROUTE}>
           <MenuItem icon="Flag" current={pathname === ROUTES.API_ROUTE}>
-            Api Functions
+            API Functions
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.CORESDK_ROUTE}>
           <MenuItem icon="Clock" current={pathname === ROUTES.CORESDK_ROUTE}>
             Core SDK Functions
+          </MenuItem>
+        </StyledRouterLink>
+        <StyledRouterLink to={ROUTES.EXTERNAL_API}>
+          <MenuItem icon="Account" current={pathname === ROUTES.EXTERNAL_API}>
+            External API Functions
           </MenuItem>
         </StyledRouterLink>
       </MenuGroup>

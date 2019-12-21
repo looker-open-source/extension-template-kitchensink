@@ -23,9 +23,9 @@
  */
 
 import React, { useContext } from "react"
-import { Heading, Box } from "@looker/components"
 import styled from "styled-components"
 import { ExtensionButton } from "../ExtensionButton"
+import { FunctionsContainer } from "../FunctionsContainer"
 import { ApiFunctionsProps } from "./types"
 import {
   ExtensionContext,
@@ -113,86 +113,70 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       .then(() => {
         updateMessages("Success")
       })
-      .catch(error => {
+      .catch((error: any) => {
         updateMessages(error)
         console.error(error)
       })
   }
-
   const clearMessagesClick = () => {
     setMessages('')
   }
 
   return (
-    <>
-      <Heading my="xlarge">API Functions</Heading>
-      <Box display="flex" flexDirection="row">
-        <Box display="flex" flexDirection="column" width="50%">
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={updateTitleButtonClick}
-          >
-            Update title
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={goToBrowseButtonClick}
-          >
-            Go to browse (update location)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={goToMarketplaceButtonClick}
-          >
-            Go to Marketplace (update location)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={openMarketplaceButtonClick}
-          >
-            Open marketplace new window
-          </ExtensionButton>
-          <ExtensionButton mt="small" variant="outline" onClick={buttonClick}>
-            Verify host connection
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={localStorageSet}
-          >
-            Set local storage
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={localStorageGet}
-          >
-            Get local storage
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={localStorageRemove}
-          >
-            Remove local storage
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={clearMessagesClick}
-          >
-            Clear messages
-          </ExtensionButton>
-        </Box>
-        <Box width="50%" pr="large">
-          <StyledPre>{messages}</StyledPre>
-        </Box>
-      </Box>
-    </>
+    <FunctionsContainer title="API Functions" messages={messages} clearMessages={clearMessagesClick}>
+      <ExtensionButton
+        mt="small"
+        variant="outline"
+        onClick={updateTitleButtonClick}
+      >
+        Update title
+      </ExtensionButton>
+      <ExtensionButton
+        mt="small"
+        variant="outline"
+        onClick={goToBrowseButtonClick}
+      >
+        Go to browse (update location)
+      </ExtensionButton>
+      <ExtensionButton
+        mt="small"
+        variant="outline"
+        onClick={goToMarketplaceButtonClick}
+      >
+        Go to Marketplace (update location)
+      </ExtensionButton>
+      <ExtensionButton
+        mt="small"
+        variant="outline"
+        onClick={openMarketplaceButtonClick}
+      >
+        Open marketplace new window
+      </ExtensionButton>
+      <ExtensionButton mt="small" variant="outline" onClick={buttonClick}>
+        Verify host connection
+      </ExtensionButton>
+      <ExtensionButton
+        mt="small"
+        variant="outline"
+        onClick={localStorageSet}
+      >
+        Set local storage
+      </ExtensionButton>
+      <ExtensionButton
+        mt="small"
+        variant="outline"
+        onClick={localStorageGet}
+      >
+        Get local storage
+      </ExtensionButton>
+      <ExtensionButton
+        mt="small"
+        variant="outline"
+        onClick={localStorageRemove}
+      >
+        Remove local storage
+      </ExtensionButton>
+    </FunctionsContainer>
   )
 }
 
@@ -201,4 +185,5 @@ const StyledPre = styled.pre`
   border: 1px solid #c1c6cc;
   height: 100%;
   padding: 20px;
+  max-width: 40vw;
 `

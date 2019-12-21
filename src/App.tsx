@@ -25,6 +25,7 @@
 import { Sidebar } from "./components/Sidebar"
 import { CoreSDKFunctions } from "./components/CoreSDKFunctions"
 import { ApiFunctions } from "./components/ApiFunctions"
+import { ExternalApiFunctions } from "./components/ExternalApiFunctions"
 import React, { useState } from "react"
 import { Switch, Route, Redirect } from "react-router-dom"
 import { theme, Box, GlobalStyle } from "@looker/components"
@@ -38,6 +39,7 @@ interface AppProps {
 export enum ROUTES {
   API_ROUTE = "/api",
   CORESDK_ROUTE = "/coresdk",
+  EXTERNAL_API = "/externalapi"
 }
 
 export const App: React.FC<AppProps> = ({ standalone }) => {
@@ -57,6 +59,9 @@ export const App: React.FC<AppProps> = ({ standalone }) => {
                 </Route>
                 <Route path={ROUTES.CORESDK_ROUTE}>
                   <CoreSDKFunctions />
+                </Route>
+                <Route path={ROUTES.EXTERNAL_API}>
+                  <ExternalApiFunctions />
                 </Route>
                 <Redirect to={ROUTES.API_ROUTE} />
               </Switch>

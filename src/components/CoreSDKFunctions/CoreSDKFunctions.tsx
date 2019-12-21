@@ -23,9 +23,9 @@
  */
 
 import React, { useContext } from "react"
-import { Heading, Box } from "@looker/components"
 import styled from "styled-components"
 import { ExtensionButton } from "../ExtensionButton"
+import { FunctionsContainer } from "../FunctionsContainer"
 import {
   ExtensionContext,
   ExtensionContextData,
@@ -99,44 +99,29 @@ export const CoreSDKFunctions = () => {
   }
 
   return (
-    <>
-      <Heading my="xlarge">Core SDK Functions</Heading>
-      <Box display="flex" flexDirection="row">
-        <Box display="flex" flexDirection="column" width="50%">
-          <ExtensionButton
-              mt="small"
-              variant="outline"
-              onClick={allConnectionsClick}
-            >
-            All connections (get method)
-          </ExtensionButton>
-          <ExtensionButton
-              mt="small"
-              variant="outline"
-              onClick={searchFoldersClick}
-            >
-            Search folders (get method with parameters)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={inlineQueryClick}
-          >
-            Inline query (post method)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={clearMessagesClick}
-          >
-            Clear messages
-          </ExtensionButton>
-        </Box>
-        <Box width="50%" pr="large">
-          <StyledPre>{messages}</StyledPre>
-        </Box>
-      </Box>
-    </>
+    <FunctionsContainer title="Core SDK Functions" messages={messages} clearMessages={clearMessagesClick}>
+      <ExtensionButton
+          mt="small"
+          variant="outline"
+          onClick={allConnectionsClick}
+        >
+        All connections (get method)
+      </ExtensionButton>
+      <ExtensionButton
+          mt="small"
+          variant="outline"
+          onClick={searchFoldersClick}
+        >
+        Search folders (get method with parameters)
+      </ExtensionButton>
+      <ExtensionButton
+        mt="small"
+        variant="outline"
+        onClick={inlineQueryClick}
+      >
+        Inline query (post method)
+      </ExtensionButton>
+    </FunctionsContainer>
   )
 }
 
@@ -145,4 +130,5 @@ const StyledPre = styled.pre`
   border: 1px solid #c1c6cc;
   height: 100%;
   padding: 20px;
+  max-width: 40vw;
 `
