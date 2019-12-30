@@ -49,28 +49,28 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
     const body = typeof response.body === 'string' ? response.body as string : JSON.stringify(response.body, null, 2)
     updateMessages(`status=${response.status}`)
     updateMessages(`status text=${response.status_text}`)
-    updateMessages(`header count=${response.headers.length}`)
+    updateMessages(`header count=${Object.keys(response.headers).length}`)
     updateMessages(`body=${body}`)
   }
 
   const data: Record<string, any> = {
     GET: {
       url: 'https://jsonplaceholder.typicode.com/posts/1',
-      headers: [
-        {name: 'x-client', value: 'extension'},
-        {name: 'x-method', value: 'GET'}
-      ],
+      headers: {
+        'x-client': 'extension',
+        'x-method': 'GET'
+      },
     },
     HEAD: {
       url: 'https://jsonplaceholder.typicode.com/posts',
     },
     POST: {
       url: 'https://jsonplaceholder.typicode.com/posts',
-      headers: [
-        {name: 'x-client', value: 'extension'},
-        {name: 'x-method', value: 'POST'},
-        {name: 'content-type', value: 'application/json; charset=UTF-8'}
-      ],
+      headers: {
+        'x-client': 'extension',
+        'x-method': 'POST',
+        'content-type': 'application/json; charset=UTF-8'
+    },
       body: {
         title: 'foo',
         body: 'bar',
@@ -79,11 +79,11 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
     },
     PUT: {
       url: 'https://jsonplaceholder.typicode.com/posts/1',
-      headers: [
-        {name: 'x-client', value: 'extension'},
-        {name: 'x-method', value: 'POST'},
-        {name: 'content-type', value: 'application/json; charset=UTF-8'}
-      ],
+      headers: {
+        'x-client': 'extension',
+        'x-method': 'PUT',
+        'content-type': 'application/json; charset=UTF-8'
+      },
       body: {
         id: 1,
         title: 'foo',
@@ -93,11 +93,11 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
     },
     PATCH: {
       url: 'https://jsonplaceholder.typicode.com/posts/1',
-      headers: [
-        {name: 'x-client', value: 'extension'},
-        {name: 'x-method', value: 'POST'},
-        {name: 'content-type', value: 'application/json; charset=UTF-8'}
-      ],
+      headers: {
+        'x-client': 'extension',
+        'x-method': 'PATCH',
+        'content-type': 'application/json; charset=UTF-8'
+      },
       body: {
         id: 1,
         title: 'foo',
@@ -107,11 +107,11 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
     },
     DELETE: {
       url: 'https://jsonplaceholder.typicode.com/posts/1',
-      headers: [
-        {name: 'x-client', value: 'extension'},
-        {name: 'x-method', value: 'DELETE'},
-        {name: 'content-type', value: 'application/json; charset=UTF-8'}
-      ],
+      headers: {
+        'x-client': 'extension',
+        'x-method': 'DELETE',
+        'content-type': 'application/json; charset=UTF-8'
+      },
     },
   }
 
