@@ -1,0 +1,89 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2019 Looker Data Sciences, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+import React, { useCallback, useContext, useState } from "react"
+import { EmbedProps } from "./types"
+import styled from "styled-components"
+import { LookerEmbedSDK, LookerEmbedDashboard } from '@looker/embed-sdk'
+import {
+  ExtensionContext,
+  ExtensionContextData,
+} from "@looker/extension-sdk-react"
+import { Button } from "@looker/components"
+
+export const Embed: React.FC<EmbedProps> = () => {
+  const [dashboard, setDashboard] = React.useState<LookerEmbedDashboard>(null)
+  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
+
+  const canceller = (event: any) => {
+    console.log(">>>>> in canceller")
+    return { cancel: !event.modal }
+  }
+
+  const setupDashboard = (dashboard: LookerEmbedDashboard) => {
+    setDashboard(dashboard)
+  }
+
+  const embedCtrRef = useCallback(el => {
+    const hostUrl = extensionContext?.extensionSDK?.lookerHostData?.hostUrl
+    if (el && hostUrl) {
+      LookerEmbedSDK.init(hostUrl)
+      LookerEmbedSDK.createDashboardWithId(1)
+        .withNext()
+        .appendTo(el)
+        .on('drillmenu:click', canceller)
+        .on('drillmodal:explore', canceller)
+        .on('dashboard:tile:explore', canceller)
+        .on('dashboard:tile:view', canceller)
+        .build()
+        .connect()
+        .then(setupDashboard)
+        .catch((error: Error) => {
+          console.error('Connection error', error)
+        })
+    }
+  }, [])
+
+  const runDashboard = () => {
+    if (dashboard) {
+      dashboard.run()
+    }
+  }
+
+  return (
+    <>
+      <Button m='medium' onClick={runDashboard}>Run Dashboard</Button>
+      <EmbedContainer ref={embedCtrRef}/>
+    </>
+  )
+}
+
+const EmbedContainer = styled.div`
+  width: 100%;
+  height: 95vh;
+  & > iframe {
+    width: 100%;
+    height: 100%;
+  }
+`

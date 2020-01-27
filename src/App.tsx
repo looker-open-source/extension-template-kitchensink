@@ -30,6 +30,7 @@ import { Switch, Route, Redirect } from "react-router-dom"
 import { theme, Box, GlobalStyle } from "@looker/components"
 import styled, { ThemeProvider } from "styled-components"
 import { ExtensionProvider } from "@looker/extension-sdk-react"
+import { Embed } from "./components/Embed"
 
 interface AppProps {
   standalone?: boolean
@@ -38,6 +39,7 @@ interface AppProps {
 export enum ROUTES {
   API_ROUTE = "/api",
   CORESDK_ROUTE = "/coresdk",
+  EMBED = "/embed"
 }
 
 export const App: React.FC<AppProps> = ({ standalone }) => {
@@ -57,6 +59,9 @@ export const App: React.FC<AppProps> = ({ standalone }) => {
                 </Route>
                 <Route path={ROUTES.CORESDK_ROUTE}>
                   <CoreSDKFunctions />
+                </Route>
+                <Route path={ROUTES.EMBED}>
+                  <Embed />
                 </Route>
                 <Redirect to={ROUTES.API_ROUTE} />
               </Switch>
