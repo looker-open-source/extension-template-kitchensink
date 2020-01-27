@@ -33,11 +33,10 @@ import {
 import { Button } from "@looker/components"
 
 export const Embed: React.FC<EmbedProps> = () => {
-  const [dashboard, setDashboard] = React.useState<LookerEmbedDashboard>(null)
+  const [dashboard, setDashboard] = React.useState<LookerEmbedDashboard>()
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
 
   const canceller = (event: any) => {
-    console.log(">>>>> in canceller")
     return { cancel: !event.modal }
   }
 

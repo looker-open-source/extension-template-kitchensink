@@ -1,6 +1,6 @@
 {
-  "name": "extension-template",
-  "version": "0.1.3",
+  "name": "extension-template-kitchensink",
+  "version": "0.1.1",
   "description": "",
   "main": "dist/bundle.js",
   "scripts": {
