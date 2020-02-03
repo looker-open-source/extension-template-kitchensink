@@ -24,65 +24,55 @@
 
 import React, { useCallback, useContext, useState } from "react"
 import { EmbedProps } from "./types"
-import styled from "styled-components"
-import { LookerEmbedSDK, LookerEmbedDashboard } from '@looker/embed-sdk'
+import { LookerEmbedSDK, LookerEmbedExplore } from '@looker/embed-sdk'
+import { EmbedContainer } from './components/EmbedContainer'
 import {
   ExtensionContext,
   ExtensionContextData,
 } from "@looker/extension-sdk-react"
 import { Button } from "@looker/components"
 
-export const Embed: React.FC<EmbedProps> = () => {
-  const [dashboard, setDashboard] = React.useState<LookerEmbedDashboard>()
+export const EmbedExplore: React.FC<EmbedProps> = () => {
+  const [running, setRunning] = React.useState(true)
+  const [explore, setExplore] = React.useState<LookerEmbedExplore>()
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
 
-  const canceller = (event: any) => {
-    return { cancel: !event.modal }
+  const updateRunButton = (running: boolean) => {
+    setRunning(running)
   }
 
-  const setupDashboard = (dashboard: LookerEmbedDashboard) => {
-    setDashboard(dashboard)
+  const setupExplore = (explore: LookerEmbedExplore) => {
+    setExplore(explore)
   }
 
   const embedCtrRef = useCallback(el => {
     const hostUrl = extensionContext?.extensionSDK?.lookerHostData?.hostUrl
     if (el && hostUrl) {
       LookerEmbedSDK.init(hostUrl)
-      LookerEmbedSDK.createDashboardWithId(1)
-        .withNext()
+      LookerEmbedSDK.createExploreWithId('thelook/products')
         .appendTo(el)
-        .on('drillmenu:click', canceller)
-        .on('drillmodal:explore', canceller)
-        .on('dashboard:tile:explore', canceller)
-        .on('dashboard:tile:view', canceller)
+        .on('explore:ready', updateRunButton.bind(null, false))
+        .on('explore:run:start', updateRunButton.bind(null, true))
+        .on('explore:run:complete', updateRunButton.bind(null, false))
         .build()
         .connect()
-        .then(setupDashboard)
+        .then(setupExplore)
         .catch((error: Error) => {
           console.error('Connection error', error)
         })
     }
   }, [])
 
-  const runDashboard = () => {
-    if (dashboard) {
-      dashboard.run()
+  const runExplore = () => {
+    if (explore) {
+      explore.run()
     }
   }
 
   return (
     <>
-      <Button m='medium' onClick={runDashboard}>Run Dashboard</Button>
+      <Button m='medium' onClick={runExplore} disabled={running}>Run Explore</Button>
       <EmbedContainer ref={embedCtrRef}/>
     </>
   )
 }
-
-const EmbedContainer = styled.div`
-  width: 100%;
-  height: 95vh;
-  & > iframe {
-    width: 100%;
-    height: 100%;
-  }
-`

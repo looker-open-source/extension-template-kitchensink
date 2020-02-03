@@ -44,9 +44,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ pathname }) => {
             Core SDK Functions
           </MenuItem>
         </StyledRouterLink>
-        <StyledRouterLink to={ROUTES.EMBED}>
-          <MenuItem icon="ApplicationSelect" current={pathname === ROUTES.EMBED}>
-            Embed
+        <StyledRouterLink to={ROUTES.EMBED_DASHBOARD}>
+          <MenuItem icon="ApplicationSelect" current={pathname === ROUTES.EMBED_DASHBOARD}>
+            Embed Dashboard
+          </MenuItem>
+        </StyledRouterLink>
+        <StyledRouterLink to={ROUTES.EMBED_EXPLORE}>
+          <MenuItem icon="ApplicationSelect" current={pathname === ROUTES.EMBED_EXPLORE}>
+            Embed Explore
+          </MenuItem>
+        </StyledRouterLink>
+        <StyledRouterLink to={ROUTES.EMBED_LOOK}>
+          <MenuItem icon="ApplicationSelect" current={pathname === ROUTES.EMBED_LOOK}>
+            Embed Look
           </MenuItem>
         </StyledRouterLink>
       </MenuGroup>

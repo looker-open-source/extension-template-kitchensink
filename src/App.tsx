@@ -30,7 +30,9 @@ import { Switch, Route, Redirect } from "react-router-dom"
 import { theme, Box, GlobalStyle } from "@looker/components"
 import styled, { ThemeProvider } from "styled-components"
 import { ExtensionProvider } from "@looker/extension-sdk-react"
-import { Embed } from "./components/Embed"
+import { EmbedDashboard } from "./components/Embed"
+import { EmbedExplore } from "./components/Embed/EmbedExplore"
+import { EmbedLook } from "./components/Embed/EmbedLook"
 
 interface AppProps {
   standalone?: boolean
@@ -39,7 +41,9 @@ interface AppProps {
 export enum ROUTES {
   API_ROUTE = "/api",
   CORESDK_ROUTE = "/coresdk",
-  EMBED = "/embed"
+  EMBED_DASHBOARD = "/embed/dashboard",
+  EMBED_EXPLORE = "/embed/explore",
+  EMBED_LOOK = "/embed/look"
 }
 
 export const App: React.FC<AppProps> = ({ standalone }) => {
@@ -60,8 +64,14 @@ export const App: React.FC<AppProps> = ({ standalone }) => {
                 <Route path={ROUTES.CORESDK_ROUTE}>
                   <CoreSDKFunctions />
                 </Route>
-                <Route path={ROUTES.EMBED}>
-                  <Embed />
+                <Route path={ROUTES.EMBED_DASHBOARD}>
+                  <EmbedDashboard />
+                </Route>
+                <Route path={ROUTES.EMBED_EXPLORE}>
+                  <EmbedExplore />
+                </Route>
+                <Route path={ROUTES.EMBED_LOOK}>
+                  <EmbedLook />
                 </Route>
                 <Redirect to={ROUTES.API_ROUTE} />
               </Switch>

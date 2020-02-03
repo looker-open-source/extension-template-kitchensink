@@ -107,6 +107,26 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       })
   }
 
+  const getEntitlements = () => {
+    interface ExtensionHostApiEx extends ExtensionHostApi {
+      invokeCoreSdkByName(
+        apiMethodName: string,
+        body?: any,
+        params?: any
+      ): Promise<any>
+    }
+    const extensionHostEx = extensionHost as ExtensionHostApiEx
+    extensionHostEx.invokeCoreSdkByName('apidoc_paths')
+      .then(value => {
+        console.log(">>>", typeof value)
+        updateMessages(value ? JSON.stringify(value, null, 2): "null")
+      })
+      .catch(error => {
+        updateMessages(error)
+        console.error(error)
+      })
+  }
+
   const localStorageRemove = () => {
     extensionHost
       .localStorageRemoveItem("testbed")
@@ -183,6 +203,13 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
           <ExtensionButton
             mt="small"
             variant="outline"
+            onClick={getEntitlements}
+          >
+            Call entitlements
+          </ExtensionButton>
+          <ExtensionButton
+            mt="small"
+            variant="outline"
             onClick={clearMessagesClick}
           >
             Clear messages
@@ -201,4 +228,5 @@ const StyledPre = styled.pre`
   border: 1px solid #c1c6cc;
   height: 100%;
   padding: 20px;
+  max-width: 40vw
 `
