@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import React, { useContext } from "react"
-import { Heading, Box } from "@looker/components"
+import React, { useContext, useEffect } from "react"
+import { Heading, Box, Paragraph } from "@looker/components"
 import styled from "styled-components"
 import { ExtensionButton } from "../ExtensionButton"
 import { ApiFunctionsProps } from "./types"
@@ -35,8 +35,19 @@ import { ExtensionHostApi } from "@looker/extension-sdk"
 
 export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   const [messages, setMessages] = React.useState("")
+  const [sandboxStatus, setSandboxStatus] = React.useState("")
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const extensionHost = extensionContext.extensionSDK as ExtensionHostApi
+
+  useEffect(() => {
+    try {
+      const parentWindow:any = (window as any).parent
+      console.log(parentWindow.looker?.version)
+      setSandboxStatus("NOT")
+    }catch(err) {
+      setSandboxStatus("")
+    }
+  }, [])
 
   const updateMessages = (message: string) => {
     setMessages(prevMessages => {
@@ -125,7 +136,8 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
 
   return (
     <>
-      <Heading my="xlarge">API Functions</Heading>
+      <Heading mt="xlarge">API Functions</Heading>
+      <Paragraph my="medium">This extension is <b>{sandboxStatus}</b> sandboxed.</Paragraph>
       <Box display="flex" flexDirection="row">
         <Box display="flex" flexDirection="column" width="50%">
           <ExtensionButton
