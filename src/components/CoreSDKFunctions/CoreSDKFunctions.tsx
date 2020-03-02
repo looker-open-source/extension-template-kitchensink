@@ -37,10 +37,11 @@ export const CoreSDKFunctions = () => {
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const sdk = extensionContext.coreSDK
 
-  const updateMessages = (message: string) => {
+  const updateMessages = (message: string, error?: any) => {
     setMessages(prevMessages => {
       const maybeLineBreak = prevMessages.length === 0 ? '' : '\n'
-      return `${prevMessages}${maybeLineBreak}${message}`
+      const fullMessage = error ? `${message}\n${error}` : message
+      return `${prevMessages}${maybeLineBreak}${fullMessage}`
     })
   }
 
@@ -52,10 +53,10 @@ export const CoreSDKFunctions = () => {
             updateMessages(connection.name || '')
           })
         } else {
-          updateMessages('Error getting connections')
+          updateMessages('Error getting connections', response.error)
         }
       })
-      .catch(error => updateMessages('Error getting connections'))
+      .catch(error => updateMessages('Error caught getting connections', error))
   }
 
   const searchFoldersClick = () => {
@@ -64,10 +65,10 @@ export const CoreSDKFunctions = () => {
       if (response.ok) {
         updateMessages(JSON.stringify(response.value, null, 2))
       } else {
-        updateMessages('Error invoking search folders')
+        updateMessages('Error invoking search folders', response.error)
       }
     })
-    .catch(error => updateMessages('Error invoking search folders'))
+    .catch(error => updateMessages('Error caught invoking search folders', error))
   }
 
   const inlineQueryClick = () => {
@@ -88,10 +89,10 @@ export const CoreSDKFunctions = () => {
         if (response.ok) {
           updateMessages(JSON.stringify(response.value, null, 2))
         } else {
-          updateMessages('Error invoking inline query')
+          updateMessages('Error invoking inline query', response.error)
         }
       })
-      .catch(error => updateMessages('Error invoking inline query'))
+      .catch(error => updateMessages('Error caught invoking inline query', error))
   }
 
   const clearMessagesClick = () => {
