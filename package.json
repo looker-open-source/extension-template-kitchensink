@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --hot --disable-host-check",
     "start-no-hot": "webpack-dev-server --no-inline --no-hot",
-    "build": "tsc --noEmit && webpack --mode=production",
+    "build": "./node_modules/.bin/tsc --noEmit && webpack --mode=production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Looker",
