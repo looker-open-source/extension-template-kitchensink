@@ -82,6 +82,7 @@ The process above requires your local development server to be running to load t
 
 - [Looker React extension template](https://github.com/looker-open-source/extension-template-react)
 - [Looker React/Redux extension template ](https://github.com/looker-open-source/extension-template-redux)
+- [Looker extension SDK](https://www.npmjs.com/package/@looker/extension-sdk)
 - [Looker extension SDK for React](https://www.npmjs.com/package/@looker/extension-sdk-react)
 - [Looker SDK](https://www.npmjs.com/package/@looker/sdk)
 - [Looker Components](https://components.looker.com/)

@@ -138,8 +138,8 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     <>
       <Heading mt="xlarge">API Functions</Heading>
       <Paragraph my="medium">This extension is <b>{sandboxStatus}</b> sandboxed.</Paragraph>
-      <Box display="flex" flexDirection="row">
-        <Box display="flex" flexDirection="column" width="50%">
+      <Box display="flex" flexDirection="row" >
+        <Box display="flex" flexDirection="column" width="50%" maxWidth='40vw'>
           <ExtensionButton
             mt="small"
             variant="outline"
@@ -200,7 +200,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
             Clear messages
           </ExtensionButton>
         </Box>
-        <Box width="50%" pr="large">
+        <Box width="50%" pr="large" maxWidth='40vw'>
           <StyledPre>{messages}</StyledPre>
         </Box>
       </Box>

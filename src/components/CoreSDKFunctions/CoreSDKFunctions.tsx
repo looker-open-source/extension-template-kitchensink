@@ -29,13 +29,13 @@ import { ExtensionButton } from "../ExtensionButton"
 import {
   ExtensionContext,
   ExtensionContextData,
-  getCoreSDK
+  getCore40SDK
 } from "@looker/extension-sdk-react"
 
 export const CoreSDKFunctions = () => {
   const [messages, setMessages] = React.useState("")
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-  const sdk = extensionContext.coreSDK
+  const sdk = extensionContext.core40SDK
 
   const updateMessages = (message: string, error?: any) => {
     setMessages(prevMessages => {
@@ -72,8 +72,9 @@ export const CoreSDKFunctions = () => {
   }
 
   const inlineQueryClick = () => {
-    // alternate mechanism to get sdk.
-    getCoreSDK()
+    // alternate mechanism to get sdk. Note getCore31SDK is also available
+    // but getCore40SDK provides access to newer functionality
+    getCore40SDK()
       .run_inline_query({
         result_format: "json_detail",
         limit: 10,
@@ -103,7 +104,7 @@ export const CoreSDKFunctions = () => {
     <>
       <Heading my="xlarge">Core SDK Functions</Heading>
       <Box display="flex" flexDirection="row">
-        <Box display="flex" flexDirection="column" width="50%">
+        <Box display="flex" flexDirection="column" width="50%" maxWidth='40vw'>
           <ExtensionButton
               mt="small"
               variant="outline"
@@ -133,7 +134,7 @@ export const CoreSDKFunctions = () => {
             Clear messages
           </ExtensionButton>
         </Box>
-        <Box width="50%" pr="large">
+        <Box width="50%" pr="large" maxWidth='40vw'>
           <StyledPre>{messages}</StyledPre>
         </Box>
       </Box>

@@ -87,4 +87,5 @@ export const Layout = styled(Box)`
   display: grid;
   grid-gap: 20px;
   grid-template-columns: 200px auto;
+  width: 100vw
 `
