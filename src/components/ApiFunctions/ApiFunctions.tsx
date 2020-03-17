@@ -130,6 +130,11 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       })
   }
 
+  const trackActionClick = () => {
+    extensionHost.track('click', 'kitchensink-action-tracked')
+    updateMessages("Action tracked")
+  }
+
   const clearMessagesClick = () => {
     setMessages('')
   }
@@ -191,6 +196,13 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
             onClick={localStorageRemove}
           >
             Remove local storage
+          </ExtensionButton>
+          <ExtensionButton
+            mt="small"
+            variant="outline"
+            onClick={trackActionClick}
+          >
+            Pinger action
           </ExtensionButton>
           <ExtensionButton
             mt="small"
