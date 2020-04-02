@@ -35,7 +35,6 @@ import { EmbedExplore } from "./components/Embed/EmbedExplore"
 import { EmbedLook } from "./components/Embed/EmbedLook"
 
 interface AppProps {
-  standalone?: boolean
 }
 
 export enum ROUTES {
@@ -46,7 +45,7 @@ export enum ROUTES {
   EMBED_LOOK = "/embed/look"
 }
 
-export const App: React.FC<AppProps> = ({ standalone }) => {
+export const App: React.FC<AppProps> = () => {
   const [pathname, setPathname] = useState("")
 
   return (

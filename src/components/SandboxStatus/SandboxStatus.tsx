@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Looker Data Sciences, Inc.
+ * Copyright (c) 2020 Looker Data Sciences, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,24 @@
  * THE SOFTWARE.
  */
 
-import * as React from "react"
-import * as ReactDOM from "react-dom"
-import { App } from "./App"
+import React, { useEffect, useState } from "react"
+import { Paragraph } from "@looker/components"
+import { SandboxStatusProps } from "./types"
 
-window.addEventListener("DOMContentLoaded", event => {
-  var root = document.createElement("div")
-  document.body.appendChild(root)
-  ReactDOM.render(<App />, root)
-})
+export const SandboxStatus: React.FC<SandboxStatusProps> = () => {
+  const [sandboxStatus, setSandboxStatus] = useState("")
+
+  useEffect(() => {
+    try {
+      const parentWindow:any = (window as any).parent
+      console.log(parentWindow.looker?.version)
+      setSandboxStatus("NOT")
+    }catch(err) {
+      setSandboxStatus("")
+    }
+  }, [])
+
+  return (
+      <Paragraph my="medium">This extension is <b>{sandboxStatus}</b> sandboxed.</Paragraph>
+  )
+}

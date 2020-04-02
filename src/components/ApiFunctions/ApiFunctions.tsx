@@ -23,9 +23,10 @@
  */
 
 import React, { useContext, useEffect } from "react"
-import { Heading, Box, Paragraph } from "@looker/components"
+import { Heading, Box } from "@looker/components"
 import styled from "styled-components"
 import { ExtensionButton } from "../ExtensionButton"
+import { SandboxStatus } from "../SandboxStatus"
 import { ApiFunctionsProps } from "./types"
 import {
   ExtensionContext,
@@ -35,19 +36,8 @@ import { ExtensionHostApi } from "@looker/extension-sdk"
 
 export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   const [messages, setMessages] = React.useState("")
-  const [sandboxStatus, setSandboxStatus] = React.useState("")
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const extensionHost = extensionContext.extensionSDK as ExtensionHostApi
-
-  useEffect(() => {
-    try {
-      const parentWindow:any = (window as any).parent
-      console.log(parentWindow.looker?.version)
-      setSandboxStatus("NOT")
-    }catch(err) {
-      setSandboxStatus("")
-    }
-  }, [])
 
   const updateMessages = (message: string) => {
     setMessages(prevMessages => {
@@ -90,7 +80,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   }
 
   const openMarketplaceButtonClick = () => {
-    extensionHost.openBrowserWindow("/marketplace", "_marketplace")
+    extensionHost.openBrowserWindow("https://docs.looker.com", "_marketplace")
     updateMessages("Window opened")
   }
 
@@ -135,6 +125,13 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     updateMessages("Action tracked")
   }
 
+  const generateUnhandledErrorClick = () => {
+    updateMessages("About to generate error")
+    // const badApi: any = {}
+    // badApi.noExistentMethod()
+    throw new Error("Kitchensink threw an error")
+  }
+
   const clearMessagesClick = () => {
     setMessages('')
   }
@@ -142,7 +139,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   return (
     <>
       <Heading mt="xlarge">API Functions</Heading>
-      <Paragraph my="medium">This extension is <b>{sandboxStatus}</b> sandboxed.</Paragraph>
+      <SandboxStatus/>
       <Box display="flex" flexDirection="row" >
         <Box display="flex" flexDirection="column" width="50%" maxWidth='40vw'>
           <ExtensionButton
@@ -203,6 +200,13 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
             onClick={trackActionClick}
           >
             Pinger action
+          </ExtensionButton>
+          <ExtensionButton
+            mt="small"
+            variant="outline"
+            onClick={generateUnhandledErrorClick}
+          >
+            Generate unhandled error
           </ExtensionButton>
           <ExtensionButton
             mt="small"

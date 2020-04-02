@@ -22,14 +22,15 @@
  * THE SOFTWARE.
  */
 
-import React, { useCallback, useContext, useState } from "react"
+import React, { useCallback, useContext } from "react"
 import { EmbedProps } from "./types"
 import { LookerEmbedSDK, LookerEmbedDashboard } from '@looker/embed-sdk'
 import {
   ExtensionContext,
   ExtensionContextData,
 } from "@looker/extension-sdk-react"
-import { Button, Label, ToggleSwitch } from "@looker/components"
+import { Button, Heading, Label, ToggleSwitch } from "@looker/components"
+import { SandboxStatus } from '../SandboxStatus'
 import { EmbedContainer } from './components/EmbedContainer'
 
 export const EmbedDashboard: React.FC<EmbedProps> = () => {
@@ -88,6 +89,8 @@ export const EmbedDashboard: React.FC<EmbedProps> = () => {
 
   return (
     <>
+      <Heading mt="xlarge">Embedded Dashboard</Heading>
+      <SandboxStatus/>
       <Label htmlFor="toggle">
         Dashboard next
         <ToggleSwitch ml='small' onChange={toggleDashboard} on={dashboardNext} id='toggle'/>

@@ -26,6 +26,7 @@ import React, { useContext } from "react"
 import { Heading, Box } from "@looker/components"
 import styled from "styled-components"
 import { ExtensionButton } from "../ExtensionButton"
+import { SandboxStatus } from "../SandboxStatus"
 import {
   ExtensionContext,
   ExtensionContextData,
@@ -102,7 +103,8 @@ export const CoreSDKFunctions = () => {
 
   return (
     <>
-      <Heading my="xlarge">Core SDK Functions</Heading>
+      <Heading mt="xlarge">Core SDK Functions</Heading>
+      <SandboxStatus/>
       <Box display="flex" flexDirection="row">
         <Box display="flex" flexDirection="column" width="50%" maxWidth='40vw'>
           <ExtensionButton

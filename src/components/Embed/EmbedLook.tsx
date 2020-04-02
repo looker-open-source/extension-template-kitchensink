@@ -22,15 +22,16 @@
  * THE SOFTWARE.
  */
 
-import React, { useCallback, useContext, useState } from "react"
+import React, { useCallback, useContext } from "react"
 import { EmbedProps } from "./types"
 import { LookerEmbedSDK, LookerEmbedLook } from '@looker/embed-sdk'
+import { SandboxStatus } from '../SandboxStatus'
 import { EmbedContainer } from './components/EmbedContainer'
 import {
   ExtensionContext,
   ExtensionContextData,
 } from "@looker/extension-sdk-react"
-import { Button } from "@looker/components"
+import { Button, Heading } from "@looker/components"
 
 export const EmbedLook: React.FC<EmbedProps> = () => {
   const [running, setRunning] = React.useState(true)
@@ -71,6 +72,8 @@ export const EmbedLook: React.FC<EmbedProps> = () => {
 
   return (
     <>
+      <Heading mt="xlarge">Embedded Look</Heading>
+      <SandboxStatus/>
       <Button m='medium' onClick={runLook} disabled={running}>Run Look</Button>
       <EmbedContainer ref={embedCtrRef}/>
     </>
