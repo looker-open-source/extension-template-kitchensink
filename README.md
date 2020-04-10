@@ -7,7 +7,7 @@ It uses [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlan
 ## Getting Started for Development
 
 1. Clone or download a copy of this template to your development machine
-2. Navigate (`cd`) to the remplate directory on your system
+2. Navigate (`cd`) to the template directory on your system
 3. Install the dependencies with [Yarn](https://yarnpkg.com/).
 
     ```
