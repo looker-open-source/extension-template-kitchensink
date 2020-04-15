@@ -1,6 +1,6 @@
 {
   "name": "extension-template-kitchensink",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "",
   "main": "dist/bundle.js",
   "scripts": {
@@ -51,7 +51,7 @@
     "@babel/preset-react": "^7.7.4",
     "@babel/preset-typescript": "^7.7.4",
     "@babel/runtime": "^7.7.4",
-    "@types/lodash": "^4.14.144",
+    "@types/lodash": "^4.14.149",
     "babel-preset-nano-react-app": "^0.1.0",
     "typescript": "^3.6.3"
   },

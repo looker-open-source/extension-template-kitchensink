@@ -22,7 +22,9 @@
  * THE SOFTWARE.
  */
 
-import React, { useContext } from "react"
+ import isEqual from 'lodash/isEqual'
+import React, { useContext, useEffect, useState } from "react"
+import { useLocation } from 'react-router-dom'
 import { Heading, Box } from "@looker/components"
 import styled from "styled-components"
 import { ExtensionButton } from "../ExtensionButton"
@@ -34,9 +36,21 @@ import {
 } from "@looker/extension-sdk-react"
 
 export const CoreSDKFunctions = () => {
-  const [messages, setMessages] = React.useState("")
+  const location = useLocation()
+  const [routeData, setRouteData] = useState<any>({})
+  const [messages, setMessages] = useState("")
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const sdk = extensionContext.core40SDK
+
+  useEffect(() => {
+    if (location.search || location.pathname.includes('?')) {
+      const route = `${location.pathname}${location.search}`
+      if (routeData.route !== route || !isEqual(routeData.routeState, location.state)) {
+        setRouteData({route, routeState: location.state })
+        updateMessages(`location: ${location.pathname}${location.search} ${JSON.stringify(location.state)}`)
+      }
+    }
+  }, [location])
 
   const updateMessages = (message: string, error?: any) => {
     setMessages(prevMessages => {

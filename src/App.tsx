@@ -46,21 +46,27 @@ export enum ROUTES {
 }
 
 export const App: React.FC<AppProps> = () => {
-  const [pathname, setPathname] = useState("")
+  const [route, setRoute] = useState("")
+  const [routeState, setRouteState] = useState()
+
+  const onRouteChange = (route: string, routeState?: any) => {
+    setRoute(route)
+    setRouteState(routeState)
+  }
 
   return (
-    <ExtensionProvider onPathnameChange={setPathname}>
+    <ExtensionProvider onRouteChange={onRouteChange}>
       <ThemeProvider theme={theme}>
         <>
           <GlobalStyle />
           <Layout>
-            <Sidebar pathname={pathname} />
+            <Sidebar route={route} routeState={routeState}/>
             <Box>
               <Switch>
                 <Route path={ROUTES.API_ROUTE}>
                   <ApiFunctions />
                 </Route>
-                <Route path={ROUTES.CORESDK_ROUTE}>
+                <Route path={[ROUTES.CORESDK_ROUTE, `${ROUTES.CORESDK_ROUTE}?test=abcd`]}>
                   <CoreSDKFunctions />
                 </Route>
                 <Route path={ROUTES.EMBED_DASHBOARD}>

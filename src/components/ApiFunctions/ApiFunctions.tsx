@@ -22,7 +22,8 @@
  * THE SOFTWARE.
  */
 
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useState } from "react"
+import { useHistory } from 'react-router-dom'
 import { Heading, Box } from "@looker/components"
 import styled from "styled-components"
 import { ExtensionButton } from "../ExtensionButton"
@@ -33,9 +34,11 @@ import {
   ExtensionContextData
 } from "@looker/extension-sdk-react"
 import { ExtensionHostApi } from "@looker/extension-sdk"
+import { ROUTES } from '../../App'
 
 export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
-  const [messages, setMessages] = React.useState("")
+  const history = useHistory()
+  const [messages, setMessages] = useState("")
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const extensionHost = extensionContext.extensionSDK as ExtensionHostApi
 
@@ -132,6 +135,10 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     throw new Error("Kitchensink threw an error")
   }
 
+  const testRouting = () => {
+    history.push(`${ROUTES.CORESDK_ROUTE}?test=abcd`, { count: 1 })
+  }
+
   const clearMessagesClick = () => {
     setMessages('')
   }
@@ -207,6 +214,13 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
             onClick={generateUnhandledErrorClick}
           >
             Generate unhandled error
+          </ExtensionButton>
+          <ExtensionButton
+            mt="small"
+            variant="outline"
+            onClick={testRouting}
+          >
+            Route test
           </ExtensionButton>
           <ExtensionButton
             mt="small"

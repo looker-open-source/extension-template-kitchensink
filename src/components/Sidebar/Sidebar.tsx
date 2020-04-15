@@ -30,32 +30,32 @@ import { SidebarProps } from "./"
 import omit from "lodash/omit"
 import { ROUTES } from '../../App'
 
-export const Sidebar: React.FC<SidebarProps> = ({ pathname }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ route }) => {
   return (
     <Box display="flex" flexDirection="column">
       <MenuGroup type="none" mt="xsmall">
         <StyledRouterLink to={ROUTES.API_ROUTE}>
-          <MenuItem icon="Flag" current={pathname === ROUTES.API_ROUTE}>
+          <MenuItem icon="Flag" current={route === ROUTES.API_ROUTE}>
             Api Functions
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.CORESDK_ROUTE}>
-          <MenuItem icon="Clock" current={pathname === ROUTES.CORESDK_ROUTE}>
+          <MenuItem icon="Clock" current={route.startsWith(ROUTES.CORESDK_ROUTE)}>
             Core SDK Functions
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.EMBED_DASHBOARD}>
-          <MenuItem icon="ApplicationSelect" current={pathname === ROUTES.EMBED_DASHBOARD}>
+          <MenuItem icon="ApplicationSelect" current={route === ROUTES.EMBED_DASHBOARD}>
             Embed Dashboard
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.EMBED_EXPLORE}>
-          <MenuItem icon="ApplicationSelect" current={pathname === ROUTES.EMBED_EXPLORE}>
+          <MenuItem icon="ApplicationSelect" current={route === ROUTES.EMBED_EXPLORE}>
             Embed Explore
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.EMBED_LOOK}>
-          <MenuItem icon="ApplicationSelect" current={pathname === ROUTES.EMBED_LOOK}>
+          <MenuItem icon="ApplicationSelect" current={route === ROUTES.EMBED_LOOK}>
             Embed Look
           </MenuItem>
         </StyledRouterLink>

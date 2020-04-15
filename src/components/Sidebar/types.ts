@@ -23,5 +23,6 @@
  */
 
 export interface SidebarProps {
-  pathname: string
+  route: string
+  routeState?: any
 }
