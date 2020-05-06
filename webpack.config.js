@@ -47,7 +47,11 @@ module.exports = {
         include: /src/
       },
       {
-        test: /\.jsx?$/,
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(js|jsx|ts|tsx)?$/,
         use: 'react-hot-loader/webpack',
         include: /node_modules/,
       }

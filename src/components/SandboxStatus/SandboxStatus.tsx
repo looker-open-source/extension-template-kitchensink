@@ -32,7 +32,7 @@ export const SandboxStatus: React.FC<SandboxStatusProps> = () => {
   useEffect(() => {
     try {
       const parentWindow:any = (window as any).parent
-      console.log(parentWindow.looker?.version)
+      parentWindow.looker?.version
       setSandboxStatus("NOT")
     }catch(err) {
       setSandboxStatus("")

@@ -41,7 +41,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ route }) => {
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.CORESDK_ROUTE}>
           <MenuItem icon="Clock" current={route.startsWith(ROUTES.CORESDK_ROUTE)}>
-            Core SDK Functions
+            Core SDK FunctionsXXXX
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.EMBED_DASHBOARD}>
@@ -57,6 +57,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ route }) => {
         <StyledRouterLink to={ROUTES.EMBED_LOOK}>
           <MenuItem icon="ApplicationSelect" current={route === ROUTES.EMBED_LOOK}>
             Embed Look
+          </MenuItem>
+        </StyledRouterLink>
+        <StyledRouterLink to={ROUTES.EXTERNAL_API_ROUTE}>
+          <MenuItem icon="ApplicationSelect" current={route.startsWith(ROUTES.EXTERNAL_API_ROUTE)}>
+            External Api Functions
           </MenuItem>
         </StyledRouterLink>
       </MenuGroup>

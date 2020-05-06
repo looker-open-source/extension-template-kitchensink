@@ -33,6 +33,8 @@ import { ExtensionProvider } from "@looker/extension-sdk-react"
 import { EmbedDashboard } from "./components/Embed"
 import { EmbedExplore } from "./components/Embed/EmbedExplore"
 import { EmbedLook } from "./components/Embed/EmbedLook"
+import { ExternalApiFunctions } from "./components/ExternalApiFunctions"
+import { hot } from "react-hot-loader/root"
 
 interface AppProps {
 }
@@ -42,10 +44,11 @@ export enum ROUTES {
   CORESDK_ROUTE = "/coresdk",
   EMBED_DASHBOARD = "/embed/dashboard",
   EMBED_EXPLORE = "/embed/explore",
-  EMBED_LOOK = "/embed/look"
+  EMBED_LOOK = "/embed/look",
+  EXTERNAL_API_ROUTE = "/externalapi",
 }
 
-export const App: React.FC<AppProps> = () => {
+export const App: React.FC<AppProps> = hot(() => {
   const [route, setRoute] = useState("")
   const [routeState, setRouteState] = useState()
 
@@ -78,6 +81,9 @@ export const App: React.FC<AppProps> = () => {
                 <Route path={ROUTES.EMBED_LOOK}>
                   <EmbedLook />
                 </Route>
+                <Route path={ROUTES.EXTERNAL_API_ROUTE}>
+                  <ExternalApiFunctions />
+                </Route>
                 <Redirect to={ROUTES.API_ROUTE} />
               </Switch>
             </Box>
@@ -86,7 +92,7 @@ export const App: React.FC<AppProps> = () => {
       </ThemeProvider>
     </ExtensionProvider>
   )
-}
+})
 
 export const Layout = styled(Box)`
   display: grid;

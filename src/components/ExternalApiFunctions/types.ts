@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Looker Data Sciences, Inc.
+ * Copyright (c) 2020 Looker Data Sciences, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,4 @@
  * THE SOFTWARE.
  */
 
-import * as React from "react"
-import { ButtonOutline } from "@looker/components"
-import styled from "styled-components"
-
-export const ExtensionButton: React.FC<any> = ({
-  children,
-  onClick,
-  ...rest
-}) => {
-  return (
-    <StyledButton onClick={onClick} mb="small" {...rest}>
-      <StyledLabel>{children}</StyledLabel>
-    </StyledButton>
-  )
-}
-
-const StyledButton = styled(ButtonOutline)`
-  text-align: center;
-`
-
-const StyledLabel = styled.div`
-  display: inline-block;
-  width: 100%;
-`
+export interface ExternalApiFunctionsProps {}
