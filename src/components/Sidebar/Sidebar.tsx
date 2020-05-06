@@ -64,6 +64,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ route }) => {
             External Api Functions
           </MenuItem>
         </StyledRouterLink>
+        <StyledRouterLink to={ROUTES.MISC_ROUTE}>
+          <MenuItem icon="ApplicationSelect" current={route === ROUTES.MISC_ROUTE}>
+            Miscellaneous Functions
+          </MenuItem>
+        </StyledRouterLink>
       </MenuGroup>
     </Box>
   )

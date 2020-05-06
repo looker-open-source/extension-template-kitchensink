@@ -34,6 +34,7 @@ import { EmbedDashboard } from "./components/Embed"
 import { EmbedExplore } from "./components/Embed/EmbedExplore"
 import { EmbedLook } from "./components/Embed/EmbedLook"
 import { ExternalApiFunctions } from "./components/ExternalApiFunctions"
+import { MiscFunctions } from "./components/MiscFunctions"
 import { hot } from "react-hot-loader/root"
 
 interface AppProps {
@@ -46,6 +47,7 @@ export enum ROUTES {
   EMBED_EXPLORE = "/embed/explore",
   EMBED_LOOK = "/embed/look",
   EXTERNAL_API_ROUTE = "/externalapi",
+  MISC_ROUTE = "/misc",
 }
 
 export const App: React.FC<AppProps> = hot(() => {
@@ -83,6 +85,9 @@ export const App: React.FC<AppProps> = hot(() => {
                 </Route>
                 <Route path={ROUTES.EXTERNAL_API_ROUTE}>
                   <ExternalApiFunctions />
+                </Route>
+                <Route path={ROUTES.MISC_ROUTE}>
+                  <MiscFunctions />
                 </Route>
                 <Redirect to={ROUTES.API_ROUTE} />
               </Switch>
