@@ -32,6 +32,9 @@ export const SandboxStatus: React.FC<SandboxStatusProps> = () => {
   useEffect(() => {
     try {
       const parentWindow:any = (window as any).parent
+      // Attempt to get data from the parent window. This
+      // will fail in a sandboxed environment and in most
+      // cases we want this to fail.
       parentWindow.looker?.version
       setSandboxStatus("NOT")
     }catch(err) {
