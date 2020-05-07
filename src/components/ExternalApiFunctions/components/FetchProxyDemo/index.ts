@@ -22,5 +22,5 @@
  * THE SOFTWARE.
  */
 
-export * from './FetchDemo'
+export * from './FetchProxyDemo'
 export * from './types'

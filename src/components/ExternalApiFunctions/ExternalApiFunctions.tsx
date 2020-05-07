@@ -27,14 +27,14 @@ import { useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 import { Box, Divider, Heading, TabList, Tab, TabPanels, TabPanel, Text } from "@looker/components"
 import { SandboxStatus } from "../SandboxStatus"
 import { ExternalApiFunctionsProps } from "./types"
-import { FetchDemo } from './components/FetchDemo'
-import { initialState as fetchDemoInitialState, reducer as fetchDemoReducer } from './data/FetchDemoReducer'
+import { FetchProxyDemo } from './components/FetchProxyDemo'
+import { initialState as dataInitialState, reducer as dataReducer } from './data/DataReducer'
 
 export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
   // State is stored here as asynchronous actions may complete
   // after components unload. If components own state, react puts messages
   // on the console.
-  const [ fetchDemoState, fetchDemoDispatch ] = useReducer(fetchDemoReducer, fetchDemoInitialState)
+  const [ dataState, dataDispatch ] = useReducer(dataReducer, dataInitialState)
 
   const history = useHistory()
   const location = useLocation()
@@ -59,12 +59,12 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
       <Box padding="small">
         <Divider/>
         <TabList selectedIndex={selectedIndex} onSelectTab={onSelectTab}>
-          <Tab>Fetch Demo</Tab>
+          <Tab>Fetch Proxy Demo</Tab>
           <Tab>Coming Soon!</Tab>
         </TabList>
         <TabPanels selectedIndex={selectedIndex}>
          <TabPanel>
-           <FetchDemo fetchDemoDispatch={fetchDemoDispatch} fetchDemoState={fetchDemoState} />
+           <FetchProxyDemo dataDispatch={dataDispatch} dataState={dataState} />
          </TabPanel>
          <TabPanel>
            <Text>More demos coming soon</Text>

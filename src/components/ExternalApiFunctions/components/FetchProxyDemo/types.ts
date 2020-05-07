@@ -24,7 +24,7 @@
 
 import { Dispatch } from "react"
 
-export interface FetchDemoProps {
-  fetchDemoState: any
-  fetchDemoDispatch: Dispatch<any>
+export interface FetchProxyDemoProps {
+  dataState: any
+  dataDispatch: Dispatch<any>
 }

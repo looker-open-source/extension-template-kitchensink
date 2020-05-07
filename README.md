@@ -119,9 +119,9 @@ Ther are three Embed demonstrations:
 
 ### External API Functions
 
-#### Fetch
+#### Fetch Proxy
 
-The fetch demonstration requires that a json server be running. To start the server run the command
+The fetch proxy demonstration requires that a json server be running. To start the server run the command
 
 ```
 yarn start-data-server

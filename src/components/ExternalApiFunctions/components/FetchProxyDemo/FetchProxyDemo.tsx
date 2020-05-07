@@ -38,7 +38,7 @@ import {
   Prompt,
   Text,
 } from "@looker/components"
-import { FetchDemoProps } from "./types"
+import { FetchProxyDemoProps } from "./types"
 import {
   ExtensionContext,
   ExtensionContextData
@@ -49,11 +49,11 @@ import {
   updateTitle,
   updateErrorMessage,
   updatePostsServer,
-} from '../../data/FetchDemoReducer'
+} from '../../data/DataReducer'
 import { extractMessageFromError } from '../../../../utils'
 
 /**
- * Demonstration of Looker extension SDK external API use.
+ * Demonstration of Looker extension SDK external API use, fetchProxy
  *
  * A note on state. This component is rendered in a tab panel and such
  * can get unloaded while an asynchronous operation is in progress. Rather
@@ -66,21 +66,21 @@ import { extractMessageFromError } from '../../../../utils'
  * A note on data. A simple json server is provided. This server must be
  * started in order for this demo to work.
  */
-export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDemoState }) => {
+export const FetchProxyDemo: React.FC<FetchProxyDemoProps> = ({ dataDispatch, dataState }) => {
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   // Get access to the extension SDK and the looker API SDK.
   const { extensionSDK, core40SDK } = extensionContext
   // Component state
-  const { posts, name, title, errorMessage, postsServer } = fetchDemoState
+  const { posts, name, title, errorMessage, postsServer } = dataState
 
   useEffect(() => {
     const fetchData = async () => {
       try {
       // Call me to get user name for including in the post
       const value = await core40SDK.ok(core40SDK.me())
-        updateName(fetchDemoDispatch, value.display_name || "Unknown")
+        updateName(dataDispatch, value.display_name || "Unknown")
       } catch(error) {
-        updateName(fetchDemoDispatch, "Unknown")
+        updateName(dataDispatch, "Unknown")
       }
       fetchPosts(true)
     }
@@ -94,7 +94,7 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
     event.preventDefault()
 
     try {
-      // A more complex use of the fetch API. In this case the
+      // A more complex use of the fetch proxy. In this case the
       // content type must be included in the headers as the json server
       // will not process it otherwise.
       // Note the that JSON object in the string MUST be converted to
@@ -112,16 +112,16 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
           })
         })
       if (response.ok) {
-        updateTitle(fetchDemoDispatch, "")
-        updateErrorMessage(fetchDemoDispatch, undefined)
+        updateTitle(dataDispatch, "")
+        updateErrorMessage(dataDispatch, undefined)
         fetchPosts()
       } else {
         console.error("Failed to create post", response)
-        updateErrorMessage(fetchDemoDispatch, "Failed to create post")
+        updateErrorMessage(dataDispatch, "Failed to create post")
       }
     } catch(error) {
       console.error("An unexpected error occured", error)
-      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${extractMessageFromError(error)}`)
+      updateErrorMessage(dataDispatch, `An unexpected error occured: ${extractMessageFromError(error)}`)
     }
   }
 
@@ -135,17 +135,17 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
           method: 'DELETE',
         })
       if (response.ok) {
-        updateTitle(fetchDemoDispatch, "")
-        updateErrorMessage(fetchDemoDispatch, undefined)
+        updateTitle(dataDispatch, "")
+        updateErrorMessage(dataDispatch, undefined)
         fetchPosts()
       } else {
         console.error("Failed to delete post", response)
-        updateErrorMessage(fetchDemoDispatch, "Failed to delete post")
+        updateErrorMessage(dataDispatch, "Failed to delete post")
       }
     }
     catch(error) {
       console.error("An unexpected error occured:", error)
-      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${extractMessageFromError(error)}`)
+      updateErrorMessage(dataDispatch, `An unexpected error occured: ${extractMessageFromError(error)}`)
     }
   }
 
@@ -157,31 +157,31 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
       // response is expected.
       const response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
       if (response.ok) {
-        updatePosts(fetchDemoDispatch, response.body.reverse())
-        updateErrorMessage(fetchDemoDispatch, undefined)
+        updatePosts(dataDispatch, response.body.reverse())
+        updateErrorMessage(dataDispatch, undefined)
       } else {
-        updateErrorMessage(fetchDemoDispatch, "Has the data server been started? yarn start start-data-server")
+        updateErrorMessage(dataDispatch, "Has the data server been started? yarn start start-data-server")
       }
     } catch(error) {
       const errorMessage = extractMessageFromError(error)
       if (firstTime && errorMessage.startsWith("Required Looker version ")) {
-        updateErrorMessage(fetchDemoDispatch, "This version of Looker does not support external API functions")
+        updateErrorMessage(dataDispatch, "This version of Looker does not support external API functions")
       } else if (firstTime && errorMessage.startsWith("Entitlements must be defined")) {
-        updateErrorMessage(fetchDemoDispatch, "Entitlements must be defined to use external API functionality")
+        updateErrorMessage(dataDispatch, "Entitlements must be defined to use external API functionality")
       } else if (firstTime) {
-        updateErrorMessage(fetchDemoDispatch, "Has the data server been started? yarn start start-data-server")
+        updateErrorMessage(dataDispatch, "Has the data server been started? yarn start start-data-server")
       } else {
-        updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${errorMessage}`)
+        updateErrorMessage(dataDispatch, `An unexpected error occured: ${errorMessage}`)
       }
     }
   }
 
   const onTitleChange = (e: any) => {
-    updateTitle(fetchDemoDispatch, e.currentTarget.value)
+    updateTitle(dataDispatch, e.currentTarget.value)
   }
 
   const onDismiss = () => {
-    updateErrorMessage(fetchDemoDispatch, undefined)
+    updateErrorMessage(dataDispatch, undefined)
   }
 
   const onChangeServerClick = (value: string) => {
@@ -190,10 +190,10 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
     // changed during the test.
     try {
       new URL(value)
-      updatePostsServer(fetchDemoDispatch, value.endsWith('/') ? value.substring(0, value.length - 1) : value)
+      updatePostsServer(dataDispatch, value.endsWith('/') ? value.substring(0, value.length - 1) : value)
     }
     catch(error) {
-      updateErrorMessage(fetchDemoDispatch, 'Invalid URL')
+      updateErrorMessage(dataDispatch, 'Invalid URL')
     }
   }
 
