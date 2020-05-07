@@ -50,6 +50,7 @@ import {
   updateErrorMessage,
   updatePostsServer,
 } from '../../data/FetchDemoReducer'
+import { extractMessageFromError } from '../../../../utils'
 
 /**
  * Demonstration of Looker extension SDK external API use.
@@ -81,111 +82,10 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
       } catch(error) {
         updateName(fetchDemoDispatch, "Unknown")
       }
-      try {
-        // Use the extension SDK external API fetch method. A simple GET call.
-        // Note the response body is determined from the fetch response. The
-        // fetch call can take a third argument that indicates what type of
-        // response is expected.
-        const response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
-        if (response.ok) {
-          updatePosts(fetchDemoDispatch, response.body.reverse())
-          updateErrorMessage(fetchDemoDispatch, undefined)
-        } else {
-          updateErrorMessage(fetchDemoDispatch, "Has the data server been started? yarn start start-data-server")
-        }
-      } catch(error) {
-        if (typeof error === 'string' && error.startsWith("Required Looker version ")) {
-          updateErrorMessage(fetchDemoDispatch, "This version of Looker does not support external API functions")
-        } else if (typeof error === 'string' && error.startsWith("Entitlements must be defined")) {
-          updateErrorMessage(fetchDemoDispatch, "Entitlements must be defined to use external API functionality")
-        } else {
-          updateErrorMessage(fetchDemoDispatch, "Has the data server been started? yarn start start-data-server")
-        }
-      }
+      fetchPosts(true)
     }
     fetchData()
   }, [postsServer])
-
-  const postsColumns = [
-    {
-      id: 'id',
-      primaryKey: true,
-      title: 'ID',
-      type: 'number',
-      widthPercent: 10,
-    },
-    {
-      id: 'title',
-      title: 'Title',
-      type: 'string',
-      widthPercent: 60,
-    },
-    {
-      id: 'author',
-      title: 'Author',
-      type: 'string',
-      widthPercent: 30,
-    },
-  ] as ActionListColumns
-
-  const onPostDelete = async (post: any) => {
-    // Slightly more complex use of the fetch method. In this case
-    // the DELETE method is used.
-    try {
-      let response: any = await extensionSDK.fetchProxy(
-        `${postsServer}/posts/${post.id}`,
-        {
-          method: 'DELETE',
-        })
-      if (response.ok) {
-        updateTitle(fetchDemoDispatch, "")
-        updateErrorMessage(fetchDemoDispatch, undefined)
-      } else {
-        console.error("Failed to delete post", response)
-        updateErrorMessage(fetchDemoDispatch, "Failed to delete post")
-        return
-      }
-      response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
-      if (response.ok) {
-        updatePosts(fetchDemoDispatch, response.body.reverse())
-        updateErrorMessage(fetchDemoDispatch, undefined)
-      } else {
-        console.error("Failed to get posts", response)
-        updateErrorMessage(fetchDemoDispatch, "Failed to get post")
-      }
-    }
-    catch(error) {
-      console.error("An unexpected error occured:", error)
-      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${error}`)
-    }
-  }
-
-  const postsItems = posts.map((post: any) => {
-    const actions = (
-      <>
-        <ActionListItemAction onClick={onPostDelete.bind(null, post)}>
-          Delete
-        </ActionListItemAction>
-      </>
-    )
-
-    const { id, title, author } = post
-    return (
-      <ActionListItem key={id} id={id} actions={actions}>
-        <ActionListItemColumn>{id}</ActionListItemColumn>
-        <ActionListItemColumn>{title}</ActionListItemColumn>
-        <ActionListItemColumn>{author}</ActionListItemColumn>
-      </ActionListItem>
-    )
-  })
-
-  const onDismiss = () => {
-    updateErrorMessage(fetchDemoDispatch, undefined)
-  }
-
-  const onTitleChange = (e: any) => {
-    updateTitle(fetchDemoDispatch, e.currentTarget.value)
-  }
 
   const onCreatePostSubmit = async (event: React.FormEvent) => {
     // Need to prevent default processing for event from occurring.
@@ -214,23 +114,74 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
       if (response.ok) {
         updateTitle(fetchDemoDispatch, "")
         updateErrorMessage(fetchDemoDispatch, undefined)
+        fetchPosts()
       } else {
         console.error("Failed to create post", response)
         updateErrorMessage(fetchDemoDispatch, "Failed to create post")
         return undefined
       }
-      response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
+    } catch(error) {
+      console.error("An unexpected error occured", error)
+      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${extractMessageFromError(error)}`)
+    }
+  }
+
+  const onPostDelete = async (post: any) => {
+    // Slightly more complex use of the fetch method. In this case
+    // the DELETE method is used.
+    try {
+      let response: any = await extensionSDK.fetchProxy(
+        `${postsServer}/posts/${post.id}`,
+        {
+          method: 'DELETE',
+        })
+      if (response.ok) {
+        updateTitle(fetchDemoDispatch, "")
+        updateErrorMessage(fetchDemoDispatch, undefined)
+      } else {
+        console.error("Failed to delete post", response)
+        updateErrorMessage(fetchDemoDispatch, "Failed to delete post")
+        return
+      }
+      fetchPosts()
+    }
+    catch(error) {
+      console.error("An unexpected error occured:", error)
+      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${error}`)
+    }
+  }
+
+  const fetchPosts = async(firstTime = false) => {
+    try {
+      // Use the extension SDK external API fetch method. A simple GET call.
+      // Note the response body is determined from the fetch response. The
+      // fetch call can take a third argument that indicates what type of
+      // response is expected.
+      const response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
       if (response.ok) {
         updatePosts(fetchDemoDispatch, response.body.reverse())
         updateErrorMessage(fetchDemoDispatch, undefined)
       } else {
-        console.error("Failed to get posts", response)
-        updateErrorMessage(fetchDemoDispatch, "Failed to get post")
+        updateErrorMessage(fetchDemoDispatch, "Has the data server been started? yarn start start-data-server")
       }
     } catch(error) {
-      console.error("An unexpected error occured", error)
-      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${error}`)
+      const errorMessage = extractMessageFromError(error)
+      if (firstTime && errorMessage.startsWith("Required Looker version ")) {
+        updateErrorMessage(fetchDemoDispatch, "This version of Looker does not support external API functions")
+      } else if (firstTime && errorMessage.startsWith("Entitlements must be defined")) {
+        updateErrorMessage(fetchDemoDispatch, "Entitlements must be defined to use external API functionality")
+      } else {
+        updateErrorMessage(fetchDemoDispatch, "Has the data server been started? yarn start start-data-server")
+      }
     }
+  }
+
+  const onTitleChange = (e: any) => {
+    updateTitle(fetchDemoDispatch, e.currentTarget.value)
+  }
+
+  const onDismiss = () => {
+    updateErrorMessage(fetchDemoDispatch, undefined)
   }
 
   const onChangeServerClick = (value: string) => {
@@ -245,6 +196,48 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
       updateErrorMessage(fetchDemoDispatch, 'Invalid URL')
     }
   }
+
+  const postsColumns = [
+    {
+      id: 'id',
+      primaryKey: true,
+      title: 'ID',
+      type: 'number',
+      widthPercent: 10,
+    },
+    {
+      id: 'title',
+      title: 'Title',
+      type: 'string',
+      widthPercent: 60,
+    },
+    {
+      id: 'author',
+      title: 'Author',
+      type: 'string',
+      widthPercent: 30,
+    },
+  ] as ActionListColumns
+
+  const postsItems = posts.map((post: any) => {
+    const actions = (
+      <>
+        <ActionListItemAction onClick={onPostDelete.bind(null, post)}>
+          Delete
+        </ActionListItemAction>
+      </>
+    )
+
+    const { id, title, author } = post
+    return (
+      <ActionListItem key={id} id={id} actions={actions}>
+        <ActionListItemColumn>{id}</ActionListItemColumn>
+        <ActionListItemColumn>{title}</ActionListItemColumn>
+        <ActionListItemColumn>{author}</ActionListItemColumn>
+      </ActionListItem>
+    )
+  })
+
 
   return (
     <>
