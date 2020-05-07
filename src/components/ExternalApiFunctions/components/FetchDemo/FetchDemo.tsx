@@ -118,7 +118,6 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
       } else {
         console.error("Failed to create post", response)
         updateErrorMessage(fetchDemoDispatch, "Failed to create post")
-        return undefined
       }
     } catch(error) {
       console.error("An unexpected error occured", error)
@@ -138,16 +137,15 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
       if (response.ok) {
         updateTitle(fetchDemoDispatch, "")
         updateErrorMessage(fetchDemoDispatch, undefined)
+        fetchPosts()
       } else {
         console.error("Failed to delete post", response)
         updateErrorMessage(fetchDemoDispatch, "Failed to delete post")
-        return
       }
-      fetchPosts()
     }
     catch(error) {
       console.error("An unexpected error occured:", error)
-      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${error}`)
+      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${extractMessageFromError(error)}`)
     }
   }
 
@@ -170,8 +168,10 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
         updateErrorMessage(fetchDemoDispatch, "This version of Looker does not support external API functions")
       } else if (firstTime && errorMessage.startsWith("Entitlements must be defined")) {
         updateErrorMessage(fetchDemoDispatch, "Entitlements must be defined to use external API functionality")
-      } else {
+      } else if (firstTime) {
         updateErrorMessage(fetchDemoDispatch, "Has the data server been started? yarn start start-data-server")
+      } else {
+        updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${errorMessage}`)
       }
     }
   }
