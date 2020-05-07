@@ -49,21 +49,19 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     })
   }
 
-  const buttonClick = () => {
-    extensionHost
-      .verifyHostConnection()
-      .then(value => {
-        if (value === true) {
-          updateMessages("Host verification success")
-        } else {
-          updateMessages("Invalid response " + value)
-        }
-      })
-      .catch(error => {
-        updateMessages("Host verification failure")
-        updateMessages(error)
-        console.error("Host verification failure", error)
-      })
+  const verifyHostConnectionClick = async () => {
+    try {
+      const value = await extensionHost.verifyHostConnection()
+      if (value === true) {
+        updateMessages("Host verification success")
+      } else {
+        updateMessages("Invalid response " + value)
+      }
+    } catch(error) {
+      updateMessages("Host verification failure")
+      updateMessages(error)
+      console.error("Host verification failure", error)
+    }
   }
 
   const updateTitleButtonClick = () => {
@@ -87,40 +85,34 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     updateMessages("Window opened")
   }
 
-  const localStorageSet = () => {
-    extensionHost
-      .localStorageSetItem("testbed", new Date().toString())
-      .then(() => {
-        updateMessages("Success")
-      })
-      .catch(error => {
-        updateMessages(error)
-        console.error(error)
-      })
+  const localStorageSet = async () => {
+    try {
+      await extensionHost.localStorageSetItem("testbed", new Date().toString())
+      updateMessages("Success")
+    } catch(error) {
+      updateMessages(error)
+      console.error(error)
+    }
   }
 
-  const localStorageGet = () => {
-    extensionHost
-      .localStorageGetItem("testbed")
-      .then(value => {
-        updateMessages(value || "null")
-      })
-      .catch(error => {
-        updateMessages(error)
-        console.error(error)
-      })
+  const localStorageGet = async () => {
+    try {
+      const value = await extensionHost.localStorageGetItem("testbed")
+      updateMessages(value || "null")
+    } catch(error) {
+      updateMessages(error)
+      console.error(error)
+    }
   }
 
-  const localStorageRemove = () => {
-    extensionHost
-      .localStorageRemoveItem("testbed")
-      .then(() => {
-        updateMessages("Success")
-      })
-      .catch(error => {
-        updateMessages(error)
-        console.error(error)
-      })
+  const localStorageRemove = async () => {
+    try {
+      await extensionHost.localStorageRemoveItem("testbed")
+      updateMessages("Success")
+    } catch(error) {
+      updateMessages(error)
+      console.error(error)
+    }
   }
 
   const trackActionClick = () => {
@@ -177,7 +169,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
           >
             Open marketplace new window
           </ExtensionButton>
-          <ExtensionButton mt="small" variant="outline" onClick={buttonClick}>
+          <ExtensionButton mt="small" variant="outline" onClick={verifyHostConnectionClick}>
             Verify host connection
           </ExtensionButton>
           <ExtensionButton

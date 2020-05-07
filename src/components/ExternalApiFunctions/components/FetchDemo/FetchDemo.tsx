@@ -73,26 +73,27 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
   const { posts, name, title, errorMessage, postsServer } = fetchDemoState
 
   useEffect(() => {
-    // Call me to get user name for including in the post
-    core40SDK.me()
-      .then((result) => {
-        if (result.ok) {
-          updateName(fetchDemoDispatch, result.value.display_name || "Unknown")
-        }
-      })
-    // Use the extension SDK external API fetch method. A simple GET call.
-    // Note the response body is determined from the fetch response. The
-    // fetch call can take a third argument that indicates what type of
-    // response is expected.
-    extensionSDK.fetch(`${postsServer}/posts`)
-      .then((response: any) => {
+    const fetchData = async () => {
+      try {
+      // Call me to get user name for including in the post
+      const value = await core40SDK.ok(core40SDK.me())
+        updateName(fetchDemoDispatch, value.display_name || "Unknown")
+      } catch(error) {
+        updateName(fetchDemoDispatch, "Unknown")
+      }
+      try {
+        // Use the extension SDK external API fetch method. A simple GET call.
+        // Note the response body is determined from the fetch response. The
+        // fetch call can take a third argument that indicates what type of
+        // response is expected.
+        const response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
         if (response.ok) {
           updatePosts(fetchDemoDispatch, response.body.reverse())
           updateErrorMessage(fetchDemoDispatch, undefined)
         } else {
           updateErrorMessage(fetchDemoDispatch, "Has the data server been started? yarn start start-data-server")
         }
-      }).catch((error: any) => {
+      } catch(error) {
         if (typeof error === 'string' && error.startsWith("Required Looker version ")) {
           updateErrorMessage(fetchDemoDispatch, "This version of Looker does not support external API functions")
         } else if (typeof error === 'string' && error.startsWith("Entitlements must be defined")) {
@@ -100,7 +101,9 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
         } else {
           updateErrorMessage(fetchDemoDispatch, "Has the data server been started? yarn start start-data-server")
         }
-      })
+      }
+    }
+    fetchData()
   }, [postsServer])
 
   const postsColumns = [
@@ -125,39 +128,36 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
     },
   ] as ActionListColumns
 
-  const onPostDelete = (post: any) => {
+  const onPostDelete = async (post: any) => {
     // Slightly more complex use of the fetch method. In this case
     // the DELETE method is used.
-    extensionSDK.fetch(
-      `${postsServer}/posts/${post.id}`,
-      {
-        method: 'DELETE',
-      }).then((response: any) => {
-        if (response.ok) {
-          updateTitle(fetchDemoDispatch, "")
-          updateErrorMessage(fetchDemoDispatch, undefined)
-        } else {
-          console.error("Failed to delete post", response)
-          updateErrorMessage(fetchDemoDispatch, "Failed to delete post")
-          return undefined
-        }
-        // Standard Promise chaining. Use the fetch method to get the
-        // posts data again as a post was just deleted.
-        return extensionSDK.fetch(`${postsServer}/posts`)
-      }).then((response: any) => {
-        if (response) {
-          if (response.ok) {
-            updatePosts(fetchDemoDispatch, response.body.reverse())
-            updateErrorMessage(fetchDemoDispatch, undefined)
-          } else {
-            console.error("Failed to get posts", response)
-            updateErrorMessage(fetchDemoDispatch, "Failed to get post")
-          }
-        }
-      }).catch((error: any) => {
-        console.error("An unexpected error occured:", error)
-        updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${error}`)
-      })
+    try {
+      let response: any = await extensionSDK.fetchProxy(
+        `${postsServer}/posts/${post.id}`,
+        {
+          method: 'DELETE',
+        })
+      if (response.ok) {
+        updateTitle(fetchDemoDispatch, "")
+        updateErrorMessage(fetchDemoDispatch, undefined)
+      } else {
+        console.error("Failed to delete post", response)
+        updateErrorMessage(fetchDemoDispatch, "Failed to delete post")
+        return
+      }
+      response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
+      if (response.ok) {
+        updatePosts(fetchDemoDispatch, response.body.reverse())
+        updateErrorMessage(fetchDemoDispatch, undefined)
+      } else {
+        console.error("Failed to get posts", response)
+        updateErrorMessage(fetchDemoDispatch, "Failed to get post")
+      }
+    }
+    catch(error) {
+      console.error("An unexpected error occured:", error)
+      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${error}`)
+    }
   }
 
   const postsItems = posts.map((post: any) => {
@@ -187,53 +187,50 @@ export const FetchDemo: React.FC<FetchDemoProps> = ({ fetchDemoDispatch, fetchDe
     updateTitle(fetchDemoDispatch, e.currentTarget.value)
   }
 
-  const onCreatePostSubmit = (event: React.FormEvent) => {
+  const onCreatePostSubmit = async (event: React.FormEvent) => {
     // Need to prevent default processing for event from occurring.
     // The button is rendered in a form and default action is to
     // submit the form.
     event.preventDefault()
-    // A more complex use of the fetch API. In this case the
-    // content type must be included in the headers as the json server
-    // will not process it otherwise.
-    // Note the that JSON object in the string MUST be converted to
-    // a string.
-    extensionSDK.fetch(
-      `${postsServer}/posts`,
-      {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          title,
-          author: name
+
+    try {
+      // A more complex use of the fetch API. In this case the
+      // content type must be included in the headers as the json server
+      // will not process it otherwise.
+      // Note the that JSON object in the string MUST be converted to
+      // a string.
+      let response = await extensionSDK.fetchProxy(
+        `${postsServer}/posts`,
+        {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            title,
+            author: name
+          })
         })
-      }).then((response: any) => {
-        if (response.ok) {
-          updateTitle(fetchDemoDispatch, "")
-          updateErrorMessage(fetchDemoDispatch, undefined)
-        } else {
-          console.error("Failed to create post", response)
-          updateErrorMessage(fetchDemoDispatch, "Failed to create post")
-          return undefined
-        }
-        // Once again, simple fetch call to get the posts as a new post
-        // has just been added. The method defaults to GET.
-        return extensionSDK.fetch(`${postsServer}/posts`)
-      }).then((response: any) => {
-        if (response) {
-          if (response.ok) {
-            updatePosts(fetchDemoDispatch, response.body.reverse())
-            updateErrorMessage(fetchDemoDispatch, undefined)
-          } else {
-            console.error("Failed to get posts", response)
-            updateErrorMessage(fetchDemoDispatch, "Failed to get post")
-          }
-        }
-      }).catch((error: any) => {
-        console.error("An unexpected error occured", error)
-        updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${error}`)
-      })
+      if (response.ok) {
+        updateTitle(fetchDemoDispatch, "")
+        updateErrorMessage(fetchDemoDispatch, undefined)
+      } else {
+        console.error("Failed to create post", response)
+        updateErrorMessage(fetchDemoDispatch, "Failed to create post")
+        return undefined
+      }
+      response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
+      if (response.ok) {
+        updatePosts(fetchDemoDispatch, response.body.reverse())
+        updateErrorMessage(fetchDemoDispatch, undefined)
+      } else {
+        console.error("Failed to get posts", response)
+        updateErrorMessage(fetchDemoDispatch, "Failed to get post")
+      }
+    } catch(error) {
+      console.error("An unexpected error occured", error)
+      updateErrorMessage(fetchDemoDispatch, `An unexpected error occured: ${error}`)
+    }
   }
 
   const onChangeServerClick = (value: string) => {
