@@ -983,10 +983,10 @@
   dependencies:
     ts-loader "^6.1.2"
 
-"@looker/extension-sdk@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@looker/extension-sdk/-/extension-sdk-0.7.0.tgz#ee6b6862a6f67c1abab047f814760044c7c70a67"
-  integrity sha512-mn5dkX5TBrIVoMaheeN1JVLODFjTxEW0s9psexT5rhw8UJ33EXyQtA1d67NeihCrh67rxQ/C8+vVF7v6fj7+UA==
+"@looker/extension-sdk@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@looker/extension-sdk/-/extension-sdk-0.7.1.tgz#5a135b1ce40c635257e9e9108b124fd9a019e27c"
+  integrity sha512-3t9GRg7pmjqvkvi6liP/fph4K1JvZ0eHcLqUTm5OOG4+nRKKGuqltAKzK72HXGhOXFcQ+forun2sZgyHUXhKeg==
   dependencies:
     "@looker/chatty" "^2.2.0"
     "@looker/sdk" "^0.2.0-beta.32"
