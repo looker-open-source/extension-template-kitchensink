@@ -60,37 +60,32 @@ export const CoreSDKFunctions = () => {
     })
   }
 
-  const allConnectionsClick = () => {
-      sdk.all_connections()
-      .then((response) => {
-        if (response.ok) {
-          response.value.forEach(connection => {
-            updateMessages(connection.name || '')
-          })
-        } else {
-          updateMessages('Error getting connections', response.error)
-        }
+  const allConnectionsClick = async () => {
+    try {
+      const value = await sdk.ok(sdk.all_connections())
+      value.forEach(connection => {
+        updateMessages(connection.name || '')
       })
-      .catch(error => updateMessages('Error caught getting connections', error))
+    } catch(error) {
+      updateMessages('Error getting connections', error)
+    }
   }
 
-  const searchFoldersClick = () => {
-    sdk.search_folders({ parent_id: '1'})
-    .then((response) => {
-      if (response.ok) {
-        updateMessages(JSON.stringify(response.value, null, 2))
-      } else {
-        updateMessages('Error invoking search folders', response.error)
-      }
-    })
-    .catch(error => updateMessages('Error caught invoking search folders', error))
+  const searchFoldersClick = async () => {
+    try {
+      const value = await sdk.ok(sdk.search_folders({ parent_id: '1'}))
+      updateMessages(JSON.stringify(value, null, 2))
+    } catch (error) {
+      updateMessages('Error invoking search folders', error)
+    }
   }
 
-  const inlineQueryClick = () => {
+  const inlineQueryClick = async () => {
     // alternate mechanism to get sdk. Note getCore31SDK is also available
     // but getCore40SDK provides access to newer functionality
-    getCore40SDK()
-      .run_inline_query({
+    const core40SDK = getCore40SDK()
+    try {
+      const value =  await core40SDK.ok(core40SDK.run_inline_query({
         result_format: "json_detail",
         limit: 10,
         body: {
@@ -100,15 +95,11 @@ export const CoreSDKFunctions = () => {
           fields: ["last_name", "gender"],
           sorts: [`last_name desc`]
         }
-      })
-      .then((response) => {
-        if (response.ok) {
-          updateMessages(JSON.stringify(response.value, null, 2))
-        } else {
-          updateMessages('Error invoking inline query', response.error)
-        }
-      })
-      .catch(error => updateMessages('Error caught invoking inline query', error))
+      }))
+      updateMessages(JSON.stringify(value, null, 2))
+    } catch (error) {
+      updateMessages('Error invoking inline query', error)
+    }
   }
 
   const clearMessagesClick = () => {

@@ -164,7 +164,9 @@ export const FetchProxyDemo: React.FC<FetchProxyDemoProps> = ({ dataDispatch, da
       }
     } catch(error) {
       const errorMessage = extractMessageFromError(error)
-      if (firstTime && errorMessage.startsWith("Required Looker version ")) {
+      if (errorMessage.startsWith("Extension not entitled to access external ")) {
+        updateErrorMessage(dataDispatch, errorMessage)
+      } else if (firstTime && errorMessage.startsWith("Required Looker version ")) {
         updateErrorMessage(dataDispatch, "This version of Looker does not support external API functions")
       } else if (firstTime && errorMessage.startsWith("Entitlements must be defined")) {
         updateErrorMessage(dataDispatch, "Entitlements must be defined to use external API functionality")
@@ -190,6 +192,7 @@ export const FetchProxyDemo: React.FC<FetchProxyDemoProps> = ({ dataDispatch, da
     // changed during the test.
     try {
       new URL(value)
+      updatePosts(dataDispatch, [])
       updatePostsServer(dataDispatch, value.endsWith('/') ? value.substring(0, value.length - 1) : value)
     }
     catch(error) {
