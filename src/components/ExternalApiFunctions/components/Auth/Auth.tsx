@@ -33,6 +33,7 @@ import { AuthProps } from "./types"
 import { GOOGLE_CLIENT_ID, GOOGLE_SCOPES } from '../..'
 import { authorize, AuthOption, updateErrorMessage, updateName } from '../../data/DataReducer'
 import { extractMessageFromError } from '../../../../utils/extract_message_from_error'
+import { getDataServerFetchProxy } from '../../utils/fetch_proxy'
 
 
 /**
@@ -45,6 +46,7 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
   // Get access to the extension SDK and the looker API SDK.
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK, core40SDK } = extensionContext
+  const dataServerFetchProxy = getDataServerFetchProxy(extensionSDK)
 
   // Dialog state
   const [ dialogOpen, setDialogOpen ] = useState(false)
@@ -58,10 +60,6 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
 
   // First time setup
   useEffect(() => {
-    // Tell the extensionSDK to automatically set credentials to include
-    // for all fetch proxy calls. This means that any cookes returned
-    // by the external API will be resent with any susequent requests.
-    extensionSDK.includeCookieCredentialUrls = [`${postsServer}/*`]
     const initialize = async () => {
       const authorized = await dataServerAuthCheck()
       const { authOption, googleAccessToken } = location.state as any || {}
@@ -95,7 +93,7 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
   // Check to see if the users data server session is valid
   const dataServerAuthCheck = async (): Promise<boolean> => {
     try {
-      let response = await extensionSDK.fetchProxy(`${postsServer}/auth`)
+      let response = await dataServerFetchProxy.fetchProxy(`${postsServer}/auth`)
       return response.ok
     } catch(error) {
       // If a failure is caught assume server not started. fetchPosts
@@ -112,7 +110,7 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
   // out to google.
   const dataServerAuth = async (body: any): Promise<boolean> => {
     try {
-      const response = await extensionSDK.fetchProxy(
+      const response = await dataServerFetchProxy.fetchProxy(
         `${postsServer}/auth`,
         {
           method: 'POST',
@@ -132,7 +130,7 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
   // Log out of the data server
   const dataServerAuthOut = async (): Promise<void> => {
     try {
-      extensionSDK.fetchProxy(`${postsServer}/authout`)
+      dataServerFetchProxy.fetchProxy(`${postsServer}/authout`)
     } catch(error) {
       console.error(error)
     }

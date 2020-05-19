@@ -49,6 +49,7 @@ import {
   updatePostsServer,
 } from '../../data/DataReducer'
 import { handleResponse, handleError } from '../../utils/validate_data_response'
+import { getDataServerFetchProxy } from '../../utils/fetch_proxy'
 
 /**
  * Demonstration of Looker extension SDK external API use, fetchProxy
@@ -68,6 +69,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
   // Get access to the extension SDK and the looker API SDK.
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK } = extensionContext
+  const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK)
 
   // Get state from redux
   const { posts, name, title, postsServer } = dataState
@@ -77,11 +79,6 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
   useEffect(() => {
     // Create a function so that async/await can be used in useEffect
     const fetchData = async () => {
-      // Tell the extensionSDK to automatically set credentials to include
-      // for all fetch proxy calls. This means that any cookes returned
-      // by the external API will be resent with any susequent requests.
-      extensionSDK.includeCookieCredentialUrls = [`${postsServer}/*`]
-
       // Ensure users session is still valid. If it's not this component
       // will log the user in anonymously.
       await authCheck()
@@ -107,7 +104,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
       // will not process it otherwise.
       // Note the that JSON object in the string MUST be converted to
       // a string.
-      let response = await extensionSDK.fetchProxy(
+      let response = await dataServerFetchProxy.fetchProxy(
         `${postsServer}/posts`,
         {
           method: 'POST',
@@ -133,7 +130,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
     // Slightly more complex use of the fetch method. In this case
     // the DELETE method is used.
     try {
-      let response = await extensionSDK.fetchProxy(
+      let response = await dataServerFetchProxy.fetchProxy(
         `${postsServer}/posts/${post.id}`,
         {
           method: 'DELETE',
@@ -152,11 +149,11 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
   const authCheck = async () => {
     try {
       // Got a valid session?
-      let response = await extensionSDK.fetchProxy(`${postsServer}/auth`)
+      let response = await dataServerFetchProxy.fetchProxy(`${postsServer}/auth`)
       if (response.status === 401) {
         // No, login anonymously
         // TODO update auth option in state?
-        response = await extensionSDK.fetchProxy(
+        response = await dataServerFetchProxy.fetchProxy(
           `${postsServer}/auth`,
           {
             method: 'POST',
@@ -180,7 +177,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
       // Note the response body is determined from the fetch response. The
       // fetch call can take a third argument that indicates what type of
       // response is expected.
-      const response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
+      const response = await dataServerFetchProxy.fetchProxy(`${postsServer}/posts`)
       if (handleResponse(response, dataDispatch)) {
         updatePosts(dataDispatch, response.body.reverse())
       }

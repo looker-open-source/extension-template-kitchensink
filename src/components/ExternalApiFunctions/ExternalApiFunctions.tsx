@@ -22,13 +22,9 @@
  * THE SOFTWARE.
  */
 
-import React, { useContext, useEffect, useReducer } from "react"
+import React, { useEffect, useReducer } from "react"
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 import { Banner, Box, Divider, Heading,  TabList, Tab, TabPanels, TabPanel, Text } from "@looker/components"
-import {
-  ExtensionContext,
-  ExtensionContextData
-} from "@looker/extension-sdk-react"
 import { SandboxStatus } from "../SandboxStatus"
 import { ExternalApiFunctionsProps } from "./types"
 import { Auth } from './components/Auth'
@@ -48,10 +44,6 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
   // after components unload. If components own state, react puts messages
   // on the console.
   const [ dataState, dataDispatch ] = useReducer(dataReducer, dataInitialState)
-
-  // Get access to the extension SDK
-  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-  const { extensionSDK } = extensionContext
 
   // React router setup
   const history = useHistory()
