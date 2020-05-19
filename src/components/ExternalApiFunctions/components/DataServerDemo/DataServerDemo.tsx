@@ -29,7 +29,6 @@ import {
   ActionListColumns,
   ActionListItem,
   ActionListItemColumn,
-  Banner,
   Box,
   Button,
   ButtonOutline,
@@ -38,19 +37,18 @@ import {
   Prompt,
   Text,
 } from "@looker/components"
-import { FetchProxyDemoProps } from "./types"
+import { DataServerDemoProps } from "./types"
 import {
   ExtensionContext,
   ExtensionContextData
 } from "@looker/extension-sdk-react"
 import {
-  updateName,
   updatePosts,
   updateTitle,
   updateErrorMessage,
   updatePostsServer,
 } from '../../data/DataReducer'
-import { extractMessageFromError } from '../../../../utils'
+import { handleResponse, handleError } from '../../utils/validate_data_response'
 
 /**
  * Demonstration of Looker extension SDK external API use, fetchProxy
@@ -66,27 +64,37 @@ import { extractMessageFromError } from '../../../../utils'
  * A note on data. A simple json server is provided. This server must be
  * started in order for this demo to work.
  */
-export const FetchProxyDemo: React.FC<FetchProxyDemoProps> = ({ dataDispatch, dataState }) => {
-  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
+export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, dataState }) => {
   // Get access to the extension SDK and the looker API SDK.
-  const { extensionSDK, core40SDK } = extensionContext
-  // Component state
-  const { posts, name, title, errorMessage, postsServer } = dataState
+  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
+  const { extensionSDK } = extensionContext
 
+  // Get state from redux
+  const { posts, name, title, postsServer } = dataState
+
+  // Get data when ever the posts server URL changes. This happens on
+  // component initialiization ase well.
   useEffect(() => {
+    // Create a function so that async/await can be used in useEffect
     const fetchData = async () => {
-      try {
-      // Call me to get user name for including in the post
-      const value = await core40SDK.ok(core40SDK.me())
-        updateName(dataDispatch, value.display_name || "Unknown")
-      } catch(error) {
-        updateName(dataDispatch, "Unknown")
-      }
+      // Tell the extensionSDK to automatically set credentials to include
+      // for all fetch proxy calls. This means that any cookes returned
+      // by the external API will be resent with any susequent requests.
+      extensionSDK.includeCookieCredentialUrls = [`${postsServer}/*`]
+
+      // Ensure users session is still valid. If it's not this component
+      // will log the user in anonymously.
+      await authCheck()
+
+      // Get the posts.
       fetchPosts(true)
     }
+    // useEffect does not support async/await directly. Fake it with
+    // a function
     fetchData()
   }, [postsServer])
 
+  // Handle creation of a post.
   const onCreatePostSubmit = async (event: React.FormEvent) => {
     // Need to prevent default processing for event from occurring.
     // The button is rendered in a form and default action is to
@@ -111,81 +119,82 @@ export const FetchProxyDemo: React.FC<FetchProxyDemoProps> = ({ dataDispatch, da
             author: name
           })
         })
-      if (response.ok) {
+      if (handleResponse(response, dataDispatch, "Failed to create post")) {
         updateTitle(dataDispatch, "")
-        updateErrorMessage(dataDispatch, undefined)
         fetchPosts()
-      } else {
-        console.error("Failed to create post", response)
-        updateErrorMessage(dataDispatch, "Failed to create post")
       }
     } catch(error) {
-      console.error("An unexpected error occured", error)
-      updateErrorMessage(dataDispatch, `An unexpected error occured: ${extractMessageFromError(error)}`)
+      handleError(error, dataDispatch)
     }
   }
 
+  // Handle deletion of a post message
   const onPostDelete = async (post: any) => {
     // Slightly more complex use of the fetch method. In this case
     // the DELETE method is used.
     try {
-      let response: any = await extensionSDK.fetchProxy(
+      let response = await extensionSDK.fetchProxy(
         `${postsServer}/posts/${post.id}`,
         {
           method: 'DELETE',
         })
-      if (response.ok) {
+      if (handleResponse(response, dataDispatch, "Failed to delete post")) {
         updateTitle(dataDispatch, "")
-        updateErrorMessage(dataDispatch, undefined)
         fetchPosts()
-      } else {
-        console.error("Failed to delete post", response)
-        updateErrorMessage(dataDispatch, "Failed to delete post")
       }
     }
     catch(error) {
-      console.error("An unexpected error occured:", error)
-      updateErrorMessage(dataDispatch, `An unexpected error occured: ${extractMessageFromError(error)}`)
+      handleError(error, dataDispatch)
     }
   }
 
-  const fetchPosts = async(firstTime = false) => {
+  // Check to see if the user session is still valid.
+  const authCheck = async () => {
+    try {
+      // Got a valid session?
+      let response = await extensionSDK.fetchProxy(`${postsServer}/auth`)
+      if (response.status === 401) {
+        // No, login anonymously
+        // TODO update auth option in state?
+        response = await extensionSDK.fetchProxy(
+          `${postsServer}/auth`,
+          {
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              type : 'none',
+            })
+          })
+      }
+    } catch(error) {
+      handleError(error, dataDispatch)
+    }
+  }
+
+  // Fetch the posts
+  const fetchPosts = async (firstTime = false) => {
     try {
       // Use the extension SDK external API fetch method. A simple GET call.
       // Note the response body is determined from the fetch response. The
       // fetch call can take a third argument that indicates what type of
       // response is expected.
       const response = await extensionSDK.fetchProxy(`${postsServer}/posts`)
-      if (response.ok) {
+      if (handleResponse(response, dataDispatch)) {
         updatePosts(dataDispatch, response.body.reverse())
-        updateErrorMessage(dataDispatch, undefined)
-      } else {
-        updateErrorMessage(dataDispatch, "Has the data server been started? yarn start start-data-server")
       }
     } catch(error) {
-      const errorMessage = extractMessageFromError(error)
-      if (errorMessage.startsWith("Extension not entitled to access external ")) {
-        updateErrorMessage(dataDispatch, errorMessage)
-      } else if (firstTime && errorMessage.startsWith("Required Looker version ")) {
-        updateErrorMessage(dataDispatch, "This version of Looker does not support external API functions")
-      } else if (firstTime && errorMessage.startsWith("Entitlements must be defined")) {
-        updateErrorMessage(dataDispatch, "Entitlements must be defined to use external API functionality")
-      } else if (firstTime) {
-        updateErrorMessage(dataDispatch, "Has the data server been started? yarn start start-data-server")
-      } else {
-        updateErrorMessage(dataDispatch, `An unexpected error occured: ${errorMessage}`)
-      }
+      handleError(error, dispatchEvent, firstTime)
     }
   }
 
+  // Handle title change for a new post
   const onTitleChange = (e: any) => {
     updateTitle(dataDispatch, e.currentTarget.value)
   }
 
-  const onDismiss = () => {
-    updateErrorMessage(dataDispatch, undefined)
-  }
-
+  // Handle data server URL change
   const onChangeServerClick = (value: string) => {
     // Allow server to be changed to facilitate integration tests.
     // Integration do not have access to 127.0.0.1 so server can be
@@ -200,6 +209,7 @@ export const FetchProxyDemo: React.FC<FetchProxyDemoProps> = ({ dataDispatch, da
     }
   }
 
+  // Post column definitions for action list
   const postsColumns = [
     {
       id: 'id',
@@ -222,7 +232,9 @@ export const FetchProxyDemo: React.FC<FetchProxyDemoProps> = ({ dataDispatch, da
     },
   ] as ActionListColumns
 
+  // render posts action list columns
   const postsItems = posts.map((post: any) => {
+    // Action column, posts may be deleted
     const actions = (
       <>
         <ActionListItemAction onClick={onPostDelete.bind(null, post)}>
@@ -231,6 +243,7 @@ export const FetchProxyDemo: React.FC<FetchProxyDemoProps> = ({ dataDispatch, da
       </>
     )
 
+    // The columns
     const { id, title, author } = post
     return (
       <ActionListItem key={id} id={id} actions={actions}>
@@ -241,29 +254,25 @@ export const FetchProxyDemo: React.FC<FetchProxyDemoProps> = ({ dataDispatch, da
     )
   })
 
-
   return (
     <>
-      {errorMessage &&
-        <Banner intent="error" onDismiss={onDismiss} canDismiss>
-          {errorMessage}
-        </Banner>
-      }
       <Box display="flex" flexDirection="row" justifyContent="space-between" mb="medium" alignItems="baseline">
         <Text>Posts data is being served from {postsServer}</Text>
-        <Prompt
-          title="Change server"
-          inputLabel='Server'
-          defaultValue={postsServer}
-          onSave={onChangeServerClick}
-        >
-          {(open) => <ButtonOutline onClick={open}>Change server</ButtonOutline>}
-        </Prompt>
+        <Box display="flex" flexDirection="row" alignItems="baseline">
+          <Prompt
+            title="Change server"
+            inputLabel='Server'
+            defaultValue={postsServer}
+            onSave={onChangeServerClick}
+          >
+            {(open) => <ButtonOutline onClick={open}>Change server</ButtonOutline>}
+          </Prompt>
+          <Button ml="small" onClick={ () => fetchPosts() }>Refresh data</Button>
+        </Box>
       </Box>
       <Box mb="medium" px="xlarge" pt="small" border="1px solid" borderColor="palette.charcoal200" borderRadius="4px">
         <Form onSubmit={onCreatePostSubmit}>
           <FieldText label="Title" name="title" value={title} onChange={onTitleChange} required />
-          <FieldText label="Author" name="author" value={name} readOnly />
           <Button disabled={title.length === 0}>Create Post</Button>
         </Form>
       </Box>

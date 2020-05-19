@@ -60,7 +60,7 @@ export const App: React.FC<AppProps> = hot(() => {
   }
 
   return (
-    <ExtensionProvider onRouteChange={onRouteChange}>
+    <ExtensionProvider onRouteChange={onRouteChange} requiredLookerVersion=">=7.9.0">
       <ThemeProvider theme={theme}>
         <>
           <GlobalStyle />

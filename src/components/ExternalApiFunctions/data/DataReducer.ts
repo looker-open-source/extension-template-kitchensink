@@ -24,23 +24,52 @@
 
 import { Dispatch } from 'react'
 
-export const initialState = {
+/**
+ * Centralized data for extanal API demos. Use react useReducer hooks.
+ */
+
+ // Initial stats
+export const initialState: DataState = {
   postsServer: "http://127.0.0.1:3000",
   posts: [],
   name: "",
   title: "",
-  errorMessage: undefined
+  errorMessage: undefined,
+  authorized: false
 }
 
+// The state interface
+export interface DataState {
+  postsServer: string
+  posts: any[]
+  name: string
+  title: string
+  errorMessage?: string
+  authorized: boolean
+  authOption?: AuthOption
+  sheetData?: any[]
+}
+
+// Supported actions
 enum Action {
   updatePosts,
   updateName,
   updateTitle,
   updateErrorMessage,
   updatePostsServer,
+  authorize,
+  updateSheetData,
 }
 
-export const reducer = (state: any, action: any) => {
+// Authorization options
+export enum AuthOption {
+  None = "none",
+  Google = "Google",
+  Github = "Github"
+}
+
+// The reducer
+export const reducer = (state: DataState, action: any) => {
   const { type, payload } = action
   switch (type) {
     case Action.updatePosts:
@@ -68,17 +97,73 @@ export const reducer = (state: any, action: any) => {
         ...state,
         postsServer: payload
       }
+    case Action.updateSheetData:
+      return {
+        ...state,
+        sheetData: payload
+      }
+    case Action.authorize:
+      return {
+        ...state,
+        posts: [],
+        sheetData: undefined,
+        title: '',
+        errorMessage: undefined,
+        authOption: payload.authOption,
+        authorized: payload.authorized
+      }
     default:
       return state
   }
 }
 
+/**
+ * Update posts
+ * @param dispatch
+ * @param posts
+ */
 export const updatePosts = (dispatch: Dispatch<any>, posts: any[]) => dispatch({ type: Action.updatePosts, payload: posts })
 
+/**
+ * Update name of poster
+ * @param dispatch
+ * @param name
+ */
 export const updateName = (dispatch: Dispatch<any>, name: string) => dispatch({ type: Action.updateName, payload: name })
 
+/**
+ *
+ * @param dispatch Update title of post
+ * @param title
+ */
 export const updateTitle = (dispatch: Dispatch<any>, title: string) => dispatch({ type: Action.updateTitle, payload: title })
 
+/**
+ * Update error message
+ * @param dispatch
+ * @param errorMessage
+ */
 export const updateErrorMessage = (dispatch: Dispatch<any>, errorMessage?: string) => dispatch({ type: Action.updateErrorMessage, payload: errorMessage })
 
+/**
+ * Update url of posts server
+ * @param dispatch
+ * @param postsServer
+ */
 export const updatePostsServer = (dispatch: Dispatch<any>, postsServer: string) => dispatch({ type: Action.updatePostsServer, payload: postsServer })
+
+/**
+ * Update sheet data
+ * @param dispatch
+ * @param sheetData
+ */
+export const updateSheetData = (dispatch: Dispatch<any>, sheetData: any[]) => dispatch({ type: Action.updateSheetData, payload: sheetData })
+
+/**
+ * Authorize or deauthorize user
+ * @param dispatch
+ * @param authorized or not - true/false
+ * @param authOption type of authorization
+ */
+export const authorize = (dispatch: Dispatch<any>, authorized: boolean, authOption = AuthOption.None) =>
+  dispatch({ type: Action.authorize, payload: { authOption, authorized } })

@@ -23,8 +23,9 @@
  */
 
 import { Dispatch } from "react"
+import { DataState } from '../../data/DataReducer'
 
-export interface FetchProxyDemoProps {
-  dataState: any
+export interface DataServerDemoProps {
+  dataState: DataState
   dataDispatch: Dispatch<any>
 }

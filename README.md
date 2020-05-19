@@ -5,6 +5,8 @@ your own extensions.
 
 It uses [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlang.org/) for writing your extension, the [React Extension SDK](https://github.com/looker-open-source/extension-sdk-react) for interacting with Looker, and [Webpack](https://webpack.js.org/) for building your code.
 
+This version of the Kitchen sink requires Looker 7.9 or above.
+
 ## Getting Started for Development
 
 1. Clone or download a copy of this template to your development machine
@@ -18,7 +20,6 @@ It uses [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlan
    ```
 
    > You may need to update your Node version or use a [Node version manager](https://github.com/nvm-sh/nvm) to change your Node version.
-
 
 
 4. Start the development server
@@ -56,7 +57,11 @@ It uses [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlan
        local_storage: yes
        navigation: yes
        new_window: yes
+       allow_forms: yes
+       allow_same_origin: yes
        core_api_methods: ["all_connections","search_folders", "run_inline_query", "me"]
+       external_api_urls: ["http://127.0.0.1:3000", "https://jsonplaceholder.typicode.com/posts"]
+       oauth2_urls: ["https://accounts.google.com/o/oauth2/v2/auth"]
      }
    }
    ```
@@ -119,9 +124,7 @@ Ther are three Embed demonstrations:
 
 ### External API Functions
 
-__This feature is not publicly available yet.__
-
-#### Fetch Proxy
+#### Fetch Proxy and OAUTH2 Authentication
 
 The fetch proxy demonstration requires that a json server be running. To start the server run the command
 
@@ -129,7 +132,19 @@ The fetch proxy demonstration requires that a json server be running. To start t
 yarn start-data-server
 ```
 
-An error message will be displayed if the server is not running OR if entitlements are not defined.
+An error message will be displayed if the server is not running OR if the required entitlements are not defined.
+
+#### Client and API key setup
+
+##### Google Sheets API setup
+
+The demo requires a client id to access the Google sheets API. To obtain one, [click here](https://developers.google.com/sheets/api/quickstart/js) and follow the instructions in step 1. Note only the client id is required. This demo accesses the sheets API endpoints directly so the API key is not required. Once the client id is obtained create a file called `.env` in the root directory of this project and add the following line to this file:
+```
+GOOGLE_CLIENT_ID=your Google client id
+```
+Restart your development server so that the new environment variables can be picked up. Note that the `.env` file should not be stored in a source control repo (it has been included in `.gitignore`).
+
+Note that Google sheets demo relies on the user authenticating using Google's OAUTH2 APIs. The OAUTH2 authentication does not necessarily authorize the user. The extension and the external APIs may need to do authorization. A very primitive example of authorization has been built into the `Auth` component and the data server. The `Auth` component retrieves information about the logged in user and sends the access token and the users id to the data server. The data server validates the access token and creates a JWT token if valid. It prints out the users id on the console.
 
 ## Deployment
 
@@ -146,7 +161,11 @@ The process above requires your local development server to be running to load t
         local_storage: yes
         navigation: yes
         new_window: yes
+        allow_forms: yes
+        allow_same_origin: yes
         core_api_methods: ["all_connections","search_folders", "run_inline_query", "me"]
+        external_api_urls: ["http://127.0.0.1:3000", "https://jsonplaceholder.typicode.com/posts"]
+        oauth2_urls: ["https://accounts.google.com/o/oauth2/v2/auth"]
       }
     }
     ```

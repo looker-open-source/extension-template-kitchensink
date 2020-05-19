@@ -4,3 +4,4 @@ dist
 .cache
 .vscode
 temp_db.json
+.env

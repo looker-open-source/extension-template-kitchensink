@@ -22,13 +22,9 @@
  * THE SOFTWARE.
  */
 
-export * from "./ExternalApiFunctions"
-export * from "./types"
+import { Dispatch } from "react"
 
-// Centralize setup of client ids, keys and scopes
-
-// The google client id should be defined in the .env file. See README.md
-export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
-export const GOOGLE_SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/userinfo.profile";
+export interface AuthProps {
+  dataState: any
+  dataDispatch: Dispatch<any>
+}

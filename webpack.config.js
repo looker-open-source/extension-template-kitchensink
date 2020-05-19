@@ -23,6 +23,8 @@
  */
 
 const path = require("path")
+const webpack = require("webpack")
+const env_config = require('./env_config')
 
 const PATHS = {
   app: path.join(__dirname, 'src/index.tsx'),
@@ -68,5 +70,8 @@ module.exports = {
       "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
     }
   },
-  devtool: 'inline-source-map'
+  devtool: 'inline-source-map',
+  plugins: [
+    new webpack.DefinePlugin(env_config())
+  ]
 }

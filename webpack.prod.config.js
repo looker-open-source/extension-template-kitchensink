@@ -23,6 +23,8 @@
  */
 
 const path = require("path")
+const webpack = require("webpack")
+const env_config = require('./env_config')
 
 const PATHS = {
   app: path.join(__dirname, 'src/index.tsx'),
@@ -55,4 +57,7 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
+  plugins: [
+    new webpack.DefinePlugin(env_config())
+  ]
 }

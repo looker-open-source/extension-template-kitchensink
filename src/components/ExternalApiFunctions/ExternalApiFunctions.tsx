@@ -22,54 +22,99 @@
  * THE SOFTWARE.
  */
 
-import React, { useEffect, useReducer } from "react"
+import React, { useContext, useEffect, useReducer } from "react"
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom'
-import { Box, Divider, Heading, TabList, Tab, TabPanels, TabPanel, Text } from "@looker/components"
+import { Banner, Box, Divider, Heading,  TabList, Tab, TabPanels, TabPanel, Text } from "@looker/components"
+import {
+  ExtensionContext,
+  ExtensionContextData
+} from "@looker/extension-sdk-react"
 import { SandboxStatus } from "../SandboxStatus"
 import { ExternalApiFunctionsProps } from "./types"
-import { FetchProxyDemo } from './components/FetchProxyDemo'
-import { initialState as dataInitialState, reducer as dataReducer } from './data/DataReducer'
+import { Auth } from './components/Auth'
+import { DataServerDemo } from './components/DataServerDemo'
+import { GoogleSheetsDemo } from './components/GoogleSheetsDemo'
+import { initialState as dataInitialState, reducer as dataReducer, updateErrorMessage, DataState } from './data/DataReducer'
 
+/**
+ * External API demonstration. Demonstrates the following:
+ * 1. The external API fetch proxy accessing a simple json data server.
+ * 2. Oauth2 authorization with Google (implicit OAUTH2 flow). Note that other
+ *    Oauth2 providers that support the implicit OAUTH2 flow can be used.
+ * 3. Google sheets demo.
+ */
 export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
   // State is stored here as asynchronous actions may complete
   // after components unload. If components own state, react puts messages
   // on the console.
   const [ dataState, dataDispatch ] = useReducer(dataReducer, dataInitialState)
 
+  // Get access to the extension SDK
+  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
+  const { extensionSDK } = extensionContext
+
+  // React router setup
   const history = useHistory()
   const location = useLocation()
-  const match = useRouteMatch<{ extension: string, tab: string }>('/:extension/:tab')
+  const match = useRouteMatch<{ func: string, tab: string }>('/:func/:tab')
+
+  // Onetime initial setup for the component
   useEffect(() => {
-    if (!match) {
-      history.push(`${location.pathname}/0`)
+    const tabIndex = parseInt(match?.params?.tab || '-1')
+    // If tab index not in the URL, add it.
+    if (tabIndex < 0 || tabIndex > 1) {
+      history.push(`${location.pathname}/0`, location.state)
     }
   }, [])
+
+  // Tab handling. Current tab is stored in URL so that it can be restored on
+  // page reload.
   let selectedIndex = match ? Number(match.params.tab) : 0
   selectedIndex = isNaN(selectedIndex) ? -1 : selectedIndex
   const onSelectTab = (index: number) => {
-    if (match) {
-      history.push(`/${match.params.extension}/${index}`)
+    const tabIndex = parseInt(match?.params?.tab || '-1')
+    if (tabIndex !== index) {
+      history.push(`/${match?.params?.func}/${index}`, location.state)
     }
   }
+
+  // Close the error message banner
+  const onDismiss = () => {
+    updateErrorMessage(dataDispatch, undefined)
+  }
+
+  // Get data from state. The user needs to be authorized to see the demos
+  const { authorized, errorMessage } = dataState
 
   return (
     <>
       <Heading mt="xlarge">External API Functions</Heading>
       <SandboxStatus/>
+      {errorMessage &&
+        <Banner intent="error" onDismiss={onDismiss} canDismiss>
+          {errorMessage}
+        </Banner>
+      }
       <Box padding="small">
         <Divider/>
-        <TabList selectedIndex={selectedIndex} onSelectTab={onSelectTab}>
-          <Tab>Fetch Proxy Demo</Tab>
-          <Tab>Coming Soon!</Tab>
-        </TabList>
-        <TabPanels selectedIndex={selectedIndex}>
-         <TabPanel>
-           <FetchProxyDemo dataDispatch={dataDispatch} dataState={dataState} />
-         </TabPanel>
-         <TabPanel>
-           <Text>More demos coming soon</Text>
-         </TabPanel>
-       </TabPanels>
+        <Auth dataDispatch={dataDispatch} dataState={dataState}/>
+        <Divider/>
+        {authorized &&
+          <>
+            <TabList selectedIndex={selectedIndex} onSelectTab={onSelectTab}>
+              <Tab>Data Server Demo</Tab>
+              <Tab>Google Sheets Demo</Tab>
+            </TabList>
+            <TabPanels selectedIndex={selectedIndex}>
+             <TabPanel>
+               <DataServerDemo dataDispatch={dataDispatch} dataState={dataState} />
+             </TabPanel>
+             <TabPanel>
+               <GoogleSheetsDemo dataDispatch={dataDispatch} dataState={dataState} />
+             </TabPanel>
+           </TabPanels>
+          </>
+        }
      </Box>
     </>
   )
