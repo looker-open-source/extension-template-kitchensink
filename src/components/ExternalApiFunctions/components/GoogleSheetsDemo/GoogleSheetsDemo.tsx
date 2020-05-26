@@ -66,7 +66,9 @@ export const GoogleSheetsDemo: React.FC<GoogleSheetsDemoProps> = ({ dataDispatch
         if (!googleAccessToken || dataState.authOption !== AuthOption.Google) {
           updateErrorMessage(dataDispatch, 'Login using Google to run the sheets demo')
         } else {
-          // Read the spread sheet
+          // Read the spread sheet. Note that the spreadsheet id comes from the Google Sheets
+          // Browser quick start demo
+          // https://developers.google.com/sheets/api/quickstart/js
           const spreadsheetId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
           const range = 'Class Data!A2:E'
           try {
