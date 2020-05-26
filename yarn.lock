@@ -976,20 +976,22 @@
   dependencies:
     "@looker/chatty" "^2.2.0"
 
-"@looker/extension-sdk-react@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@looker/extension-sdk-react/-/extension-sdk-react-0.5.1.tgz#e8b314b0ea91eaff5f57364ddd62bfdb7a3f28ff"
-  integrity sha512-H0jJNyjV9inAFV2CEvju6r8EJg4EIbEqludtvN1cHteVzLKfiuR6okOfxnV2I/L/x34jRs4QxALmS1l9rG6trw==
+"@looker/extension-sdk-react@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@looker/extension-sdk-react/-/extension-sdk-react-0.6.0.tgz#df95658054dbb23da66fc68f289d620cdcf0b63d"
+  integrity sha512-63RhlbYmG+2tgQLyzJQ7TUpzxw8WmepTNRQXRyFbnfivhP2lWLx6t3qVZG1oF05ss8QcE0j6FfzC2WiogfqquA==
   dependencies:
     ts-loader "^6.1.2"
 
-"@looker/extension-sdk@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@looker/extension-sdk/-/extension-sdk-0.7.1.tgz#5a135b1ce40c635257e9e9108b124fd9a019e27c"
-  integrity sha512-3t9GRg7pmjqvkvi6liP/fph4K1JvZ0eHcLqUTm5OOG4+nRKKGuqltAKzK72HXGhOXFcQ+forun2sZgyHUXhKeg==
+"@looker/extension-sdk@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@looker/extension-sdk/-/extension-sdk-0.8.0.tgz#45b548188ba560c829f15fee03e6306f58e93b67"
+  integrity sha512-NtHSrsB6NxRCq8u+McN4rTNd7uNyggNM3JhEWHqouqtbXWurmis5zRGTzM6XL09rLKx7QcV/E8HECjm6y5FUUg==
   dependencies:
     "@looker/chatty" "^2.2.0"
-    "@looker/sdk" "^0.2.0-beta.32"
+    "@looker/sdk" "0.3.0-beta.1"
+    "@types/request" "^2.48.5"
+    "@types/request-promise-native" "^1.0.17"
     semver "^6.3.0"
 
 "@looker/icons@^0.7.29":
@@ -997,15 +999,11 @@
   resolved "https://registry.yarnpkg.com/@looker/icons/-/icons-0.7.29.tgz#7597518f818c2b741fe39ae7f190517292c8d424"
   integrity sha512-V7KcSVla56w2wns0aYIwyjMd+J+9MUgilQTvjxUQoS43uD03oQtJgLNVHXvyMayAZKhBQbuzkhqyGk3IN30jkA==
 
-"@looker/sdk@^0.2.0-beta.32":
-  version "0.2.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@looker/sdk/-/sdk-0.2.0-beta.32.tgz#8d99e39a048fc9e438d8517af5fe59d790aff9b3"
-  integrity sha512-57AKJPJIuMahVVGWvrpaO5WwzvONNpYV/Gyvqd2l9SrNMFJroktsqCjhhOg4txkAVYIufVJ/xTRKkM4DKxAeYQ==
+"@looker/sdk@0.3.0-beta.1":
+  version "0.3.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@looker/sdk/-/sdk-0.3.0-beta.1.tgz#1426390ecc602046da8a6febdfb56eed40412ee1"
+  integrity sha512-2WPdBlRFu3XNJFgtIqRR0pXJzAPMiUpRO1C0fyhgv0KjWBSYj9ajRe+/607L0eDovmXvn5yBFR0E2aMW3gDZgA==
   dependencies:
-    "@types/ini" "^1.3.30"
-    "@types/node" "^12.12.6"
-    "@types/request" "^2.48.3"
-    "@types/request-promise-native" "^1.0.17"
     ini "^1.3.5"
     readable-stream "^3.4.0"
     request "^2.88.0"
@@ -1149,11 +1147,6 @@
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.5.tgz#527d20ef68571a4af02ed74350164e7a67544860"
   integrity sha512-wLD/Aq2VggCJXSjxEwrMafIP51Z+13H78nXIX0ABEuIGhmB5sNGbR113MOKo+yfw+RDo1ZU3DM6yfnnRF/+ouw==
 
-"@types/ini@^1.3.30":
-  version "1.3.30"
-  resolved "https://registry.yarnpkg.com/@types/ini/-/ini-1.3.30.tgz#d1485459c9fad84e937414b832a2adb649eab379"
-  integrity sha512-2+iF8zPSbpU83UKE+PNd4r/MhwNAdyGpk3H+VMgEH3EhjFZq1kouLgRoZrmIcmoGX97xFvqdS44DkICR5Nz3tQ==
-
 "@types/lodash@^4.14.149":
   version "4.14.150"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.150.tgz#649fe44684c3f1fcb6164d943c5a61977e8cf0bd"
@@ -1176,7 +1169,7 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.4.tgz#1581d6c16e3d4803eb079c87d4ac893ee7501c2c"
   integrity sha512-x26ur3dSXgv5AwKS0lNfbjpCakGIduWU1DU91Zz58ONRWrIKGunmZBNv4P7N+e27sJkiGDsw/3fT4AtsqQBrBA==
 
-"@types/node@^12.12.6", "@types/node@^12.7.5":
+"@types/node@^12.7.5":
   version "12.12.37"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.37.tgz#cb4782d847f801fa58316da5b4801ca3a59ae790"
   integrity sha512-4mXKoDptrXAwZErQHrLzpe0FN/0Wmf5JRniSVIdwUrtDf9wnmEV1teCNLBo/TwuXhkK/bVegoEn/wmb+x0AuPg==
@@ -1233,10 +1226,20 @@
   dependencies:
     "@types/request" "*"
 
-"@types/request@*", "@types/request@^2.48.3":
+"@types/request@*":
   version "2.48.4"
   resolved "https://registry.yarnpkg.com/@types/request/-/request-2.48.4.tgz#df3d43d7b9ed3550feaa1286c6eabf0738e6cf7e"
   integrity sha512-W1t1MTKYR8PxICH+A4HgEIPuAC3sbljoEVfyZbeFJJDbr30guDspJri2XOaM2E+Un7ZjrihaDi7cf6fPa2tbgw==
+  dependencies:
+    "@types/caseless" "*"
+    "@types/node" "*"
+    "@types/tough-cookie" "*"
+    form-data "^2.5.0"
+
+"@types/request@^2.48.5":
+  version "2.48.5"
+  resolved "https://registry.yarnpkg.com/@types/request/-/request-2.48.5.tgz#019b8536b402069f6d11bee1b2c03e7f232937a0"
+  integrity sha512-/LO7xRVnL3DxJ1WkPGDQrp4VTV1reX9RkC85mJ+Qzykj2Bdw+mG15aAfDahc76HtknjzE16SX/Yddn6MxVbmGQ==
   dependencies:
     "@types/caseless" "*"
     "@types/node" "*"
