@@ -4,6 +4,7 @@
   "description": "Looker Extension SDK functionality demonstration",
   "main": "dist/bundle.js",
   "scripts": {
+    "clean": "rm -rf dist",
     "start": "webpack-dev-server --hot --disable-host-check --port 8080",
     "start-no-hot": "webpack-dev-server --no-inline --no-hot --port 8080",
     "build": "export BABEL_ENV=build && tsc --skipLibCheck --noEmit && webpack --mode=production --config webpack.prod.config.js",
