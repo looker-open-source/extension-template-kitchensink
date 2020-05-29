@@ -65,6 +65,10 @@ export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
     setMessages('')
   }
 
+  const logout = () => {
+    extensionSDK.spartanLogout()
+  }
+
   return (
     <>
       <Heading mt="xlarge">Miscellaneous Functions</Heading>
@@ -104,6 +108,11 @@ export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
         <Box width="50%" pr="large" maxWidth='40vw'>
           <StyledPre>{messages}</StyledPre>
         </Box>
+      </Box>
+      <Box display="flex" flexDirection="row" >
+        <ExtensionButton onClick={logout}>
+          Logout of Looker (only in /spartan mode)
+        </ExtensionButton>
       </Box>
     </>
   )
