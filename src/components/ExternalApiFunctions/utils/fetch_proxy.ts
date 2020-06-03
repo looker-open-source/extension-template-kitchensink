@@ -1,15 +1,17 @@
-import { ExtensionSDK, FetchProxy } from "@looker/extension-sdk";
-
-let dataServerFetchProxy: FetchProxy
+import { ExtensionSDK, FetchProxy, FetchCustomParameters } from "@looker/extension-sdk";
 
 /**
- * The data server factory uses cookies. Credentials must be set to include in order
- * for third party cookies to be sent to the server
+ * With the advent of enforcement of the SameSite attribute for cookies, an authorization
+ * header is being used instead of cookies.
  * @param extensionSDK
+ * @param locationState
  */
-export const getDataServerFetchProxy = (extensionSDK: ExtensionSDK): FetchProxy => {
-  if (!dataServerFetchProxy) {
-    dataServerFetchProxy = extensionSDK.createFetchProxy(undefined, { credentials: 'include' })
+export const getDataServerFetchProxy = (extensionSDK: ExtensionSDK, locationState?: any): FetchProxy => {
+  const init: FetchCustomParameters = {}
+  if (locationState && locationState.jwtToken) {
+    init.headers = {
+      "Authorization" : `Bearer ${locationState.jwtToken}`
+    }
   }
-  return dataServerFetchProxy
+  return extensionSDK.createFetchProxy(undefined, init)
 }

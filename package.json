@@ -1,6 +1,6 @@
 {
   "name": "extension-template-kitchensink",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Looker Extension SDK functionality demonstration",
   "main": "dist/bundle.js",
   "scripts": {
@@ -32,7 +32,6 @@
     "@types/styled-system": "^5.1.3",
     "axios": "^0.19.2",
     "babel-loader": "^8.0.6",
-    "cookie-session": "^1.4.0",
     "date-fns": "^2.12.0",
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",

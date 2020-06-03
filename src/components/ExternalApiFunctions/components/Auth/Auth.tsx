@@ -46,17 +46,16 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
   // Get access to the extension SDK and the looker API SDK.
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK, core40SDK } = extensionContext
-  const dataServerFetchProxy = getDataServerFetchProxy(extensionSDK)
 
   // Dialog state
   const [ dialogOpen, setDialogOpen ] = useState(false)
 
-  // Component data state
-  const { authorized, authOption, postsServer, name } = dataState
-
   // React router setup
   const history = useHistory()
   const location = useLocation()
+
+  // Component data state
+  const { authorized, authOption, postsServer, name } = dataState
 
   // First time setup
   useEffect(() => {
@@ -93,6 +92,7 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
   // Check to see if the users data server session is valid
   const dataServerAuthCheck = async (): Promise<boolean> => {
     try {
+      const dataServerFetchProxy = getDataServerFetchProxy(extensionSDK, location.state)
       let response = await dataServerFetchProxy.fetchProxy(`${postsServer}/auth`)
       return response.ok
     } catch(error) {
@@ -108,8 +108,9 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
   // For anonymous logins, the session token is just created.
   // For google logins, the data server validates the access token by calling
   // out to google.
-  const dataServerAuth = async (body: any): Promise<boolean> => {
+  const dataServerAuth = async (body: any): Promise<string | undefined> => {
     try {
+      const dataServerFetchProxy = getDataServerFetchProxy(extensionSDK, location.state)
       const response = await dataServerFetchProxy.fetchProxy(
         `${postsServer}/auth`,
         {
@@ -120,16 +121,19 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
           body: JSON.stringify(body)
         }
       )
-      return response.ok
+      if (response.ok && response.body && response.body.jwt_token) {
+        return response.body.jwt_token
+      }
     } catch(error) {
       console.error(error)
-      return false
     }
+    return undefined
   }
 
   // Log out of the data server
   const dataServerAuthOut = async (): Promise<void> => {
     try {
+      const dataServerFetchProxy = getDataServerFetchProxy(extensionSDK, location.state)
       dataServerFetchProxy.fetchProxy(`${postsServer}/authout`)
     } catch(error) {
       console.error(error)
@@ -169,16 +173,16 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
         // Log into the data server. Pass in the id from from google. The data server
         // can use the id to verify if the user is authorized to use the data server
         // (it doesn't but it could).
-        const loginDataServer = await dataServerAuth({
+        const jwtToken = await dataServerAuth({
           type: authOption,
           access_token,
           expires_in,
           name,
           id
         })
-        if (loginDataServer) {
+        if (jwtToken) {
           // Save the google access token in push state. This is needed for the sheets demo.
-          history.replace(location.pathname, { ...location.state, googleAccessToken: access_token }  )
+          history.replace(location.pathname, { ...location.state, googleAccessToken: access_token, jwtToken }  )
           authorize(dataDispatch, true, authOption)
         } else {
           updateErrorMessage(dataDispatch, "Login failed")
@@ -196,12 +200,13 @@ export const Auth: React.FC<AuthProps> = ({dataState, dataDispatch}) => {
       const { id, name } = await getUserInfo(AuthOption.None)
       try {
         // Semi anonymous login
-        const loginDataServer = await dataServerAuth({
+        const jwtToken = await dataServerAuth({
           type: authOption,
           name,
           id
         })
-        if (loginDataServer) {
+        if (jwtToken) {
+          history.replace(location.pathname, { ...location.state, jwtToken }  )
           authorize(dataDispatch, true, authOption)
         } else {
           updateErrorMessage(dataDispatch, "Login failed")

@@ -24,25 +24,22 @@
 
 const jsonServer = require('json-server')
 const jwt = require('jsonwebtoken')
-const cookieSession = require('cookie-session')
 const axios = require('axios')
 
 /**
  * A test server that serves up test json data and that can
- * protect that data if needed. Sessions are created using an
- * expiring JWT token stored in a cookie (the cookie does not expire,
- * the JWT token does).
+ * protect that data if needed. A request must have an Authorization
+ * header to access the data.
  *
- * User can sign in anonymously and a session will be created.
- * The session will last for one hour after which the user has to
+ * User can sign in anonymously and an authorization token will be created.
+ * The token will last for one hour after which the user has to
  * log in again. It does not automatically extend.
  *
  * The user can sign in using a google access token and expiration
  * (obtained by using the OAUTH2 implicit flow in the web client).
  * If the token is valid (determined by calling the google token
- * info server) a session is created using the expiration as the
- * length of the session. The token is not validated again, the
- * session is not extended.
+ * info server) a server token is created using the expiration as the
+ * length of the token. 
  */
 
 // Key for signing JWT tokens. DO NOT DO THIS IN A PRODUCTION APP.
@@ -57,41 +54,30 @@ server.use(middlewares)
 // allow custom routes to use json-server's body parser
 server.use(jsonServer.bodyParser)
 
-// turn on session handling. Sessions are based upon
-// JWT tokens, no session state is stored in the server.
-server.use(
-  cookieSession({
-    signed: false,
-  })
-);
-
-// Add data about the current user to the request object if a valid
-// JWT token is stored in the session object (the session object
-// is populated by the cookie-session middleware set up in the
-// previous step). The data is derived by decoding the JWT token
-// stored in the session cookue. If the token cannot be decoded
-// the session is expired.
+// With the advent of the SameSite attribute of cookies, added support
+// for the token in the Authorization header.
 server.use((req, res, next) => {
-  if (!req.session && !req.session.jwt) {
-    return next();
-  }
-  try {
-    const payload = jwt.verify(
-      req.session.jwt,
-      JWT_KEY
-    )
-    req.currentUser = payload;
-  } catch (err) {
-    // most likely token has expires. Could also be tampering with
-    // token but this is a test application so it does not really
-    // matter.
-  }
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const payload = jwt.verify(
+        token,
+        JWT_KEY
+      )
+      req.currentUser = payload;
+    } catch (err) {
+      // most likely token has expires. Could also be tampering with
+      // token but this is a test application so it does not really
+      // matter.
+    }
+  }  
   next();
 })
 
-// Simple signout route. Destroys the session cookie.
+// Simple signout route. Now a noop as cookie sessions no longer
+// supported. 
 server.get('/authout', (req, res) => {
-  req.session = null
   res.sendStatus(200)
 })
 
@@ -143,10 +129,7 @@ server.post('/auth', async (req, res) => {
     JWT_KEY,
     options
   );
-  req.session = {
-    jwt: userJwt,
-  };
-  res.status(200).send(req.body);
+  res.status(200).send({...req.body, jwt_token: userJwt});
 })
 
 // All data requests go through this guard first.

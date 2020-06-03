@@ -23,6 +23,7 @@
  */
 
 import React, { useContext, useEffect } from "react"
+import { useLocation } from 'react-router-dom'
 import {
   ActionList,
   ActionListItemAction,
@@ -69,7 +70,8 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
   // Get access to the extension SDK and the looker API SDK.
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK } = extensionContext
-  const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK)
+  // React router location
+  const location = useLocation()
 
   // Get state from redux
   const { posts, name, title, postsServer } = dataState
@@ -104,6 +106,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
       // will not process it otherwise.
       // Note the that JSON object in the string MUST be converted to
       // a string.
+      const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
       let response = await dataServerFetchProxy.fetchProxy(
         `${postsServer}/posts`,
         {
@@ -130,6 +133,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
     // Slightly more complex use of the fetch method. In this case
     // the DELETE method is used.
     try {
+      const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
       let response = await dataServerFetchProxy.fetchProxy(
         `${postsServer}/posts/${post.id}`,
         {
@@ -149,6 +153,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
   const authCheck = async () => {
     try {
       // Got a valid session?
+      const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
       let response = await dataServerFetchProxy.fetchProxy(`${postsServer}/auth`)
       if (response.status === 401) {
         // No, login anonymously
@@ -177,6 +182,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
       // Note the response body is determined from the fetch response. The
       // fetch call can take a third argument that indicates what type of
       // response is expected.
+      const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
       const response = await dataServerFetchProxy.fetchProxy(`${postsServer}/posts`)
       if (handleResponse(response, dataDispatch)) {
         updatePosts(dataDispatch, response.body.reverse())
