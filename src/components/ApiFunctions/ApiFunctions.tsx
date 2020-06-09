@@ -130,6 +130,52 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     history.push(`${ROUTES.CORESDK_ROUTE}?test=abcd`, { count: 1 })
   }
 
+  const getUserAttributeClick = () => {
+    extensionHost
+      .userAttributeGetItem('foo')
+      .then((value) => {
+        updateMessages(`User attribute 'foo' is ${value}`)
+      })
+      .catch(error => {
+        updateMessages(error)
+        console.error(error)
+      })
+    extensionHost
+      .userAttributeGetItem('locale')
+      .then((value) => {
+        updateMessages(`User attribute 'locale' is ${value}`)
+      })
+      .catch(error => {
+        updateMessages(error)
+        console.error(error)
+      })
+  }
+
+  const setUserAttributeClick = () => {
+    extensionHost
+      .userAttributeSetItem('foo', new Date().toString())
+      .then((value) => {
+        if (value) {
+          updateMessages(`Updated 'foo' to '${value}'`)
+        }
+      })
+      .catch(error => {
+        updateMessages(error)
+        console.error(error)
+      })
+    extensionHost
+      .userAttributeSetItem('locale', new Date().toString())
+      .then((value) => {
+        if (value) {
+          updateMessages(`Updated 'locale' to '${value}'`)
+        }
+      })
+      .catch(error => {
+        updateMessages(error)
+        console.error(error)
+      })
+  }
+
   const clearMessagesClick = () => {
     setMessages('')
   }
@@ -212,6 +258,20 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
           </ExtensionButton>
           <ExtensionButton mt="small" variant="outline" onClick={testRouting}>
             Route test
+          </ExtensionButton>
+          <ExtensionButton
+            mt="small"
+            variant="outline"
+            onClick={getUserAttributeClick}
+          >
+            Get User Attribute
+          </ExtensionButton>
+          <ExtensionButton
+            mt="small"
+            variant="outline"
+            onClick={setUserAttributeClick}
+          >
+            Set User Attribute
           </ExtensionButton>
           <ExtensionButton
             mt="small"
