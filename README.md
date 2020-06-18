@@ -21,8 +21,7 @@ This version of the Kitchen sink requires Looker 7.9 or above.
 
    > You may need to update your Node version or use a [Node version manager](https://github.com/nvm-sh/nvm) to change your Node version.
 
-
-4. Start the development server
+4) Start the development server
 
    ```
    yarn start
@@ -30,18 +29,18 @@ This version of the Kitchen sink requires Looker 7.9 or above.
 
    Great! Your extension is now running and serving the JavaScript at http://localhost:8080/bundle.js.
 
-   > __Note well:__ The webpack development server also supports https. To use, add the parameter --https to the start command
-   `"start": "webpack-dev-server --hot --disable-host-check --https"`
-   Should you decide to use https, you should visit the bundle URL you are running as there will likely be a certificate warning. The development server runs with a self-signed SSL certificate, so you will need to accept this to allow your browser to connect to it.
+   > **Note well:** The webpack development server also supports https. To use, add the parameter --https to the start command
+   > `"start": "webpack-dev-server --hot --disable-host-check --https"`
+   > Should you decide to use https, you should visit the bundle URL you are running as there will likely be a certificate warning. The development server runs with a self-signed SSL certificate, so you will need to accept this to allow your browser to connect to it.
 
    The default yarn start command runs with hot module replacement working. Some changes will cause a full reload of the extension iframe. When this happens the extension framework connection will break. You will need to do a full page reload of the outer page to restart
    the extension.
 
    To run without hot module replacement run `yarn start-no-hot`
 
-5. Now log in to Looker and create a new project.
+5) Now log in to Looker and create a new project.
 
-   This is found under __Develop__ => __Manage LookML Projects__ => __New LookML Project__.
+   This is found under **Develop** => **Manage LookML Projects** => **New LookML Project**.
 
    You'll want to select "Blank Project" as your "Starting Point". You'll now have a new project with no files.
 
@@ -54,32 +53,35 @@ This version of the Kitchen sink requires Looker 7.9 or above.
      label: "Kitchen sink"
      url: "http://localhost:8080/bundle.js"
      entitlements: {
-       local_storage: yes
-       navigation: yes
-       new_window: yes
-       allow_forms: yes
-       allow_same_origin: yes
-       core_api_methods: ["all_connections","search_folders", "run_inline_query", "me"]
-       external_api_urls: ["http://127.0.0.1:3000", "https://jsonplaceholder.typicode.com/posts"]
-       oauth2_urls: ["https://accounts.google.com/o/oauth2/v2/auth"]
+        local_storage: yes
+        navigation: yes
+        new_window: yes
+        allow_forms: yes
+        allow_same_origin: yes
+        core_api_methods: ["all_connections","search_folders", "run_inline_query", "me"]
+        external_api_urls: ["http://127.0.0.1:3000", "http://localhost:3000", "https://*.googleapis.com", "https://*.github.com", "https://REPLACE_ME.auth0.com"]
+        oauth2_urls: ["https://accounts.google.com/o/oauth2/v2/auth", "https://github.com/login/oauth/authorize", "https://dev-5eqts7im.auth0.com/authorize", "https://dev-5eqts7im.auth0.com/login/oauth/token", "https://github.com/login/oauth/access_token"]
      }
    }
    ```
 
+The manifest includes a reference to the `oauth2_url https://REPLACE_ME.auth0.com`. This URL needs to be obtained from Auth0 and is explained later in this document.
+
 6. Create a `model` LookML file in your project. The name doesn't matter. The model and connection won't be used, and in the future this step may be eliminated.
-    - Add a connection in this model. It can be any connection, it doesn't matter which.
-    - [Configure the model you created](https://docs.looker.com/data-modeling/getting-started/create-projects#configuring_a_model) so that it has access to some connection.
+
+   - Add a connection in this model. It can be any connection, it doesn't matter which.
+   - [Configure the model you created](https://docs.looker.com/data-modeling/getting-started/create-projects#configuring_a_model) so that it has access to some connection.
 
 7. Connect your new project to Git. You can do this multiple ways:
-    - Create a new repository on GitHub or a similar service, and follow the instructions to [connect your project to Git](https://docs.looker.com/data-modeling/getting-started/setting-up-git-connection)
-    - A simpler but less powerful approach is to set up git with the "Bare" repository option which does not require connecting to an external Git Service.
 
-8.  Commit your changes and deploy your them to production through the Project UI.
+   - Create a new repository on GitHub or a similar service, and follow the instructions to [connect your project to Git](https://docs.looker.com/data-modeling/getting-started/setting-up-git-connection)
+   - A simpler but less powerful approach is to set up git with the "Bare" repository option which does not require connecting to an external Git Service.
 
-9.  Reload the page and click the `Browse` dropdown menu. You should see your extension in the list.
-    - The extension will load the JavaScript from the `url` you provided in the `application` definition/
-    - Reloading the extension page will bring in any new code changes from the extension template (webpack's hot reloading is not currently supported).
+8. Commit your changes and deploy your them to production through the Project UI.
 
+9. Reload the page and click the `Browse` dropdown menu. You should see your extension in the list.
+   - The extension will load the JavaScript from the `url` you provided in the `application` definition/
+   - Reloading the extension page will bring in any new code changes from the extension template (webpack's hot reloading is not currently supported).
 
 ## Extension Entitlements
 
@@ -126,7 +128,7 @@ Ther are three Embed demonstrations:
 
 #### Fetch Proxy and OAUTH2 Authentication
 
-The fetch proxy demonstration requires that a json server be running. To start the server run the command
+The fetch proxy demonstration requires that a json data server be running. To start the server run the command
 
 ```
 yarn start-data-server
@@ -136,15 +138,166 @@ An error message will be displayed if the server is not running OR if the requir
 
 #### Client and API key setup
 
+Create a .env file with the following entries. The values are explained later in the document. These values should be set prior to starting the development and data servers. Do NOT store the .env file in your source code repository.
+
+```
+CUSTOM_CLIENT_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_API_KEY=
+GITHUB_CLIENT_ID=
+AUTH0_CLIENT_ID=
+AUTH0_BASE_URL=
+```
+
+##### Custom API setup
+
+The custom client secret can be any value. It is NOT used in the extension but is used by the demo data server to validate whether a user is authorized the data server (note that the implemention is exceedingly simplistic and is just used for demo purposes). The client secret should be added to the `.env` file so that the data server can do a simple check.
+
+```
+CUSTOM_CLIENT_SECRET=
+```
+
+The custom client secret must also be added to the User attributes in the looker server. The user attribute should be set up as follows:
+
+- name - `kitchensink_kitchensink_custom_secret_key`
+- user acess - view
+- hide values - yes
+- domain whitelist - http://127.0.0.1:3000/*
+- default value - your secret key
+
+The extension authenticates the user by adding a secret key tag to the authentication request. The secret key tag is replaced by the Looker server with the user attribute value. The authentication endpoint then returns a JWT token that can be used in subsequent requests. The code that does this is found in the `Auth.tsx` file:
+
+```typescript
+const dataServerAuth = async (body: any): Promise<string | undefined> => {
+  try {
+    // The custom secret will be resolved by the Looker server.
+    body.client_secret = extensionSDK.createSecretKeyTag('custom_secret_key')
+    const response = await extensionSDK.serverProxy(
+      `${POSTS_SERVER_URL}/auth`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(body),
+      }
+    )
+    if (response.ok && response.body && response.body.jwt_token) {
+      return response.body.jwt_token
+    }
+  } catch (error) {
+    console.error(error)
+  }
+  return undefined
+}
+```
+
 ##### Google Sheets API setup
 
-The demo requires a client id to access the Google sheets API. To obtain one, [click here](https://developers.google.com/sheets/api/quickstart/js) and follow the instructions in step 1. Note only the client id is required. This demo accesses the sheets API endpoints directly so the API key is not required. Once the client id is obtained create a file called `.env` in the root directory of this project and add the following line to this file:
-```
-GOOGLE_CLIENT_ID=your Google client id
-```
-Restart your development server so that the new environment variables can be picked up. Note that the `.env` file should not be stored in a source control repo (it has been included in `.gitignore`).
+The demo requires a client id and an API key to access the Google sheets API. To obtain one, [click here](https://developers.google.com/sheets/api/quickstart/js) and follow the instructions in step 1. The following values need to be setup in the `.env` file, these values can be found in the [google developer console](https://console.developers.google.com/).
 
-Note that Google sheets demo relies on the user authenticating using Google's OAUTH2 APIs. The OAUTH2 authentication does not necessarily authorize the user. The extension and the external APIs may need to do authorization. A very primitive example of authorization has been built into the `Auth` component and the data server. The `Auth` component retrieves information about the logged in user and sends the access token and the users id to the data server. The data server validates the access token and creates a JWT token if valid. It prints out the users id on the console.
+```
+GOOGLE_CLIENT_ID=Application OAUTH2 client ID
+GOOGLE_API_KEY=Application API key
+```
+
+When the user uses the Google OAUTH2 authorization mechanism the client id is used. The extension accesses the sheets API directly. Note that the OAUTH2 implicit flow is used to authorize with Google.
+
+When the user uses the other authorization mechanisms, the extension access the sheets API using the serverProxy call. The data server uses the API key to access the sheets API. This way the API key is NOT exposed in the extension code.
+
+##### Github OAUTH2 setup
+
+The Github OAUTH2 mechanism uses the PKCE flow. Create a [Github OAUTH App](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/). Add the Github client id to your .env file
+
+```
+GITHUB_CLIENT_ID=Github OAUTH2 client ID
+```
+
+The Github client secret must also be added to the User attributes in the looker server. The user attribute should be set up as follows:
+
+- name - `kitchensink_kitchensink_github_secret_key`
+- user acess - view
+- hide values - yes
+- domain whitelist - https://github.com/login/oauth/access_token
+- default value - Github client secret
+
+See `Auth.tsx` for authorizing use Github OAUTH2 PKCE flow
+
+```typescript
+const githubSignin = async () => {
+  try {
+    const response = await extensionSDK.oauth2Authenticate(
+      'https://github.com/login/oauth/authorize',
+      {
+        client_id: GITHUB_CLIENT_ID,
+        response_type: 'code',
+      },
+      'GET'
+    )
+    const codeExchangeResponse = await extensionSDK.oauth2ExchangeCodeForToken(
+      'https://github.com/login/oauth/access_token',
+      {
+        client_id: GITHUB_CLIENT_ID,
+        client_secret: extensionSDK.createSecretKeyTag('github_secret_key'),
+        code: response.code,
+      }
+    )
+    const { access_token } = codeExchangeResponse
+    // Success handling
+  } catch (error) {
+    // Error handling
+  }
+}
+```
+
+##### Auth0 OAUTH2 setup
+
+The Auth0 OAUTH2 mechanism uses the PKCE flow. Create a [Auth0 account](https://auth0.com). Add the Auth0 client id and base URL to your .env file
+
+```
+AUTH0_CLIENT_ID=Auth0 Client id
+AUTH0_BASE_URL=https://{tenant_id}.auth0.com
+```
+
+The Auth0 application client secret must also be added to the User attributes in the looker server. The user attribute should be set up as follows:
+
+- name - `kitchensink_kitchensink_auth0_secret_key`
+- user acess - view
+- hide values - yes
+- domain whitelist - https://{tenant_id}.auth0.com/login/oauth/token
+- default value - Auth0 client secret
+
+See `Auth.tsx` for authorizing use Auth0 OAUTH2 PKCE flow
+
+```typescript
+const auth0Signin = async () => {
+  try {
+    const response = await extensionSDK.oauth2Authenticate(
+      `${AUTH0_BASE_URL}/authorize`,
+      {
+        client_id: AUTH0_CLIENT_ID,
+        response_type: 'code',
+        scope: AUTH0_SCOPES,
+      },
+      'GET'
+    )
+    const codeExchangeResponse = await extensionSDK.oauth2ExchangeCodeForToken(
+      `${AUTH0_BASE_URL}/login/oauth/token`,
+      {
+        grant_type: 'authorization_code',
+        client_id: AUTH0_CLIENT_ID,
+        client_secret: extensionSDK.createSecretKeyTag('auth0_secret_key'),
+        code: response.code,
+      }
+    )
+    const { access_token, expires_in } = codeExchangeResponse
+    // Success processing
+  } catch (error) {
+    // Error processing
+  }
+}
+```
 
 ## Deployment
 
@@ -153,22 +306,22 @@ The process above requires your local development server to be running to load t
 1. In your extension project directory on your development machine you can build the extension with `yarn build`.
 2. Drag and drop the generated `dist/bundle.js` file into the Looker project interface
 3. Modify your `manifest.lkml` to use `file` instead of `url`:
-    ```
-    application: kitchensink {
-      label: "Kitchen sink"
-      file: "bundle.js"
-      entitlements: {
+   ```
+   application: kitchensink {
+     label: "Kitchen sink"
+     file: "bundle.js"
+       entitlements: {
         local_storage: yes
         navigation: yes
         new_window: yes
         allow_forms: yes
         allow_same_origin: yes
         core_api_methods: ["all_connections","search_folders", "run_inline_query", "me"]
-        external_api_urls: ["http://127.0.0.1:3000", "https://jsonplaceholder.typicode.com/posts"]
-        oauth2_urls: ["https://accounts.google.com/o/oauth2/v2/auth"]
+        external_api_urls: ["http://127.0.0.1:3000", "http://localhost:3000", "https://*.googleapis.com", "https://*.github.com", "https://REPLACE_ME.auth0.com"]
+        oauth2_urls: ["https://accounts.google.com/o/oauth2/v2/auth", "https://github.com/login/oauth/authorize", "https://dev-5eqts7im.auth0.com/authorize", "https://dev-5eqts7im.auth0.com/login/oauth/token", "https://github.com/login/oauth/access_token"]
       }
-    }
-    ```
+   }
+   ```
 
 ## Notes
 
