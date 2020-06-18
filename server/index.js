@@ -25,13 +25,14 @@
 const jsonServer = require('json-server')
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
+const dotenv = require('dotenv')
 
 /**
  * A test server that serves up test json data and that can
  * protect that data if needed. A request must have an Authorization
  * header to access the data.
  *
- * User can sign in anonymously and an authorization token will be created.
+ * User can sign in and an authorization token will be created.
  * The token will last for one hour after which the user has to
  * log in again. It does not automatically extend.
  *
@@ -39,11 +40,14 @@ const axios = require('axios')
  * (obtained by using the OAUTH2 implicit flow in the web client).
  * If the token is valid (determined by calling the google token
  * info server) a server token is created using the expiration as the
- * length of the token. 
+ * length of the token.
  */
 
 // Key for signing JWT tokens. DO NOT DO THIS IN A PRODUCTION APP.
 const JWT_KEY = 'HowNowBrownCow'
+
+dotenv.config()
+const { AUTH0_BASE_URL, GOOGLE_API_KEY } = process.env
 
 // Set up the json server
 const server = jsonServer.create()
@@ -57,26 +61,23 @@ server.use(jsonServer.bodyParser)
 // With the advent of the SameSite attribute of cookies, added support
 // for the token in the Authorization header.
 server.use((req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization
   if (authHeader) {
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1]
     try {
-      const payload = jwt.verify(
-        token,
-        JWT_KEY
-      )
-      req.currentUser = payload;
+      const payload = jwt.verify(token, JWT_KEY)
+      req.currentUser = payload
     } catch (err) {
       // most likely token has expires. Could also be tampering with
       // token but this is a test application so it does not really
       // matter.
     }
-  }  
-  next();
+  }
+  next()
 })
 
 // Simple signout route. Now a noop as cookie sessions no longer
-// supported. 
+// supported.
 server.get('/authout', (req, res) => {
   res.sendStatus(200)
 })
@@ -93,43 +94,31 @@ server.get('/auth', (req, res) => {
   }
 })
 
-// Log the user in.
-// If the client provides a google access token it will be validated.
-// Otherwise the user will be logged in anonymously.
+// Log the user in. Login is via the Looker server which expands a client secret
+// stored in the Looker server. This endpoint validates the client secret. If
+// it does not match the authorization is rejected.
 server.post('/auth', async (req, res) => {
-  const { type, access_token, expires_in, name, id } = req.body
-  if (type === 'Google') {
-    // For google login, verify the access token.
-    // If access token is not valid return a 401.
-    try {
-      const response = await axios.get(`https://oauth2.googleapis.com/tokeninfo?access_token=${access_token}`)
-      if (response.status !== 200) {
-        res.status(401)
-        return
-      }
-    } catch (error) {
-      res.status(401)
-      return
-    }
+  const { type, expires_in, name, id, client_secret } = req.body
+  // validate the client secret
+  if (client_secret !== process.env.CUSTOM_CLIENT_SECRET) {
+    res.status(401)
+    return
   }
   // In theory the id would be used to check if the user is
   // authorized to access the data server. As this is just
   // sample code we just grant access. Log the login though.
-  console.log(`${name}/${id} authorized to use the JSON server`)
+  console.log(`${type}/${name}/${id} authorized to use the JSON server`)
   // Create the JWT token for the session. Use the expires
   // provided (google provides some value) or default to an
   // hour. This is a very simple app, no proviso is built
   // in to handle a token being invalidated before the JWT
   // token expires.
   const options = {
-    expiresIn: expires_in ? parseInt(expires_in) : 3600
+    expiresIn: expires_in ? parseInt(expires_in) : 3600,
   }
-  const userJwt = jwt.sign(
-    { ...req.body },
-    JWT_KEY,
-    options
-  );
-  res.status(200).send({...req.body, jwt_token: userJwt});
+  const userJwt = jwt.sign({ ...req.body }, JWT_KEY, options)
+  res.set('Content-Type', 'application/json')
+  res.status(200).send({ jwt_token: userJwt })
 })
 
 // All data requests go through this guard first.
@@ -142,6 +131,28 @@ server.use((req, res, next) => {
     next()
   } else {
     res.sendStatus(401)
+  }
+})
+
+server.get('/sheets/:id/:range', async (req, res) => {
+  try {
+    const response = await axios.get(
+      `https://sheets.googleapis.com/v4/spreadsheets/${req.params.id}/values/${req.params.range}?key=${GOOGLE_API_KEY}`
+    )
+    res.status(response.status).send(response.data)
+  } catch (error) {
+    let status = 500
+    if (error.response) {
+      console.error('data', error.response.data)
+      console.error('status', error.response.status)
+      console.error('errors', error.response.headers)
+      status = error.response.status
+    } else if (error.request) {
+      console.error('request', error.request)
+    } else {
+      console.error('errror', error.message)
+    }
+    res.status(status).send({})
   }
 })
 

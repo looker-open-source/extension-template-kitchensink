@@ -76,7 +76,8 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
   }
 
   // Get data from state. The user needs to be authorized to see the demos
-  const { authorized, errorMessage } = dataState
+  const { errorMessage } = dataState
+  const { jwtToken } = ( location.state as any || {})
 
   return (
     <>
@@ -91,7 +92,7 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
         <Divider/>
         <Auth dataDispatch={dataDispatch} dataState={dataState}/>
         <Divider/>
-        {authorized &&
+        {jwtToken &&
           <>
             <TabList selectedIndex={selectedIndex} onSelectTab={onSelectTab}>
               <Tab>Data Server Demo</Tab>

@@ -38,10 +38,13 @@ import {
 import {
   updateErrorMessage,
   updateSheetData,
-  AuthOption
 } from '../../data/DataReducer'
-import { GOOGLE_CLIENT_ID } from '../..'
+import { GOOGLE_CLIENT_ID, AuthOption } from '../..'
 import { handleResponse, handleError } from '../../utils/validate_data_response'
+import { getDataServerFetchProxy } from '../../utils/fetch_proxy'
+import {
+  POSTS_SERVER_URL,
+} from '../..'
 
 /**
  * Demonstrate usage of the google sheets API via the extension sdk fetch proxy
@@ -61,25 +64,38 @@ export const GoogleSheetsDemo: React.FC<GoogleSheetsDemoProps> = ({ dataDispatch
       if (GOOGLE_CLIENT_ID === '') {
         updateErrorMessage(dataDispatch, 'Google client id has not been defined. Please see README.md for instructions.')
       } else {
-        // Make sure the user has logged in using google (we need a google access token)
-        const { googleAccessToken } = location.state as any
-        if (!googleAccessToken || dataState.authOption !== AuthOption.Google) {
-          updateErrorMessage(dataDispatch, 'Login using Google to run the sheets demo')
-        } else {
-          // Read the spread sheet. Note that the spreadsheet id comes from the Google Sheets
-          // Browser quick start demo
-          // https://developers.google.com/sheets/api/quickstart/js
-          const spreadsheetId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
-          const range = 'Class Data!A2:E'
-          try {
-            const response = await extensionSDK.fetchProxy(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?access_token=${googleAccessToken}`)
+        const { googleAccessToken, authOption } = location.state as any
+        const spreadsheetId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
+        const range = 'Class Data!A2:E'
+        try {
+          if (authOption === AuthOption.Google) {
+            // The sheets API can be accessed directly when google is the OAUTH provider.
+            if (!googleAccessToken) {
+              // This should not happen
+              updateErrorMessage(dataDispatch, 'Google access token is missing')
+            } else {
+              // Read the spread sheet. Note that the spreadsheet id comes from the Google Sheets
+              // Browser quick start demo
+              // https://developers.google.com/sheets/api/quickstart/js
+                const response = await extensionSDK.fetchProxy(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?access_token=${googleAccessToken}`)
+                if (handleResponse(response, dataDispatch)) {
+                  const values: any[] = response.body?.values || []
+                  updateSheetData(dataDispatch, values)
+                }
+            }
+          } else {
+            // If use is not logged in using google OAUTH the sheet is read using a 
+            // proxy call to the data server. The data server will check to see if the
+            // user is authorized to make the call by checking the JWT token.
+            const dataServerFetchProxy = getDataServerFetchProxy(extensionSDK, location.state)
+            const response = await dataServerFetchProxy.fetchProxy(`${POSTS_SERVER_URL}/sheets/${spreadsheetId}/${range}`)
             if (handleResponse(response, dataDispatch)) {
               const values: any[] = response.body?.values || []
               updateSheetData(dataDispatch, values)
             }
-          } catch(error) {
-            handleError(error, dispatchEvent)
           }
+        } catch(error) {
+          handleError(error, dispatchEvent)
         }
       }
     }

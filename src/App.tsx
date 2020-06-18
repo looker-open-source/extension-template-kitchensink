@@ -22,36 +22,35 @@
  * THE SOFTWARE.
  */
 
-import { Sidebar } from "./components/Sidebar"
-import { CoreSDKFunctions } from "./components/CoreSDKFunctions"
-import { ApiFunctions } from "./components/ApiFunctions"
-import React, { useState } from "react"
-import { Switch, Route, Redirect } from "react-router-dom"
-import { theme, Box, GlobalStyle } from "@looker/components"
-import styled, { ThemeProvider } from "styled-components"
-import { ExtensionProvider } from "@looker/extension-sdk-react"
-import { EmbedDashboard } from "./components/Embed"
-import { EmbedExplore } from "./components/Embed/EmbedExplore"
-import { EmbedLook } from "./components/Embed/EmbedLook"
-import { ExternalApiFunctions } from "./components/ExternalApiFunctions"
-import { MiscFunctions } from "./components/MiscFunctions"
-import { hot } from "react-hot-loader/root"
+import { Sidebar } from './components/Sidebar'
+import { CoreSDKFunctions } from './components/CoreSDKFunctions'
+import { ApiFunctions } from './components/ApiFunctions'
+import React, { useState } from 'react'
+import { Switch, Route, Redirect } from 'react-router-dom'
+import { theme, Box, GlobalStyle } from '@looker/components'
+import styled, { ThemeProvider } from 'styled-components'
+import { ExtensionProvider } from '@looker/extension-sdk-react'
+import { EmbedDashboard } from './components/Embed'
+import { EmbedExplore } from './components/Embed/EmbedExplore'
+import { EmbedLook } from './components/Embed/EmbedLook'
+import { ExternalApiFunctions } from './components/ExternalApiFunctions'
+import { MiscFunctions } from './components/MiscFunctions'
+import { hot } from 'react-hot-loader/root'
 
-interface AppProps {
-}
+interface AppProps {}
 
 export enum ROUTES {
-  API_ROUTE = "/api",
-  CORESDK_ROUTE = "/coresdk",
-  EMBED_DASHBOARD = "/embed/dashboard",
-  EMBED_EXPLORE = "/embed/explore",
-  EMBED_LOOK = "/embed/look",
-  EXTERNAL_API_ROUTE = "/externalapi",
-  MISC_ROUTE = "/misc",
+  API_ROUTE = '/api',
+  CORESDK_ROUTE = '/coresdk',
+  EMBED_DASHBOARD = '/embed/dashboard',
+  EMBED_EXPLORE = '/embed/explore',
+  EMBED_LOOK = '/embed/look',
+  EXTERNAL_API_ROUTE = '/externalapi',
+  MISC_ROUTE = '/misc',
 }
 
 export const App: React.FC<AppProps> = hot(() => {
-  const [route, setRoute] = useState("")
+  const [route, setRoute] = useState('')
   const [routeState, setRouteState] = useState()
 
   const onRouteChange = (route: string, routeState?: any) => {
@@ -60,18 +59,26 @@ export const App: React.FC<AppProps> = hot(() => {
   }
 
   return (
-    <ExtensionProvider onRouteChange={onRouteChange} requiredLookerVersion=">=7.9.0">
+    <ExtensionProvider
+      onRouteChange={onRouteChange}
+      requiredLookerVersion=">=7.9.0"
+    >
       <ThemeProvider theme={theme}>
         <>
           <GlobalStyle />
           <Layout>
-            <Sidebar route={route} routeState={routeState}/>
+            <Sidebar route={route} routeState={routeState} />
             <Box>
               <Switch>
                 <Route path={ROUTES.API_ROUTE}>
                   <ApiFunctions />
                 </Route>
-                <Route path={[ROUTES.CORESDK_ROUTE, `${ROUTES.CORESDK_ROUTE}?test=abcd`]}>
+                <Route
+                  path={[
+                    ROUTES.CORESDK_ROUTE,
+                    `${ROUTES.CORESDK_ROUTE}?test=abcd`,
+                  ]}
+                >
                   <CoreSDKFunctions />
                 </Route>
                 <Route path={ROUTES.EMBED_DASHBOARD}>
@@ -103,5 +110,5 @@ export const Layout = styled(Box)`
   display: grid;
   grid-gap: 20px;
   grid-template-columns: 200px auto;
-  width: 100vw
+  width: 100vw;
 `

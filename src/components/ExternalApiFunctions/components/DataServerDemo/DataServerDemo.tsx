@@ -32,10 +32,8 @@ import {
   ActionListItemColumn,
   Box,
   Button,
-  ButtonOutline,
   FieldText,
   Form,
-  Prompt,
   Text,
 } from "@looker/components"
 import { DataServerDemoProps } from "./types"
@@ -46,11 +44,12 @@ import {
 import {
   updatePosts,
   updateTitle,
-  updateErrorMessage,
-  updatePostsServer,
 } from '../../data/DataReducer'
 import { handleResponse, handleError } from '../../utils/validate_data_response'
 import { getDataServerFetchProxy } from '../../utils/fetch_proxy'
+import {
+  POSTS_SERVER_URL,
+} from '../..'
 
 /**
  * Demonstration of Looker extension SDK external API use, fetchProxy
@@ -73,25 +72,13 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
   // React router location
   const location = useLocation()
 
-  // Get state from redux
-  const { posts, name, title, postsServer } = dataState
+  // Get state from the reducer
+  const { posts, name, title } = dataState
 
-  // Get data when ever the posts server URL changes. This happens on
-  // component initialiization ase well.
   useEffect(() => {
-    // Create a function so that async/await can be used in useEffect
-    const fetchData = async () => {
-      // Ensure users session is still valid. If it's not this component
-      // will log the user in anonymously.
-      await authCheck()
-
-      // Get the posts.
-      fetchPosts(true)
-    }
-    // useEffect does not support async/await directly. Fake it with
-    // a function
-    fetchData()
-  }, [postsServer])
+    // First time in get the posts
+    fetchPosts(true)
+  }, [])
 
   // Handle creation of a post.
   const onCreatePostSubmit = async (event: React.FormEvent) => {
@@ -108,7 +95,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
       // a string.
       const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
       let response = await dataServerFetchProxy.fetchProxy(
-        `${postsServer}/posts`,
+        `${POSTS_SERVER_URL}/posts`,
         {
           method: 'POST',
           headers: {
@@ -135,7 +122,7 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
     try {
       const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
       let response = await dataServerFetchProxy.fetchProxy(
-        `${postsServer}/posts/${post.id}`,
+        `${POSTS_SERVER_URL}/posts/${post.id}`,
         {
           method: 'DELETE',
         })
@@ -149,32 +136,6 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
     }
   }
 
-  // Check to see if the user session is still valid.
-  const authCheck = async () => {
-    try {
-      // Got a valid session?
-      const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
-      let response = await dataServerFetchProxy.fetchProxy(`${postsServer}/auth`)
-      if (response.status === 401) {
-        // No, login anonymously
-        // TODO update auth option in state?
-        response = await dataServerFetchProxy.fetchProxy(
-          `${postsServer}/auth`,
-          {
-            method: 'POST',
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              type : 'none',
-            })
-          })
-      }
-    } catch(error) {
-      handleError(error, dataDispatch)
-    }
-  }
-
   // Fetch the posts
   const fetchPosts = async (firstTime = false) => {
     try {
@@ -183,8 +144,8 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
       // fetch call can take a third argument that indicates what type of
       // response is expected.
       const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
-      const response = await dataServerFetchProxy.fetchProxy(`${postsServer}/posts`)
-      if (handleResponse(response, dataDispatch)) {
+      const response = await dataServerFetchProxy.fetchProxy(`${POSTS_SERVER_URL}/posts`)
+      if (handleResponse(response, dataDispatch, undefined, firstTime)) {
         updatePosts(dataDispatch, response.body.reverse())
       }
     } catch(error) {
@@ -195,21 +156,6 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
   // Handle title change for a new post
   const onTitleChange = (e: any) => {
     updateTitle(dataDispatch, e.currentTarget.value)
-  }
-
-  // Handle data server URL change
-  const onChangeServerClick = (value: string) => {
-    // Allow server to be changed to facilitate integration tests.
-    // Integration do not have access to 127.0.0.1 so server can be
-    // changed during the test.
-    try {
-      new URL(value)
-      updatePosts(dataDispatch, [])
-      updatePostsServer(dataDispatch, value.endsWith('/') ? value.substring(0, value.length - 1) : value)
-    }
-    catch(error) {
-      updateErrorMessage(dataDispatch, 'Invalid URL')
-    }
   }
 
   // Post column definitions for action list
@@ -260,16 +206,8 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
   return (
     <>
       <Box display="flex" flexDirection="row" justifyContent="space-between" mb="medium" alignItems="baseline">
-        <Text>Posts data is being served from {postsServer}</Text>
+        <Text>Posts data is being served from {POSTS_SERVER_URL}</Text>
         <Box display="flex" flexDirection="row" alignItems="baseline">
-          <Prompt
-            title="Change server"
-            inputLabel='Server'
-            defaultValue={postsServer}
-            onSave={onChangeServerClick}
-          >
-            {(open) => <ButtonOutline onClick={open}>Change server</ButtonOutline>}
-          </Prompt>
           <Button ml="small" onClick={ () => fetchPosts() }>Refresh data</Button>
         </Box>
       </Box>

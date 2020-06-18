@@ -30,42 +30,29 @@ import { Dispatch } from 'react'
 
  // Initial stats
 export const initialState: DataState = {
-  postsServer: "http://127.0.0.1:3000",
   posts: [],
   name: "",
   title: "",
   errorMessage: undefined,
-  authorized: false
 }
 
 // The state interface
 export interface DataState {
-  postsServer: string
   posts: any[]
   name: string
   title: string
   errorMessage?: string
-  authorized: boolean
-  authOption?: AuthOption
   sheetData?: any[]
 }
 
 // Supported actions
 enum Action {
+  initialize,
   updatePosts,
   updateName,
   updateTitle,
   updateErrorMessage,
-  updatePostsServer,
-  authorize,
   updateSheetData,
-}
-
-// Authorization options
-export enum AuthOption {
-  None = "none",
-  Google = "Google",
-  Github = "Github"
 }
 
 // The reducer
@@ -92,26 +79,13 @@ export const reducer = (state: DataState, action: any) => {
         ...state,
         errorMessage: payload
       }
-    case Action.updatePostsServer:
-      return {
-        ...state,
-        postsServer: payload
-      }
     case Action.updateSheetData:
       return {
         ...state,
         sheetData: payload
       }
-    case Action.authorize:
-      return {
-        ...state,
-        posts: [],
-        sheetData: undefined,
-        title: '',
-        errorMessage: undefined,
-        authOption: payload.authOption,
-        authorized: payload.authorized
-      }
+    case Action.initialize:
+      return { ...initialState }
     default:
       return state
   }
@@ -146,13 +120,6 @@ export const updateTitle = (dispatch: Dispatch<any>, title: string) => dispatch(
 export const updateErrorMessage = (dispatch: Dispatch<any>, errorMessage?: string) => dispatch({ type: Action.updateErrorMessage, payload: errorMessage })
 
 /**
- * Update url of posts server
- * @param dispatch
- * @param postsServer
- */
-export const updatePostsServer = (dispatch: Dispatch<any>, postsServer: string) => dispatch({ type: Action.updatePostsServer, payload: postsServer })
-
-/**
  * Update sheet data
  * @param dispatch
  * @param sheetData
@@ -160,10 +127,7 @@ export const updatePostsServer = (dispatch: Dispatch<any>, postsServer: string) 
 export const updateSheetData = (dispatch: Dispatch<any>, sheetData: any[]) => dispatch({ type: Action.updateSheetData, payload: sheetData })
 
 /**
- * Authorize or deauthorize user
+ * Initialize state
  * @param dispatch
- * @param authorized or not - true/false
- * @param authOption type of authorization
  */
-export const authorize = (dispatch: Dispatch<any>, authorized: boolean, authOption = AuthOption.None) =>
-  dispatch({ type: Action.authorize, payload: { authOption, authorized } })
+export const initializeState = (dispatch: Dispatch<any>) => dispatch({ type: Action.initialize })

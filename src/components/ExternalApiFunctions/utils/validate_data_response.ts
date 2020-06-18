@@ -5,7 +5,6 @@ import {
 import { extractMessageFromError } from '../../../utils'
 import {
   updateErrorMessage,
-  authorize
 } from '../data/DataReducer'
 
 /**
@@ -18,16 +17,18 @@ import {
 export const handleResponse = (
   response: FetchProxyDataResponse,
   dataDispatch: Dispatch<any>,
-  errorMessage = "Unexpected error. Has the data server been started? yarn start start-data-server"
+  errorMessage = "Unexpected error. Has the data server been started? yarn start start-data-server",
+  firstTime = false,  
   ): boolean => {
   const { ok, status } = response
   if (ok) {
-    updateErrorMessage(dataDispatch, undefined)
+    if (!firstTime) {
+      updateErrorMessage(dataDispatch, undefined)
+    }
     return true
   } else {
     if (status === 401) {
-      updateErrorMessage(dataDispatch, "Session expired!")
-      authorize(dataDispatch, false)
+      updateErrorMessage(dataDispatch, "Token expired!")
     } else {
       updateErrorMessage(dataDispatch, errorMessage)
     }
