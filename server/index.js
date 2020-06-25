@@ -44,10 +44,12 @@ const dotenv = require('dotenv')
  */
 
 // Key for signing JWT tokens. DO NOT DO THIS IN A PRODUCTION APP.
-const JWT_KEY = 'HowNowBrownCow'
+const JWT_KEY =
+  process.env.JWT_TOKEN_SECRET ||
+  'GV5KspkUq5Ymxkj7ZnBtrsukHySKG6y2puFbP8hGVkDbggQ7DhJFQDJrxQVRPaVv'
 
 dotenv.config()
-const { AUTH0_BASE_URL, GOOGLE_API_KEY } = process.env
+const { GOOGLE_API_KEY } = process.env
 
 // Set up the json server
 const server = jsonServer.create()
