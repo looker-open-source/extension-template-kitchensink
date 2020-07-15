@@ -22,15 +22,30 @@
  * THE SOFTWARE.
  */
 
-import React, { useEffect, useReducer } from "react"
+import React, { useEffect, useReducer } from 'react'
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom'
-import { Banner, Box, Divider, Heading,  TabList, Tab, TabPanels, TabPanel, Text } from "@looker/components"
-import { SandboxStatus } from "../SandboxStatus"
-import { ExternalApiFunctionsProps } from "./types"
+import {
+  MessageBar,
+  Box,
+  Divider,
+  Heading,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Text,
+} from '@looker/components'
+import { SandboxStatus } from '../SandboxStatus'
+import { ExternalApiFunctionsProps } from './types'
 import { Auth } from './components/Auth'
 import { DataServerDemo } from './components/DataServerDemo'
 import { GoogleSheetsDemo } from './components/GoogleSheetsDemo'
-import { initialState as dataInitialState, reducer as dataReducer, updateErrorMessage, DataState } from './data/DataReducer'
+import {
+  initialState as dataInitialState,
+  reducer as dataReducer,
+  updateErrorMessage,
+  DataState,
+} from './data/DataReducer'
 
 /**
  * External API demonstration. Demonstrates the following:
@@ -43,12 +58,12 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
   // State is stored here as asynchronous actions may complete
   // after components unload. If components own state, react puts messages
   // on the console.
-  const [ dataState, dataDispatch ] = useReducer(dataReducer, dataInitialState)
+  const [dataState, dataDispatch] = useReducer(dataReducer, dataInitialState)
 
   // React router setup
   const history = useHistory()
   const location = useLocation()
-  const match = useRouteMatch<{ func: string, tab: string }>('/:func/:tab')
+  const match = useRouteMatch<{ func: string; tab: string }>('/:func/:tab')
 
   // Onetime initial setup for the component
   useEffect(() => {
@@ -77,38 +92,44 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
 
   // Get data from state. The user needs to be authorized to see the demos
   const { errorMessage } = dataState
-  const { jwtToken } = ( location.state as any || {})
+  const { jwtToken } = (location.state as any) || {}
 
   return (
     <>
       <Heading mt="xlarge">External API Functions</Heading>
-      <SandboxStatus/>
-      {errorMessage &&
-        <Banner intent="error" onDismiss={onDismiss} canDismiss>
+      <SandboxStatus />
+      {errorMessage && (
+        <MessageBar intent="critical" onPrimaryClick={onDismiss}>
           {errorMessage}
-        </Banner>
-      }
+        </MessageBar>
+      )}
       <Box padding="small">
-        <Divider/>
-        <Auth dataDispatch={dataDispatch} dataState={dataState}/>
-        <Divider/>
-        {jwtToken &&
+        <Divider />
+        <Auth dataDispatch={dataDispatch} dataState={dataState} />
+        <Divider />
+        {jwtToken && (
           <>
             <TabList selectedIndex={selectedIndex} onSelectTab={onSelectTab}>
               <Tab>Data Server Demo</Tab>
               <Tab>Google Sheets Demo</Tab>
             </TabList>
             <TabPanels selectedIndex={selectedIndex}>
-             <TabPanel>
-               <DataServerDemo dataDispatch={dataDispatch} dataState={dataState} />
-             </TabPanel>
-             <TabPanel>
-               <GoogleSheetsDemo dataDispatch={dataDispatch} dataState={dataState} />
-             </TabPanel>
-           </TabPanels>
+              <TabPanel>
+                <DataServerDemo
+                  dataDispatch={dataDispatch}
+                  dataState={dataState}
+                />
+              </TabPanel>
+              <TabPanel>
+                <GoogleSheetsDemo
+                  dataDispatch={dataDispatch}
+                  dataState={dataState}
+                />
+              </TabPanel>
+            </TabPanels>
           </>
-        }
-     </Box>
+        )}
+      </Box>
     </>
   )
 }

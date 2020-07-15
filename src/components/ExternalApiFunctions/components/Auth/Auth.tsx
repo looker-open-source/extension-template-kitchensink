@@ -30,7 +30,7 @@ import {
   ButtonOutline,
   Dialog,
   Heading,
-  ModalContent,
+  DialogContent,
   SpaceVertical,
   Text,
 } from '@looker/components'
@@ -564,7 +564,7 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
         {jwtToken ? 'Sign out' : 'Sign in'}
       </Button>
       <Dialog isOpen={dialogOpen} onClose={closeDialog} width="50vw">
-        <ModalContent>
+        <DialogContent>
           <Heading>Choose an authentication method</Heading>
           <SpaceVertical mt="xlarge" mb="large">
             <ButtonOutline
@@ -595,7 +595,7 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
               Sign in
             </ButtonOutline>
           </SpaceVertical>
-        </ModalContent>
+        </DialogContent>
       </Dialog>
     </Box>
   )

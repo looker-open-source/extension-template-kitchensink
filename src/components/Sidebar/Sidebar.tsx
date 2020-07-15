@@ -22,50 +22,68 @@
  * THE SOFTWARE.
  */
 
-import { Box, MenuGroup, MenuItem, MenuItemProps } from "@looker/components"
-import * as React from "react"
-import { Link as RouterLink, LinkProps } from "react-router-dom"
-import styled from "styled-components"
-import { SidebarProps } from "./"
-import omit from "lodash/omit"
+import { Box, MenuGroup, MenuItem, MenuItemProps } from '@looker/components'
+import * as React from 'react'
+import { Link as RouterLink, LinkProps } from 'react-router-dom'
+import styled from 'styled-components'
+import { SidebarProps } from './'
+import omit from 'lodash/omit'
 import { ROUTES } from '../../App'
 
 export const Sidebar: React.FC<SidebarProps> = ({ route }) => {
   return (
     <Box display="flex" flexDirection="column">
-      <MenuGroup type="none" mt="xsmall">
+      <MenuGroup type="none">
         <StyledRouterLink to={ROUTES.API_ROUTE}>
           <MenuItem icon="Flag" current={route === ROUTES.API_ROUTE}>
             Api Functions
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.CORESDK_ROUTE}>
-          <MenuItem icon="Clock" current={route.startsWith(ROUTES.CORESDK_ROUTE)}>
+          <MenuItem
+            icon="Clock"
+            current={route.startsWith(ROUTES.CORESDK_ROUTE)}
+          >
             Core SDK Functions
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.EMBED_DASHBOARD}>
-          <MenuItem icon="ApplicationSelect" current={route === ROUTES.EMBED_DASHBOARD}>
+          <MenuItem
+            icon="ApplicationSelect"
+            current={route === ROUTES.EMBED_DASHBOARD}
+          >
             Embed Dashboard
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.EMBED_EXPLORE}>
-          <MenuItem icon="ApplicationSelect" current={route === ROUTES.EMBED_EXPLORE}>
+          <MenuItem
+            icon="ApplicationSelect"
+            current={route === ROUTES.EMBED_EXPLORE}
+          >
             Embed Explore
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.EMBED_LOOK}>
-          <MenuItem icon="ApplicationSelect" current={route === ROUTES.EMBED_LOOK}>
+          <MenuItem
+            icon="ApplicationSelect"
+            current={route === ROUTES.EMBED_LOOK}
+          >
             Embed Look
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.EXTERNAL_API_ROUTE}>
-          <MenuItem icon="ApplicationSelect" current={route.startsWith(ROUTES.EXTERNAL_API_ROUTE)}>
+          <MenuItem
+            icon="ApplicationSelect"
+            current={route.startsWith(ROUTES.EXTERNAL_API_ROUTE)}
+          >
             External Api Functions
           </MenuItem>
         </StyledRouterLink>
         <StyledRouterLink to={ROUTES.MISC_ROUTE}>
-          <MenuItem icon="ApplicationSelect" current={route === ROUTES.MISC_ROUTE}>
+          <MenuItem
+            icon="ApplicationSelect"
+            current={route === ROUTES.MISC_ROUTE}
+          >
             Miscellaneous Functions
           </MenuItem>
         </StyledRouterLink>
@@ -74,8 +92,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ route }) => {
   )
 }
 
-const StyledRouterLinkInner: React.FC<LinkProps & MenuItemProps> = props => (
-  <RouterLink {...omit(props, "customizationProps")} />
+const StyledRouterLinkInner: React.FC<LinkProps & MenuItemProps> = (props) => (
+  <RouterLink {...omit(props, 'customizationProps')} />
 )
 
 const StyledRouterLink = styled(StyledRouterLinkInner)`

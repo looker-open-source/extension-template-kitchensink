@@ -27,7 +27,7 @@ import { CoreSDKFunctions } from './components/CoreSDKFunctions'
 import { ApiFunctions } from './components/ApiFunctions'
 import React, { useState } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import { theme, Box, GlobalStyle } from '@looker/components'
+import { theme, Box, ComponentsProvider } from '@looker/components'
 import styled, { ThemeProvider } from 'styled-components'
 import { ExtensionProvider } from '@looker/extension-sdk-react'
 import { EmbedDashboard } from './components/Embed'
@@ -64,8 +64,7 @@ export const App: React.FC<AppProps> = hot(() => {
       requiredLookerVersion=">=7.9.0"
     >
       <ThemeProvider theme={theme}>
-        <>
-          <GlobalStyle />
+        <ComponentsProvider>
           <Layout>
             <Sidebar route={route} routeState={routeState} />
             <Box>
@@ -100,7 +99,7 @@ export const App: React.FC<AppProps> = hot(() => {
               </Switch>
             </Box>
           </Layout>
-        </>
+        </ComponentsProvider>
       </ThemeProvider>
     </ExtensionProvider>
   )

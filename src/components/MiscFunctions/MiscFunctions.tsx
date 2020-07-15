@@ -22,25 +22,25 @@
  * THE SOFTWARE.
  */
 
-import React, { useContext, useState } from "react"
-import { Heading, Box, Paragraph } from "@looker/components"
-import styled from "styled-components"
-import { ExtensionButton } from "../ExtensionButton"
-import { SandboxStatus } from "../SandboxStatus"
-import { MiscFunctionsProps } from "./types"
+import React, { useContext, useState } from 'react'
+import { Heading, Box, Paragraph } from '@looker/components'
+import styled from 'styled-components'
+import { ExtensionButton } from '../ExtensionButton'
+import { SandboxStatus } from '../SandboxStatus'
+import { MiscFunctionsProps } from './types'
 import {
   ExtensionContext,
-  ExtensionContextData
-} from "@looker/extension-sdk-react"
-import { ExtensionHostApi } from "@looker/extension-sdk"
+  ExtensionContextData,
+} from '@looker/extension-sdk-react'
+import { ExtensionHostApi } from '@looker/extension-sdk'
 
 export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
-  const [messages, setMessages] = useState("")
+  const [messages, setMessages] = useState('')
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const extensionSDK = extensionContext.extensionSDK as ExtensionHostApi
 
   const updateMessages = (message: string) => {
-    setMessages(prevMessages => {
+    setMessages((prevMessages) => {
       const maybeLineBreak = prevMessages.length === 0 ? '' : '\n'
       return `${prevMessages}${maybeLineBreak}${message}`
     })
@@ -57,7 +57,7 @@ export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
   }
 
   const navigateAwayClick = () => {
-    updateMessages("Change extension window location")
+    updateMessages('Change extension window location')
     createAndSubmitForm()
   }
 
@@ -72,23 +72,23 @@ export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
   return (
     <>
       <Heading mt="xlarge">Miscellaneous Functions</Heading>
-      <SandboxStatus/>
-      <Box display="flex" flexDirection="row" >
-        <Box display="flex" flexDirection="column" width="50%" maxWidth='40vw'>
+      <SandboxStatus />
+      <Box display="flex" flexDirection="row">
+        <Box display="flex" flexDirection="column" width="50%" maxWidth="40vw">
           <Paragraph>
             Clicking the button below will cause the extension to try and
             navigate to a new location within the extension window (not the
-            owning window for which there is an extension SDK method).
-            This is not allowed (extensions MUST be single page applications).
-            The extension will be reloaded if window location does change.
+            owning window for which there is an extension SDK method). This is
+            not allowed (extensions MUST be single page applications). The
+            extension will be reloaded if window location does change.
           </Paragraph>
           <Paragraph>
-            A circuit breaker has been built into the extension reload functionality.
-            Should an extension attempt to change location more than 3 times in a
-            30 second window, the extension will NOT be reloaded and an error
-            message will be displayed. You can simulate this by pressing the
-            button 4 times within the 30 second window (you have to wait for the
-            extension to reload).
+            A circuit breaker has been built into the extension reload
+            functionality. Should an extension attempt to change location more
+            than 3 times in a 30 second window, the extension will NOT be
+            reloaded and an error message will be displayed. You can simulate
+            this by pressing the button 4 times within the 30 second window (you
+            have to wait for the extension to reload).
           </Paragraph>
           <ExtensionButton
             mt="small"
@@ -104,15 +104,13 @@ export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
           >
             Clear messages
           </ExtensionButton>
+          <ExtensionButton onClick={logout}>
+            Logout of Looker (only in /spartan mode)
+          </ExtensionButton>
         </Box>
-        <Box width="50%" pr="large" maxWidth='40vw'>
+        <Box width="50%" pr="large" maxWidth="40vw">
           <StyledPre>{messages}</StyledPre>
         </Box>
-      </Box>
-      <Box display="flex" flexDirection="row" >
-        <ExtensionButton onClick={logout}>
-          Logout of Looker (only in /spartan mode)
-        </ExtensionButton>
       </Box>
     </>
   )
