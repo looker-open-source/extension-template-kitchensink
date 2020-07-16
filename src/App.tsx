@@ -27,8 +27,8 @@ import { CoreSDKFunctions } from './components/CoreSDKFunctions'
 import { ApiFunctions } from './components/ApiFunctions'
 import React, { useState } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import { theme, Box, ComponentsProvider } from '@looker/components'
-import styled, { ThemeProvider } from 'styled-components'
+import { Box, ComponentsProvider } from '@looker/components'
+import styled from 'styled-components'
 import { ExtensionProvider } from '@looker/extension-sdk-react'
 import { EmbedDashboard } from './components/Embed'
 import { EmbedExplore } from './components/Embed/EmbedExplore'
@@ -63,44 +63,42 @@ export const App: React.FC<AppProps> = hot(() => {
       onRouteChange={onRouteChange}
       requiredLookerVersion=">=7.9.0"
     >
-      <ThemeProvider theme={theme}>
-        <ComponentsProvider>
-          <Layout>
-            <Sidebar route={route} routeState={routeState} />
-            <Box>
-              <Switch>
-                <Route path={ROUTES.API_ROUTE}>
-                  <ApiFunctions />
-                </Route>
-                <Route
-                  path={[
-                    ROUTES.CORESDK_ROUTE,
-                    `${ROUTES.CORESDK_ROUTE}?test=abcd`,
-                  ]}
-                >
-                  <CoreSDKFunctions />
-                </Route>
-                <Route path={ROUTES.EMBED_DASHBOARD}>
-                  <EmbedDashboard />
-                </Route>
-                <Route path={ROUTES.EMBED_EXPLORE}>
-                  <EmbedExplore />
-                </Route>
-                <Route path={ROUTES.EMBED_LOOK}>
-                  <EmbedLook />
-                </Route>
-                <Route path={ROUTES.EXTERNAL_API_ROUTE}>
-                  <ExternalApiFunctions />
-                </Route>
-                <Route path={ROUTES.MISC_ROUTE}>
-                  <MiscFunctions />
-                </Route>
-                <Redirect to={ROUTES.API_ROUTE} />
-              </Switch>
-            </Box>
-          </Layout>
-        </ComponentsProvider>
-      </ThemeProvider>
+      <ComponentsProvider>
+        <Layout>
+          <Sidebar route={route} routeState={routeState} />
+          <Box>
+            <Switch>
+              <Route path={ROUTES.API_ROUTE}>
+                <ApiFunctions />
+              </Route>
+              <Route
+                path={[
+                  ROUTES.CORESDK_ROUTE,
+                  `${ROUTES.CORESDK_ROUTE}?test=abcd`,
+                ]}
+              >
+                <CoreSDKFunctions />
+              </Route>
+              <Route path={ROUTES.EMBED_DASHBOARD}>
+                <EmbedDashboard />
+              </Route>
+              <Route path={ROUTES.EMBED_EXPLORE}>
+                <EmbedExplore />
+              </Route>
+              <Route path={ROUTES.EMBED_LOOK}>
+                <EmbedLook />
+              </Route>
+              <Route path={ROUTES.EXTERNAL_API_ROUTE}>
+                <ExternalApiFunctions />
+              </Route>
+              <Route path={ROUTES.MISC_ROUTE}>
+                <MiscFunctions />
+              </Route>
+              <Redirect to={ROUTES.API_ROUTE} />
+            </Switch>
+          </Box>
+        </Layout>
+      </ComponentsProvider>
     </ExtensionProvider>
   )
 })
