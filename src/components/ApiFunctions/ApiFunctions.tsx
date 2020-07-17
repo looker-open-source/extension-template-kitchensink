@@ -176,6 +176,31 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       })
   }
 
+  const resetUserAttributeClick = () => {
+    extensionHost
+      .userAttributeResetItem('foo', new Date().toString())
+      .then((value) => {
+        if (value) {
+          updateMessages(`Reset 'foo' to default`)
+        }
+      })
+      .catch(error => {
+        updateMessages(error)
+        console.error(error)
+      })
+    extensionHost
+      .userAttributeResetItem('locale', new Date().toString())
+      .then((value) => {
+        if (value) {
+          updateMessages(`Reset 'locale' to '${value}'`)
+        }
+      })
+      .catch(error => {
+        updateMessages(error)
+        console.error(error)
+      })
+  }
+
   const clearMessagesClick = () => {
     setMessages('')
   }
@@ -272,6 +297,13 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
             onClick={setUserAttributeClick}
           >
             Set User Attribute
+          </ExtensionButton>
+          <ExtensionButton
+            mt="small"
+            variant="outline"
+            onClick={resetUserAttributeClick}
+          >
+            Reset User Attribute
           </ExtensionButton>
           <ExtensionButton
             mt="small"
