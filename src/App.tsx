@@ -59,10 +59,7 @@ export const App: React.FC<AppProps> = hot(() => {
   }
 
   return (
-    <ExtensionProvider
-      onRouteChange={onRouteChange}
-      requiredLookerVersion=">=7.9.0"
-    >
+    <ExtensionProvider onRouteChange={onRouteChange}>
       <ComponentsProvider>
         <Layout>
           <Sidebar route={route} routeState={routeState} />
