@@ -103,7 +103,7 @@ server.post('/auth', async (req, res) => {
   const { type, expires_in, name, id, client_secret } = req.body
   // validate the client secret
   if (client_secret !== process.env.CUSTOM_CLIENT_SECRET) {
-    res.status(401)
+    res.sendStatus(401)
     return
   }
   // In theory the id would be used to check if the user is

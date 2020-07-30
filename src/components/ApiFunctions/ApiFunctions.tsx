@@ -22,28 +22,27 @@
  * THE SOFTWARE.
  */
 
-import React, { useContext, useState } from "react"
+import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Heading, Box } from "@looker/components"
-import styled from "styled-components"
-import { ExtensionButton } from "../ExtensionButton"
-import { SandboxStatus } from "../SandboxStatus"
-import { ApiFunctionsProps } from "./types"
+import { Heading, Box } from '@looker/components'
+import styled from 'styled-components'
+import { ExtensionButton } from '../ExtensionButton'
+import { SandboxStatus } from '../SandboxStatus'
+import { ApiFunctionsProps } from './types'
 import {
   ExtensionContext,
-  ExtensionContextData
-} from "@looker/extension-sdk-react"
-import { ExtensionHostApi } from "@looker/extension-sdk"
-import { ROUTES } from '../../App'
+  ExtensionContextData,
+} from '@looker/extension-sdk-react'
+import { ROUTES } from '../../KitchenSink'
 
 export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   const history = useHistory()
-  const [messages, setMessages] = useState("")
+  const [messages, setMessages] = useState('')
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-  const extensionHost = extensionContext.extensionSDK as ExtensionHostApi
+  const { extensionSDK } = extensionContext
 
   const updateMessages = (message: string) => {
-    setMessages(prevMessages => {
+    setMessages((prevMessages) => {
       const maybeLineBreak = prevMessages.length === 0 ? '' : '\n'
       return `${prevMessages}${maybeLineBreak}${message}`
     })
@@ -51,45 +50,45 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
 
   const verifyHostConnectionClick = async () => {
     try {
-      const value = await extensionHost.verifyHostConnection()
+      const value = await extensionSDK.verifyHostConnection()
       if (value === true) {
-        updateMessages("Host verification success")
+        updateMessages('Host verification success')
       } else {
-        updateMessages("Invalid response " + value)
+        updateMessages('Invalid response ' + value)
       }
-    } catch(error) {
-      updateMessages("Host verification failure")
+    } catch (error) {
+      updateMessages('Host verification failure')
       updateMessages(error)
-      console.error("Host verification failure", error)
+      console.error('Host verification failure', error)
     }
   }
 
   const updateTitleButtonClick = () => {
     const date = new Date()
-    extensionHost.updateTitle(
+    extensionSDK.updateTitle(
       `Extension Title Update ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
     )
-    updateMessages("Title updated")
+    updateMessages('Title updated')
   }
 
   const goToBrowseButtonClick = () => {
-    extensionHost.updateLocation("/browse")
+    extensionSDK.updateLocation('/browse')
   }
 
   const goToMarketplaceButtonClick = () => {
-    extensionHost.updateLocation("/marketplace")
+    extensionSDK.updateLocation('/marketplace')
   }
 
   const openMarketplaceButtonClick = () => {
-    extensionHost.openBrowserWindow("/marketplace", "_marketplace")
-    updateMessages("Window opened")
+    extensionSDK.openBrowserWindow('/marketplace', '_marketplace')
+    updateMessages('Window opened')
   }
 
   const localStorageSet = async () => {
     try {
-      await extensionHost.localStorageSetItem("testbed", new Date().toString())
-      updateMessages("Success")
-    } catch(error) {
+      await extensionSDK.localStorageSetItem('testbed', new Date().toString())
+      updateMessages('Success')
+    } catch (error) {
       updateMessages(error)
       console.error(error)
     }
@@ -97,9 +96,9 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
 
   const localStorageGet = async () => {
     try {
-      const value = await extensionHost.localStorageGetItem("testbed")
-      updateMessages(value || "null")
-    } catch(error) {
+      const value = await extensionSDK.localStorageGetItem('testbed')
+      updateMessages(value || 'null')
+    } catch (error) {
       updateMessages(error)
       console.error(error)
     }
@@ -107,24 +106,24 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
 
   const localStorageRemove = async () => {
     try {
-      await extensionHost.localStorageRemoveItem("testbed")
-      updateMessages("Success")
-    } catch(error) {
+      await extensionSDK.localStorageRemoveItem('testbed')
+      updateMessages('Success')
+    } catch (error) {
       updateMessages(error)
       console.error(error)
     }
   }
 
   const trackActionClick = () => {
-    extensionHost.track('click', 'kitchensink-action-tracked')
-    updateMessages("Action tracked")
+    extensionSDK.track('click', 'kitchensink-action-tracked')
+    updateMessages('Action tracked')
   }
 
   const generateUnhandledErrorClick = () => {
-    updateMessages("About to generate error")
+    updateMessages('About to generate error')
     // const badApi: any = {}
     // badApi.noExistentMethod()
-    throw new Error("Kitchensink threw an error")
+    throw new Error('Kitchensink threw an error')
   }
 
   const testRouting = () => {
@@ -138,9 +137,9 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   return (
     <>
       <Heading mt="xlarge">API Functions</Heading>
-      <SandboxStatus/>
-      <Box display="flex" flexDirection="row" >
-        <Box display="flex" flexDirection="column" width="50%" maxWidth='40vw'>
+      <SandboxStatus />
+      <Box display="flex" flexDirection="row">
+        <Box display="flex" flexDirection="column" width="50%" maxWidth="40vw">
           <ExtensionButton
             mt="small"
             variant="outline"
@@ -169,7 +168,11 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
           >
             Open marketplace new window
           </ExtensionButton>
-          <ExtensionButton mt="small" variant="outline" onClick={verifyHostConnectionClick}>
+          <ExtensionButton
+            mt="small"
+            variant="outline"
+            onClick={verifyHostConnectionClick}
+          >
             Verify host connection
           </ExtensionButton>
           <ExtensionButton
@@ -207,11 +210,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
           >
             Generate unhandled error
           </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={testRouting}
-          >
+          <ExtensionButton mt="small" variant="outline" onClick={testRouting}>
             Route test
           </ExtensionButton>
           <ExtensionButton
@@ -222,7 +221,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
             Clear messages
           </ExtensionButton>
         </Box>
-        <Box width="50%" pr="large" maxWidth='40vw'>
+        <Box width="50%" pr="large" maxWidth="40vw">
           <StyledPre>{messages}</StyledPre>
         </Box>
       </Box>

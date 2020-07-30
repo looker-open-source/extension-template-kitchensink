@@ -28,63 +28,81 @@ import { Link as RouterLink, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 import { SidebarProps } from './'
 import omit from 'lodash/omit'
-import { ROUTES } from '../../App'
+import { ROUTES } from '../../KitchenSink'
 
-export const Sidebar: React.FC<SidebarProps> = ({ route }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  route,
+  configurationData,
+}) => {
   return (
     <Box display="flex" flexDirection="column">
       <MenuGroup type="none">
-        <StyledRouterLink to={ROUTES.API_ROUTE}>
-          <MenuItem icon="Flag" current={route === ROUTES.API_ROUTE}>
-            Api Functions
+        <StyledRouterLink to={ROUTES.HOME_ROUTE}>
+          <MenuItem icon="Home" current={route === ROUTES.HOME_ROUTE}>
+            Home
           </MenuItem>
         </StyledRouterLink>
-        <StyledRouterLink to={ROUTES.CORESDK_ROUTE}>
-          <MenuItem
-            icon="Clock"
-            current={route.startsWith(ROUTES.CORESDK_ROUTE)}
-          >
-            Core SDK Functions
-          </MenuItem>
-        </StyledRouterLink>
-        <StyledRouterLink to={ROUTES.EMBED_DASHBOARD}>
-          <MenuItem
-            icon="ApplicationSelect"
-            current={route === ROUTES.EMBED_DASHBOARD}
-          >
-            Embed Dashboard
-          </MenuItem>
-        </StyledRouterLink>
-        <StyledRouterLink to={ROUTES.EMBED_EXPLORE}>
-          <MenuItem
-            icon="ApplicationSelect"
-            current={route === ROUTES.EMBED_EXPLORE}
-          >
-            Embed Explore
-          </MenuItem>
-        </StyledRouterLink>
-        <StyledRouterLink to={ROUTES.EMBED_LOOK}>
-          <MenuItem
-            icon="ApplicationSelect"
-            current={route === ROUTES.EMBED_LOOK}
-          >
-            Embed Look
-          </MenuItem>
-        </StyledRouterLink>
-        <StyledRouterLink to={ROUTES.EXTERNAL_API_ROUTE}>
-          <MenuItem
-            icon="ApplicationSelect"
-            current={route.startsWith(ROUTES.EXTERNAL_API_ROUTE)}
-          >
-            External Api Functions
-          </MenuItem>
-        </StyledRouterLink>
-        <StyledRouterLink to={ROUTES.MISC_ROUTE}>
-          <MenuItem
-            icon="ApplicationSelect"
-            current={route === ROUTES.MISC_ROUTE}
-          >
-            Miscellaneous Functions
+        {configurationData.showApiFunctions && (
+          <StyledRouterLink to={ROUTES.API_ROUTE}>
+            <MenuItem icon="Api" current={route === ROUTES.API_ROUTE}>
+              Api Functions
+            </MenuItem>
+          </StyledRouterLink>
+        )}
+        {configurationData.showCoreSdkFunctions && (
+          <StyledRouterLink to={ROUTES.CORESDK_ROUTE}>
+            <MenuItem
+              icon="SqlRunner"
+              current={route.startsWith(ROUTES.CORESDK_ROUTE)}
+            >
+              Core SDK Functions
+            </MenuItem>
+          </StyledRouterLink>
+        )}
+        {configurationData.showEmbedDashboard && (
+          <StyledRouterLink to={ROUTES.EMBED_DASHBOARD}>
+            <MenuItem
+              icon="Dashboard"
+              current={route === ROUTES.EMBED_DASHBOARD}
+            >
+              Embed Dashboard
+            </MenuItem>
+          </StyledRouterLink>
+        )}
+        {configurationData.showEmbedExplore && (
+          <StyledRouterLink to={ROUTES.EMBED_EXPLORE}>
+            <MenuItem icon="Explore" current={route === ROUTES.EMBED_EXPLORE}>
+              Embed Explore
+            </MenuItem>
+          </StyledRouterLink>
+        )}
+        {configurationData.showEmbedLook && (
+          <StyledRouterLink to={ROUTES.EMBED_LOOK}>
+            <MenuItem icon="AnalyticsApp" current={route === ROUTES.EMBED_LOOK}>
+              Embed Look
+            </MenuItem>
+          </StyledRouterLink>
+        )}
+        {configurationData.showExternalApiFunctions && (
+          <StyledRouterLink to={ROUTES.EXTERNAL_API_ROUTE}>
+            <MenuItem
+              icon="External"
+              current={route.startsWith(ROUTES.EXTERNAL_API_ROUTE)}
+            >
+              External Api Functions
+            </MenuItem>
+          </StyledRouterLink>
+        )}
+        {configurationData.showMiscFunctions && (
+          <StyledRouterLink to={ROUTES.MISC_ROUTE}>
+            <MenuItem icon="More" current={route === ROUTES.MISC_ROUTE}>
+              Miscellaneous Functions
+            </MenuItem>
+          </StyledRouterLink>
+        )}
+        <StyledRouterLink to={ROUTES.CONFIG_ROUTE}>
+          <MenuItem icon="Gear" current={route === ROUTES.CONFIG_ROUTE}>
+            Configure
           </MenuItem>
         </StyledRouterLink>
       </MenuGroup>

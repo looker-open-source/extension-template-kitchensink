@@ -95,9 +95,19 @@ in the sample manifest contained repository.
 
 ## Demoed Extension Features
 
+### Context Functions
+
+Extensions can share context data between users. The context data can be used for data that does not change frequently and to share amongst different users of the extension. Care should be taken when writing the data as there is no data locking and the last write wins. The context data is available to the extension immediately. Functions are provided to write and refresh the data.
+
+- `getContextData` - get the context data.
+- `saveContextData` - writes context data to the Looker server.
+- `refreshContextData` - gets the lastest context data from the Looker server.
+
+The configuation component demonstrates the context functionality. It can be used to show/hide views in the Kitchen Sink. It can also be used to change the keys used for the embed demonstrations.
+
 ### API Functions
 
-API functions demonstrates the following function
+API functions demonstrates the following functionality
 
 - Update title - modifies the title of the page the extension is running in.
 - Navigation - navigates to different locations in the Looker server using the current page (browse and marketplace).

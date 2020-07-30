@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Looker Data Sciences, Inc.
+ * Copyright (c) 2020 Looker Data Sciences, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,6 @@
  * THE SOFTWARE.
  */
 
-import React, { useState } from 'react'
-import { KitchenSink } from './KitchenSink'
-import { ExtensionProvider } from '@looker/extension-sdk-react'
-import { hot } from 'react-hot-loader/root'
+import React from 'react'
 
-export const App: React.FC<{}> = hot(() => {
-  const [route, setRoute] = useState('')
-  const [routeState, setRouteState] = useState()
-
-  const onRouteChange = (route: string, routeState?: any) => {
-    setRoute(route)
-    setRouteState(routeState)
-  }
-
-  return (
-    <ExtensionProvider onRouteChange={onRouteChange}>
-      <KitchenSink route={route} routeState={routeState} />
-    </ExtensionProvider>
-  )
-})
+export interface HomeProps {}

@@ -22,18 +22,18 @@
  * THE SOFTWARE.
  */
 
-import React, { useCallback, useContext } from "react"
-import { EmbedProps } from "./types"
+import React, { useCallback, useContext } from 'react'
+import { EmbedProps } from './types'
 import { LookerEmbedSDK, LookerEmbedLook } from '@looker/embed-sdk'
 import { SandboxStatus } from '../SandboxStatus'
 import { EmbedContainer } from './components/EmbedContainer'
 import {
   ExtensionContext,
   ExtensionContextData,
-} from "@looker/extension-sdk-react"
-import { Button, Heading } from "@looker/components"
+} from '@looker/extension-sdk-react'
+import { Button, Heading } from '@looker/components'
 
-export const EmbedLook: React.FC<EmbedProps> = () => {
+export const EmbedLook: React.FC<EmbedProps> = ({ id }) => {
   const [running, setRunning] = React.useState(true)
   const [look, setLook] = React.useState<LookerEmbedLook>()
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
@@ -46,11 +46,11 @@ export const EmbedLook: React.FC<EmbedProps> = () => {
     setLook(look)
   }
 
-  const embedCtrRef = useCallback(el => {
+  const embedCtrRef = useCallback((el) => {
     const hostUrl = extensionContext?.extensionSDK?.lookerHostData?.hostUrl
     if (el && hostUrl) {
       LookerEmbedSDK.init(hostUrl)
-      LookerEmbedSDK.createLookWithId(2)
+      LookerEmbedSDK.createLookWithId(id as number)
         .appendTo(el)
         .on('look:loaded', updateRunButton.bind(null, false))
         .on('look:run:start', updateRunButton.bind(null, true))
@@ -73,9 +73,11 @@ export const EmbedLook: React.FC<EmbedProps> = () => {
   return (
     <>
       <Heading mt="xlarge">Embedded Look</Heading>
-      <SandboxStatus/>
-      <Button m='medium' onClick={runLook} disabled={running}>Run Look</Button>
-      <EmbedContainer ref={embedCtrRef}/>
+      <SandboxStatus />
+      <Button m="medium" onClick={runLook} disabled={running}>
+        Run Look
+      </Button>
+      <EmbedContainer ref={embedCtrRef} />
     </>
   )
 }

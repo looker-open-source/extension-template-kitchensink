@@ -22,4 +22,6 @@
  * THE SOFTWARE.
  */
 
-export interface EmbedProps {}
+export interface EmbedProps {
+  id: number | string
+}

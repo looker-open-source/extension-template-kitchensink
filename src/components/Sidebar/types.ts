@@ -22,7 +22,10 @@
  * THE SOFTWARE.
  */
 
+import { ConfigurationData } from '../../types'
+
 export interface SidebarProps {
   route: string
   routeState?: any
+  configurationData: ConfigurationData
 }

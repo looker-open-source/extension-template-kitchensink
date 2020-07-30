@@ -22,18 +22,18 @@
  * THE SOFTWARE.
  */
 
-import React, { useCallback, useContext } from "react"
-import { EmbedProps } from "./types"
+import React, { useCallback, useContext } from 'react'
+import { EmbedProps } from './types'
 import { LookerEmbedSDK, LookerEmbedDashboard } from '@looker/embed-sdk'
 import {
   ExtensionContext,
   ExtensionContextData,
-} from "@looker/extension-sdk-react"
-import { Button, Heading, Label, ToggleSwitch } from "@looker/components"
+} from '@looker/extension-sdk-react'
+import { Button, Heading, Label, ToggleSwitch } from '@looker/components'
 import { SandboxStatus } from '../SandboxStatus'
 import { EmbedContainer } from './components/EmbedContainer'
 
-export const EmbedDashboard: React.FC<EmbedProps> = () => {
+export const EmbedDashboard: React.FC<EmbedProps> = ({ id }) => {
   const [dashboardNext, setDashboardNext] = React.useState(true)
   const [running, setRunning] = React.useState(true)
   const [dashboard, setDashboard] = React.useState<LookerEmbedDashboard>()
@@ -55,31 +55,34 @@ export const EmbedDashboard: React.FC<EmbedProps> = () => {
     setDashboard(dashboard)
   }
 
-  const embedCtrRef = useCallback(el => {
-    const hostUrl = extensionContext?.extensionSDK?.lookerHostData?.hostUrl
-    if (el && hostUrl) {
-      el.innerHTML = ''
-      LookerEmbedSDK.init(hostUrl)
-      const db = LookerEmbedSDK.createDashboardWithId(1)
-      if (dashboardNext) {
-        db.withNext()
+  const embedCtrRef = useCallback(
+    (el) => {
+      const hostUrl = extensionContext?.extensionSDK?.lookerHostData?.hostUrl
+      if (el && hostUrl) {
+        el.innerHTML = ''
+        LookerEmbedSDK.init(hostUrl)
+        const db = LookerEmbedSDK.createDashboardWithId(id as number)
+        if (dashboardNext) {
+          db.withNext()
+        }
+        db.appendTo(el)
+          .on('dashboard:loaded', updateRunButton.bind(null, false))
+          .on('dashboard:run:start', updateRunButton.bind(null, true))
+          .on('dashboard:run:complete', updateRunButton.bind(null, false))
+          .on('drillmenu:click', canceller)
+          .on('drillmodal:explore', canceller)
+          .on('dashboard:tile:explore', canceller)
+          .on('dashboard:tile:view', canceller)
+          .build()
+          .connect()
+          .then(setupDashboard)
+          .catch((error: Error) => {
+            console.error('Connection error', error)
+          })
       }
-      db.appendTo(el)
-        .on('dashboard:loaded', updateRunButton.bind(null, false))
-        .on('dashboard:run:start', updateRunButton.bind(null, true))
-        .on('dashboard:run:complete', updateRunButton.bind(null, false))
-        .on('drillmenu:click', canceller)
-        .on('drillmodal:explore', canceller)
-        .on('dashboard:tile:explore', canceller)
-        .on('dashboard:tile:view', canceller)
-        .build()
-        .connect()
-        .then(setupDashboard)
-        .catch((error: Error) => {
-          console.error('Connection error', error)
-        })
-    }
-  }, [dashboardNext])
+    },
+    [dashboardNext]
+  )
 
   const runDashboard = () => {
     if (dashboard) {
@@ -90,13 +93,20 @@ export const EmbedDashboard: React.FC<EmbedProps> = () => {
   return (
     <>
       <Heading mt="xlarge">Embedded Dashboard</Heading>
-      <SandboxStatus/>
+      <SandboxStatus />
       <Label htmlFor="toggle">
         Dashboard next
-        <ToggleSwitch ml='small' onChange={toggleDashboard} on={dashboardNext} id='toggle'/>
+        <ToggleSwitch
+          ml="small"
+          onChange={toggleDashboard}
+          on={dashboardNext}
+          id="toggle"
+        />
       </Label>
-      <Button m='medium' onClick={runDashboard} disabled={running}>Run Dashboard</Button>
-      <EmbedContainer ref={embedCtrRef}/>
+      <Button m="medium" onClick={runDashboard} disabled={running}>
+        Run Dashboard
+      </Button>
+      <EmbedContainer ref={embedCtrRef} />
     </>
   )
 }

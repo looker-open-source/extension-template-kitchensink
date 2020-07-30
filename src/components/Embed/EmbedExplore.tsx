@@ -22,18 +22,18 @@
  * THE SOFTWARE.
  */
 
-import React, { useCallback, useContext } from "react"
-import { EmbedProps } from "./types"
+import React, { useCallback, useContext } from 'react'
+import { EmbedProps } from './types'
 import { LookerEmbedSDK, LookerEmbedExplore } from '@looker/embed-sdk'
 import { SandboxStatus } from '../SandboxStatus'
 import { EmbedContainer } from './components/EmbedContainer'
 import {
   ExtensionContext,
   ExtensionContextData,
-} from "@looker/extension-sdk-react"
-import { Button, Heading } from "@looker/components"
+} from '@looker/extension-sdk-react'
+import { Button, Heading } from '@looker/components'
 
-export const EmbedExplore: React.FC<EmbedProps> = () => {
+export const EmbedExplore: React.FC<EmbedProps> = ({ id }) => {
   const [running, setRunning] = React.useState(true)
   const [explore, setExplore] = React.useState<LookerEmbedExplore>()
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
@@ -46,11 +46,11 @@ export const EmbedExplore: React.FC<EmbedProps> = () => {
     setExplore(explore)
   }
 
-  const embedCtrRef = useCallback(el => {
+  const embedCtrRef = useCallback((el) => {
     const hostUrl = extensionContext?.extensionSDK?.lookerHostData?.hostUrl
     if (el && hostUrl) {
       LookerEmbedSDK.init(hostUrl)
-      LookerEmbedSDK.createExploreWithId('thelook/products')
+      LookerEmbedSDK.createExploreWithId(id as string)
         .appendTo(el)
         .on('explore:ready', updateRunButton.bind(null, false))
         .on('explore:run:start', updateRunButton.bind(null, true))
@@ -73,9 +73,11 @@ export const EmbedExplore: React.FC<EmbedProps> = () => {
   return (
     <>
       <Heading mt="xlarge">Embedded Explore</Heading>
-      <SandboxStatus/>
-      <Button m='medium' onClick={runExplore} disabled={running}>Run Explore</Button>
-      <EmbedContainer ref={embedCtrRef}/>
+      <SandboxStatus />
+      <Button m="medium" onClick={runExplore} disabled={running}>
+        Run Explore
+      </Button>
+      <EmbedContainer ref={embedCtrRef} />
     </>
   )
 }
