@@ -131,16 +131,16 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   }
 
   const getUserAttributeClick = () => {
-    extensionHost
-      .userAttributeGetItem('foo')
+    extensionSDK
+      .userAttributeGetItem('user_value')
       .then((value) => {
-        updateMessages(`User attribute 'foo' is ${value}`)
+        updateMessages(`User attribute 'user_value' is ${value}`)
       })
       .catch(error => {
         updateMessages(error)
         console.error(error)
       })
-    extensionHost
+    extensionSDK
       .userAttributeGetItem('locale')
       .then((value) => {
         updateMessages(`User attribute 'locale' is ${value}`)
@@ -152,18 +152,18 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   }
 
   const setUserAttributeClick = () => {
-    extensionHost
-      .userAttributeSetItem('foo', new Date().toString())
+    extensionSDK
+      .userAttributeSetItem('user_value', new Date().toString())
       .then((value) => {
         if (value) {
-          updateMessages(`Updated 'foo' to '${value}'`)
+          updateMessages(`Updated 'user_value' to '${value}'`)
         }
       })
       .catch(error => {
         updateMessages(error)
         console.error(error)
       })
-    extensionHost
+    extensionSDK
       .userAttributeSetItem('locale', new Date().toString())
       .then((value) => {
         if (value) {
@@ -177,23 +177,19 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   }
 
   const resetUserAttributeClick = () => {
-    extensionHost
-      .userAttributeResetItem('foo', new Date().toString())
-      .then((value) => {
-        if (value) {
-          updateMessages(`Reset 'foo' to default`)
-        }
+    extensionSDK
+      .userAttributeResetItem('user_value')
+      .then(() => {
+        updateMessages(`Reset 'user_value' to default`)
       })
       .catch(error => {
         updateMessages(error)
         console.error(error)
       })
-    extensionHost
-      .userAttributeResetItem('locale', new Date().toString())
-      .then((value) => {
-        if (value) {
-          updateMessages(`Reset 'locale' to '${value}'`)
-        }
+    extensionSDK
+      .userAttributeResetItem('locale')
+      .then(() => {
+        updateMessages(`Reset 'locale' default`)
       })
       .catch(error => {
         updateMessages(error)

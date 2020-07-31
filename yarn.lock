@@ -1044,10 +1044,10 @@
     polished "^3.6.5"
     styled-system "^5.1.5"
 
-"@looker/embed-sdk@1.0.0-beta.6":
-  version "1.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@looker/embed-sdk/-/embed-sdk-1.0.0-beta.6.tgz#2e11b0e0843f006e098c49f9098e837271140558"
-  integrity sha512-fpdXne4QCtoL2NR+Vnx2IvW7yFosAugVDYbxJeD3GVphK/f0o2RudZb6VvKSPa88i91cJbHgrSh3gY4tO+1DsQ==
+"@looker/embed-sdk@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@looker/embed-sdk/-/embed-sdk-1.2.0.tgz#221150253930f18f7f8f7de73ff00b2149584665"
+  integrity sha512-PHTzfva958QnHVR9rbXKJ0HydoicygZg2N5bXdewwCzrfCJVblKTwwXCpf6EoaUrxF9Aic4mgMf5UrwymamWvQ==
   dependencies:
     "@looker/chatty" "^2.2.0"
 
