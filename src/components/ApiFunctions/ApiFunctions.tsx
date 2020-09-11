@@ -130,74 +130,66 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     history.push(`${ROUTES.CORESDK_ROUTE}?test=abcd`, { count: 1 })
   }
 
-  const getUserAttributeClick = () => {
-    extensionSDK
-      .userAttributeGetItem('user_value')
-      .then((value) => {
-        updateMessages(`User attribute 'user_value' is ${value}`)
-      })
-      .catch(error => {
-        const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
-        updateMessages(`Create a user attribute named "${name}" to use this attribute`)
-        console.error(error)
-      })
-    extensionSDK
-      .userAttributeGetItem('locale')
-      .then((value) => {
-        updateMessages(`User attribute 'locale' is ${value}`)
-      })
-      .catch(error => {
-        updateMessages(error)
-        console.error(error)
-      })
+  const getUserAttributeClick = async () => {
+    try {
+      const value = await extensionSDK.userAttributeGetItem('user_value')
+      updateMessages(`User attribute 'user_value' is ${value}`)
+    } catch (error) {
+      const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
+      updateMessages(`Create a user attribute named "${name}" and reload to use this attribute`)
+      console.error(error)
+    }
+    try {
+      const value = await extensionSDK.userAttributeGetItem('locale')
+      updateMessages(`User attribute 'locale' is ${value}`)
+    } catch (error) {
+      updateMessages(error)
+      console.error(error)
+    }
   }
 
-  const setUserAttributeClick = () => {
-    extensionSDK
-      .userAttributeSetItem('user_value', new Date().toString())
-      .then((value) => {
-        if (value) {
-          updateMessages(`Updated 'user_value' to '${value}'`)
-        }
-      })
-      .catch(error => {
+  const setUserAttributeClick = async () => {
+    try {
+      const value = await extensionSDK
+        .userAttributeSetItem('user_value', new Date().toString())
+      if (value) {
+        updateMessages(`Updated 'user_value' to '${value}'`)
+      }
+    } catch (error) {
         const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
-        updateMessages(`Create a user attribute named "${name}" to use this attribute`)
+        updateMessages(`Create a user attribute named "${name}" and reload to use this attribute`)
         console.error(error)
-      })
-    extensionSDK
-      .userAttributeSetItem('locale', new Date().toString())
-      .then((value) => {
-        if (value) {
-          updateMessages(`Updated 'locale' to '${value}'`)
-        }
-      })
-      .catch(error => {
-        updateMessages(error)
-        console.error(error)
-      })
+    }
+    // This will fail because system user attributes cannot by modified by an extension
+    try {
+      const timestamp = new Date().toString()
+      const value = await extensionSDK.userAttributeSetItem('locale', timestamp)
+      if (value) {
+        updateMessages(`Updated 'locale' to '${timestamp}'`)
+      }
+    } catch (error) {
+      updateMessages(error)
+      console.error(error)
+    }
   }
 
-  const resetUserAttributeClick = () => {
-    extensionSDK
-      .userAttributeResetItem('user_value')
-      .then(() => {
-        updateMessages(`Reset 'user_value' to default`)
-      })
-      .catch(error => {
-        const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
-        updateMessages(`Create a user attribute named "${name}" to use this attribute`)
-        console.error(error)
-      })
-    extensionSDK
-      .userAttributeResetItem('locale')
-      .then(() => {
-        updateMessages(`Reset 'locale' default`)
-      })
-      .catch(error => {
-        updateMessages(error)
-        console.error(error)
-      })
+  const resetUserAttributeClick = async () => {
+    try {
+      await extensionSDK.userAttributeResetItem('user_value')
+      updateMessages(`Reset 'user_value' to default`)
+    } catch (error) {
+      const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
+      updateMessages(`Create a user attribute named "${name}" and reload to use this attribute`)
+      console.error(error)
+    }
+    // This will fail because system user attributes cannot by modified by an extension
+    try {
+      await extensionSDK.userAttributeResetItem('locale')
+      updateMessages(`Reset 'locale' default`)
+    } catch (error) {
+      updateMessages(error)
+      console.error(error)
+    }
   }
 
   const clearMessagesClick = () => {
