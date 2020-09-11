@@ -137,7 +137,8 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
         updateMessages(`User attribute 'user_value' is ${value}`)
       })
       .catch(error => {
-        updateMessages(error)
+        const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
+        updateMessages(`Create a user attribute named "${name}" to use this attribute`)
         console.error(error)
       })
     extensionSDK
@@ -160,7 +161,8 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
         }
       })
       .catch(error => {
-        updateMessages(error)
+        const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
+        updateMessages(`Create a user attribute named "${name}" to use this attribute`)
         console.error(error)
       })
     extensionSDK
@@ -183,7 +185,8 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
         updateMessages(`Reset 'user_value' to default`)
       })
       .catch(error => {
-        updateMessages(error)
+        const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
+        updateMessages(`Create a user attribute named "${name}" to use this attribute`)
         console.error(error)
       })
     extensionSDK
