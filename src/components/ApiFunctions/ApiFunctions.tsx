@@ -160,7 +160,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
         updateMessages(`Create a user attribute named "${name}" and reload to use this attribute`)
         console.error(error)
     }
-    // This will fail because system user attributes cannot by modified by an extension
+    // This will fail because global user attributes cannot by modified by an extension
     try {
       const timestamp = new Date().toString()
       const value = await extensionSDK.userAttributeSetItem('locale', timestamp)
@@ -182,7 +182,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       updateMessages(`Create a user attribute named "${name}" and reload to use this attribute`)
       console.error(error)
     }
-    // This will fail because system user attributes cannot by modified by an extension
+    // This will fail because global user attributes cannot by modified by an extension
     try {
       await extensionSDK.userAttributeResetItem('locale')
       updateMessages(`Reset 'locale' default`)
