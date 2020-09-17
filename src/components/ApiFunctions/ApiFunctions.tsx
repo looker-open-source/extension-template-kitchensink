@@ -41,6 +41,8 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK } = extensionContext
 
+  const uaName = `${extensionSDK.lookerHostData?.extensionId.replace(/(::|-)/g, '_')}_user_value`
+
   const updateMessages = (message: string) => {
     setMessages((prevMessages) => {
       const maybeLineBreak = prevMessages.length === 0 ? '' : '\n'
@@ -135,8 +137,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       const value = await extensionSDK.userAttributeGetItem('user_value')
       updateMessages(`User attribute 'user_value' is ${value}`)
     } catch (error) {
-      const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
-      updateMessages(`Create a user attribute named "${name}" and reload to use this attribute`)
+      updateMessages(`Create a user attribute named "${uaName}" and reload to use this attribute`)
       console.error(error)
     }
     try {
@@ -156,8 +157,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
         updateMessages(`Updated 'user_value' to '${value}'`)
       }
     } catch (error) {
-        const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
-        updateMessages(`Create a user attribute named "${name}" and reload to use this attribute`)
+        updateMessages(`Create a user attribute named "${uaName}" and reload to use this attribute`)
         console.error(error)
     }
     // This will fail because global user attributes cannot by modified by an extension
@@ -178,8 +178,7 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       await extensionSDK.userAttributeResetItem('user_value')
       updateMessages(`Reset 'user_value' to default`)
     } catch (error) {
-      const name = `${extensionSDK.lookerHostData?.extensionId.replace('::', '_')}_user_value`
-      updateMessages(`Create a user attribute named "${name}" and reload to use this attribute`)
+      updateMessages(`Create a user attribute named "${uaName}" and reload to use this attribute`)
       console.error(error)
     }
     // This will fail because global user attributes cannot by modified by an extension
