@@ -263,7 +263,7 @@ const githubSignin = async () => {
 
 ##### Auth0 OAUTH2 setup
 
-The Auth0 OAUTH2 mechanism uses the PKCE flow. Create a [Auth0 account](https://auth0.com). Add the Auth0 client id and base URL to your .env file
+The Auth0 OAUTH2 mechanism uses the PKCE flow with secret key and code challenge. Create a [Auth0 account](https://auth0.com). Add the Auth0 client id and base URL to your .env file
 
 ```
 AUTH0_CLIENT_ID=Auth0 Client id
@@ -278,7 +278,7 @@ The Auth0 application client secret must also be added to the User attributes in
 - domain whitelist - https://{tenant_id}.auth0.com/login/oauth/token
 - default value - Auth0 client secret
 
-See `Auth.tsx` for authorizing use Auth0 OAUTH2 PKCE flow
+See `Auth.tsx` for authorizing use Auth0 OAUTH2 PKCE flow. The following demonstrates use of the secret key.
 
 ```typescript
 const auth0Signin = async () => {

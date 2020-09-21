@@ -31,6 +31,7 @@ export enum AuthOption {
   Google = 'Google',
   Github = 'Github',
   Auth0 = 'Auth0',
+  Auth0Alt = 'Auth0Alt',
 }
 
 // Posts server
