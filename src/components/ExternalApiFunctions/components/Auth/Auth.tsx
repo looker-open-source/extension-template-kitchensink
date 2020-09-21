@@ -268,7 +268,7 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
   }
 
   // Github login
-  const githubSignin = async (u) => {
+  const githubSignin = async () => {
     const authenticateParameters: Record<string, string> = {
       client_id: GITHUB_CLIENT_ID,
       response_type: 'code',
