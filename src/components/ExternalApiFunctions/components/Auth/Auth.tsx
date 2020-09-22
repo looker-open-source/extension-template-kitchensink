@@ -24,6 +24,7 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
+import * as semver from 'semver'
 import {
   Box,
   Button,
@@ -587,6 +588,12 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
     authMessage = 'You are not authorized!'
   }
 
+  const oauthCodeChallengeSupported = semver.intersects(
+    '>=7.17.0',
+    extensionSDK.lookerHostData?.lookerVersion || '7.0.0',
+    true
+  )
+
   return (
     <Box
       display="flex"
@@ -627,7 +634,7 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
             <ButtonOutline
               width="100%"
               onClick={signin.bind(null, AuthOption.Auth0Alt)}
-              disabled={AUTH0_CLIENT_ID === ''}
+              disabled={AUTH0_CLIENT_ID === '' || !oauthCodeChallengeSupported}
             >
               Sign with Auth0 (PKCE code challenge)
             </ButtonOutline>
