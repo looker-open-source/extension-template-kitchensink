@@ -615,34 +615,34 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
               onClick={signin.bind(null, AuthOption.Google)}
               disabled={GOOGLE_CLIENT_ID === ''}
             >
-              Sign with Google
+              Sign with Google (OAUTH implicit flow)
             </ButtonOutline>
             <ButtonOutline
               width="100%"
               onClick={signin.bind(null, AuthOption.Github)}
               disabled={GITHUB_CLIENT_ID === ''}
             >
-              Sign with Github (PKCE secret key)
+              Sign with Github (OAUTH code flow with secret key)
             </ButtonOutline>
             <ButtonOutline
               width="100%"
               onClick={signin.bind(null, AuthOption.Auth0)}
               disabled={AUTH0_CLIENT_ID === ''}
             >
-              Sign with Auth0 (PKCE secret key)
+              Sign with Auth0 (OAUTH code flow with secret key)
             </ButtonOutline>
             <ButtonOutline
               width="100%"
               onClick={signin.bind(null, AuthOption.Auth0Alt)}
               disabled={AUTH0_CLIENT_ID === '' || !oauthCodeChallengeSupported}
             >
-              Sign with Auth0 (PKCE code challenge)
+              Sign with Auth0 (OAUTH PKCE flow with code challenge)
             </ButtonOutline>
             <ButtonOutline
               width="100%"
               onClick={signin.bind(null, AuthOption.Custom)}
             >
-              Sign in
+              Sign in (with custom secret key)
             </ButtonOutline>
           </SpaceVertical>
         </DialogContent>
