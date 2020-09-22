@@ -24,6 +24,7 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
+import * as semver from 'semver'
 import {
   Box,
   Button,
@@ -268,34 +269,51 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
 
   // Github login
   const githubSignin = async () => {
+    const authenticateParameters: Record<string, string> = {
+      client_id: GITHUB_CLIENT_ID,
+      response_type: 'code',
+    }
     try {
       const response = await extensionSDK.oauth2Authenticate(
         'https://github.com/login/oauth/authorize',
-        {
-          client_id: GITHUB_CLIENT_ID,
-          response_type: 'code',
-        },
+        authenticateParameters,
         'GET'
       )
       // Note the client secret is securely stored in the Looker server.
       // Do NOT expose the client secret in the extension code.
+      // Note github does not support code challenge.
+      const exchangeParameters: Record<string, string> = {
+        client_id: GITHUB_CLIENT_ID,
+        code: response.code,
+        client_secret: extensionSDK.createSecretKeyTag('github_secret_key'),
+      }
       const codeExchangeResponse = await extensionSDK.oauth2ExchangeCodeForToken(
         'https://github.com/login/oauth/access_token',
-        {
-          client_id: GITHUB_CLIENT_ID,
-          client_secret: extensionSDK.createSecretKeyTag('github_secret_key'),
-          code: response.code,
+        exchangeParameters
+      )
+      const { access_token, error_description } = codeExchangeResponse
+      if (!access_token) {
+        updateErrorMessage(
+          dataDispatch,
+          error_description || 'Authentication failed'
+        )
+      } else {
+        const { id, name } = await getGithubUserInfo(access_token)
+        if (!id) {
+          updateErrorMessage(
+            dataDispatch,
+            'Failed to retrieve information about user'
+          )
+        } else {
+          const jwtToken = await signinDataServer(
+            AuthOption.Github,
+            id,
+            name,
+            access_token
+          )
+          updateLocationPushState(AuthOption.Github, jwtToken, access_token)
         }
-      )
-      const { access_token } = codeExchangeResponse
-      const { id, name } = await getGithubUserInfo(access_token)
-      const jwtToken = await signinDataServer(
-        AuthOption.Github,
-        id,
-        name,
-        access_token
-      )
-      updateLocationPushState(AuthOption.Github, jwtToken, access_token)
+      }
     } catch (error) {
       const errorMessage = extractMessageFromError(error)
       if (
@@ -316,8 +334,8 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
 
   // Get information about the use from Github
   const getGithubUserInfo = async (accessToken?: string) => {
-    let name = 'Unknown'
-    let id = 'Unknown'
+    let name
+    let id
     try {
       const userInfoResponse = await extensionSDK.fetchProxy(
         'https://api.github.com/user',
@@ -341,27 +359,43 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
   }
 
   // Sigin in using Auth0
-  const auth0Signin = async () => {
+  const auth0Signin = async (useCodeChallenge: boolean) => {
     try {
+      const authRequest: Record<string, string> = {
+        client_id: AUTH0_CLIENT_ID,
+        response_type: 'code',
+        scope: AUTH0_SCOPES,
+      }
+      if (useCodeChallenge) {
+        // Alternate method to secret key. The looker host will generate
+        // a code challenge and a code verifier. The code challenge is an
+        // hashed version of the code verifier. The challenge is sent with
+        // the code request, the verifier is sent with the token request.
+        // The oauth2 server then hashes the verifier and compares to the
+        // code challenge. If they match a token will be returned.
+        authRequest.code_challenge_method = 'S256'
+      }
       const response = await extensionSDK.oauth2Authenticate(
         `${AUTH0_BASE_URL}/authorize`,
-        {
-          client_id: AUTH0_CLIENT_ID,
-          response_type: 'code',
-          scope: AUTH0_SCOPES,
-        },
+        authRequest,
         'GET'
       )
-      // Note the client secret is securely stored in the Looker server.
-      // Do NOT expose the client secret in the extension code.
+      const exchangeRequest: Record<string, string> = {
+        grant_type: 'authorization_code',
+        client_id: AUTH0_CLIENT_ID,
+        code: response.code,
+      }
+      if (!useCodeChallenge) {
+        // Note the client secret is securely stored in the Looker server.
+        // Do NOT expose the client secret in the extension code.
+        exchangeRequest.client_secret = extensionSDK.createSecretKeyTag(
+          'auth0_secret_key'
+        )
+      }
+
       const codeExchangeResponse = await extensionSDK.oauth2ExchangeCodeForToken(
         `${AUTH0_BASE_URL}/login/oauth/token`,
-        {
-          grant_type: 'authorization_code',
-          client_id: AUTH0_CLIENT_ID,
-          client_secret: extensionSDK.createSecretKeyTag('auth0_secret_key'),
-          code: response.code,
-        }
+        exchangeRequest
       )
       const { access_token, expires_in } = codeExchangeResponse
       const { id, name } = await getAuth0UserInfo(access_token)
@@ -517,7 +551,10 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
         githubSignin()
         break
       case AuthOption.Auth0:
-        auth0Signin()
+        auth0Signin(false)
+        break
+      case AuthOption.Auth0Alt:
+        auth0Signin(true)
         break
       default:
         customSignin()
@@ -550,6 +587,12 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
     authMessage = 'You are not authorized!'
   }
 
+  const oauthCodeChallengeSupported = semver.intersects(
+    '>=7.17.0',
+    extensionSDK.lookerHostData?.lookerVersion || '7.0.0',
+    true
+  )
+
   return (
     <Box
       display="flex"
@@ -571,27 +614,34 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
               onClick={signin.bind(null, AuthOption.Google)}
               disabled={GOOGLE_CLIENT_ID === ''}
             >
-              Sign with Google
+              Sign with Google (OAUTH implicit flow)
             </ButtonOutline>
             <ButtonOutline
               width="100%"
               onClick={signin.bind(null, AuthOption.Github)}
               disabled={GITHUB_CLIENT_ID === ''}
             >
-              Sign with Github
+              Sign with Github (OAUTH code flow with secret key)
             </ButtonOutline>
             <ButtonOutline
               width="100%"
               onClick={signin.bind(null, AuthOption.Auth0)}
               disabled={AUTH0_CLIENT_ID === ''}
             >
-              Sign with Auth0
+              Sign with Auth0 (OAUTH code flow with secret key)
+            </ButtonOutline>
+            <ButtonOutline
+              width="100%"
+              onClick={signin.bind(null, AuthOption.Auth0Alt)}
+              disabled={AUTH0_CLIENT_ID === '' || !oauthCodeChallengeSupported}
+            >
+              Sign with Auth0 (OAUTH PKCE flow with code challenge)
             </ButtonOutline>
             <ButtonOutline
               width="100%"
               onClick={signin.bind(null, AuthOption.Custom)}
             >
-              Sign in
+              Sign in (with custom secret key)
             </ButtonOutline>
           </SpaceVertical>
         </DialogContent>

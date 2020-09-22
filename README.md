@@ -218,7 +218,7 @@ When the user uses the other authorization mechanisms, the extension access the 
 
 ##### Github OAUTH2 setup
 
-The Github OAUTH2 mechanism uses the PKCE flow. Create a [Github OAUTH App](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/). Add the Github client id to your .env file
+The Github OAUTH2 mechanism uses the Authorization code grant type with secret key. Create a [Github OAUTH App](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/). Add the Github client id to your .env file
 
 ```
 GITHUB_CLIENT_ID=Github OAUTH2 client ID
@@ -232,7 +232,7 @@ The Github client secret must also be added to the User attributes in the looker
 - domain whitelist - https://github.com/login/oauth/access_token
 - default value - Github client secret
 
-See `Auth.tsx` for authorizing use Github OAUTH2 PKCE flow
+See `Auth.tsx` for authorizing use Github OAUTH2 Authorization code grant type with secret key.
 
 ```typescript
 const githubSignin = async () => {
@@ -263,7 +263,7 @@ const githubSignin = async () => {
 
 ##### Auth0 OAUTH2 setup
 
-The Auth0 OAUTH2 mechanism uses the PKCE flow. Create a [Auth0 account](https://auth0.com). Add the Auth0 client id and base URL to your .env file
+The Auth0 OAUTH2 mechanism uses the uses the Authorization Code grant type with either a secret key or PKCE (code challenge & code verifier). Create a [Auth0 account](https://auth0.com). Add the Auth0 client id and base URL to your .env file
 
 ```
 AUTH0_CLIENT_ID=Auth0 Client id
@@ -278,7 +278,7 @@ The Auth0 application client secret must also be added to the User attributes in
 - domain whitelist - https://{tenant_id}.auth0.com/login/oauth/token
 - default value - Auth0 client secret
 
-See `Auth.tsx` for authorizing use Auth0 OAUTH2 PKCE flow
+See `Auth.tsx` for authorizing using the Auth0 OAUTH2 Authorization Code grant type. The following demonstrates use of the secret key.
 
 ```typescript
 const auth0Signin = async () => {
@@ -298,6 +298,37 @@ const auth0Signin = async () => {
         grant_type: 'authorization_code',
         client_id: AUTH0_CLIENT_ID,
         client_secret: extensionSDK.createSecretKeyTag('auth0_secret_key'),
+        code: response.code,
+      }
+    )
+    const { access_token, expires_in } = codeExchangeResponse
+    // Success processing
+  } catch (error) {
+    // Error processing
+  }
+}
+```
+
+See `Auth.tsx` for authorizing using the Auth0 OAUTH2 PKCE (code challenge & code verifier). The following demonstrates use of the code challenge.
+
+```typescript
+const auth0Signin = async () => {
+  try {
+    const response = await extensionSDK.oauth2Authenticate(
+      `${AUTH0_BASE_URL}/authorize`,
+      {
+        client_id: AUTH0_CLIENT_ID,
+        response_type: 'code',
+        scope: AUTH0_SCOPES,
+        authRequest.code_challenge_method = 'S256',
+      },
+      'GET'
+    )
+    const codeExchangeResponse = await extensionSDK.oauth2ExchangeCodeForToken(
+      `${AUTH0_BASE_URL}/login/oauth/token`,
+      {
+        grant_type: 'authorization_code',
+        client_id: AUTH0_CLIENT_ID,
         code: response.code,
       }
     )
