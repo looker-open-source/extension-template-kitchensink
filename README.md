@@ -128,7 +128,7 @@ Core SDK functions demonstrates various calls the Looker SDK.
 
 ### Embed Functions
 
-Ther are three Embed demonstrations:
+There are three Embed demonstrations:
 
 - Dashboard - can be toggled between class and next dashboards.
 - Explore
