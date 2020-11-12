@@ -24,23 +24,28 @@
 
 import React, { useEffect, useState, useContext } from 'react'
 import { Switch, Route } from 'react-router-dom'
-import styled from 'styled-components'
-import * as semver from 'semver'
-import { Box, ComponentsProvider, MessageBar } from '@looker/components'
+import { intersects } from 'semver'
+import {
+  ComponentsProvider,
+  Layout,
+  Page,
+  Aside,
+  Section,
+} from '@looker/components'
 import {
   ExtensionContext,
   ExtensionContextData,
 } from '@looker/extension-sdk-react'
 import { Sidebar } from './components/Sidebar'
-import { CoreSDKFunctions } from './components/CoreSDKFunctions'
-import { ApiFunctions } from './components/ApiFunctions'
-import { Home } from './components/Home'
-import { EmbedDashboard } from './components/Embed'
-import { EmbedExplore } from './components/Embed/EmbedExplore'
-import { EmbedLook } from './components/Embed/EmbedLook'
-import { ExternalApiFunctions } from './components/ExternalApiFunctions'
-import { MiscFunctions } from './components/MiscFunctions'
-import { Configure } from './components/Configure'
+import { AsyncCoreSDKFunctions } from './components/CoreSDKFunctions/CoreSDKFunctions.async'
+import { AsyncApiFunctions } from './components/ApiFunctions/ApiFunctions.async'
+import { AsyncHome } from './components/Home/Home.async'
+import { AsyncEmbedDashboard } from './components/Embed/EmbedDashboard.async'
+import { AsyncEmbedExplore } from './components/Embed/EmbedExplore.async'
+import { AsyncEmbedLook } from './components/Embed/EmbedLook.async'
+import { AsyncExternalApiFunctions } from './components/ExternalApiFunctions/ExternalApiFunctions.async'
+import { AsyncMiscFunctions } from './components/MiscFunctions/MiscFunctions.async'
+import { AsyncConfigure } from './components/Configure/Configure.async'
 import { KitchenSinkProps, ConfigurationData } from './types'
 
 export enum ROUTES {
@@ -60,7 +65,7 @@ export const KitchenSink: React.FC<KitchenSinkProps> = ({
   routeState,
 }) => {
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-  const { extensionSDK, initializeError } = extensionContext
+  const { extensionSDK } = extensionContext
   const [canPersistContextData, setCanPersistContextData] = useState<boolean>(
     false
   )
@@ -74,7 +79,7 @@ export const KitchenSink: React.FC<KitchenSinkProps> = ({
       // default configuration object and disable saving of context data.
       let context
       if (
-        semver.intersects(
+        intersects(
           '>=7.14.0',
           extensionSDK.lookerHostData?.lookerVersion || '7.0.0',
           true
@@ -124,20 +129,20 @@ export const KitchenSink: React.FC<KitchenSinkProps> = ({
     <>
       {configurationData && (
         <ComponentsProvider>
-          {initializeError ? (
-            <MessageBar intent="critical">{initializeError}</MessageBar>
-          ) : (
-            <Layout>
-              <Sidebar
-                route={route}
-                routeState={routeState}
-                configurationData={configurationData}
-              />
-              <Box>
+          <Page>
+            <Layout hasAside>
+              <Aside>
+                <Sidebar
+                  route={route}
+                  routeState={routeState}
+                  configurationData={configurationData}
+                />
+              </Aside>
+              <Section>
                 <Switch>
                   {configurationData.showApiFunctions && (
                     <Route path={ROUTES.API_ROUTE}>
-                      <ApiFunctions />
+                      <AsyncApiFunctions />
                     </Route>
                   )}
                   {configurationData.showCoreSdkFunctions && (
@@ -147,57 +152,50 @@ export const KitchenSink: React.FC<KitchenSinkProps> = ({
                         `${ROUTES.CORESDK_ROUTE}?test=abcd`,
                       ]}
                     >
-                      <CoreSDKFunctions />
+                      <AsyncCoreSDKFunctions />
                     </Route>
                   )}
                   {configurationData.showEmbedDashboard && (
                     <Route path={ROUTES.EMBED_DASHBOARD}>
-                      <EmbedDashboard id={configurationData.dashboardId} />
+                      <AsyncEmbedDashboard id={configurationData.dashboardId} />
                     </Route>
                   )}
                   {configurationData.showEmbedExplore && (
                     <Route path={ROUTES.EMBED_EXPLORE}>
-                      <EmbedExplore id={configurationData.exploreId} />
+                      <AsyncEmbedExplore id={configurationData.exploreId} />
                     </Route>
                   )}
                   {configurationData.showEmbedLook && (
                     <Route path={ROUTES.EMBED_LOOK}>
-                      <EmbedLook id={configurationData.lookId} />
+                      <AsyncEmbedLook id={configurationData.lookId} />
                     </Route>
                   )}
                   {configurationData.showExternalApiFunctions && (
                     <Route path={ROUTES.EXTERNAL_API_ROUTE}>
-                      <ExternalApiFunctions />
+                      <AsyncExternalApiFunctions />
                     </Route>
                   )}
                   {configurationData.showMiscFunctions && (
                     <Route path={ROUTES.MISC_ROUTE}>
-                      <MiscFunctions />
+                      <AsyncMiscFunctions />
                     </Route>
                   )}
                   <Route path={ROUTES.CONFIG_ROUTE}>
-                    <Configure
+                    <AsyncConfigure
                       configurationData={configurationData}
                       updateConfigurationData={updateConfigurationData}
                       canPersistContextData={canPersistContextData}
                     />
                   </Route>
                   <Route>
-                    <Home />
+                    <AsyncHome />
                   </Route>
                 </Switch>
-              </Box>
+              </Section>
             </Layout>
-          )}
+          </Page>
         </ComponentsProvider>
       )}
     </>
   )
 }
-
-export const Layout = styled(Box)`
-  display: grid;
-  grid-gap: 20px;
-  grid-template-columns: 200px auto;
-  width: 100vw;
-`

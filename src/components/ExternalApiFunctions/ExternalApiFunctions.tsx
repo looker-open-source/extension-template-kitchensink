@@ -54,7 +54,7 @@ import {
  *    Oauth2 providers that support the implicit OAUTH2 flow can be used.
  * 3. Google sheets demo.
  */
-export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
+const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
   // State is stored here as asynchronous actions may complete
   // after components unload. If components own state, react puts messages
   // on the console.
@@ -133,3 +133,5 @@ export const ExternalApiFunctions: React.FC<ExternalApiFunctionsProps> = () => {
     </>
   )
 }
+
+export default ExternalApiFunctions

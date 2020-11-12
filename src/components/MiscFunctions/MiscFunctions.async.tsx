@@ -22,5 +22,14 @@
  * THE SOFTWARE.
  */
 
-export * from './Configure'
-export * from './types'
+import React, { lazy, Suspense } from 'react'
+
+const MiscFunctions = lazy<any>(
+  async () => import(/* webpackChunkName: "misc_functions" */ './MiscFunctions')
+)
+
+export const AsyncMiscFunctions: React.FC = () => (
+  <Suspense fallback={<></>}>
+    <MiscFunctions />
+  </Suspense>
+)

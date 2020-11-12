@@ -22,29 +22,17 @@
  * THE SOFTWARE.
  */
 
-import React, { useEffect, useState } from 'react'
-import { Paragraph } from '@looker/components'
-import { SandboxStatusProps } from './types'
+import React, { lazy, Suspense } from 'react'
 
-export const SandboxStatus: React.FC<SandboxStatusProps> = () => {
-  const [sandboxStatus, setSandboxStatus] = useState('')
+const ExternalApiFunctions = lazy<any>(
+  async () =>
+    import(
+      /* webpackChunkName: "external_api_functions" */ './ExternalApiFunctions'
+    )
+)
 
-  useEffect(() => {
-    try {
-      const parentWindow: any = (window as any).parent
-      // Attempt to get data from the parent window. This
-      // will fail in a sandboxed environment and in most
-      // cases we want this to fail.
-      parentWindow.looker?.version
-      setSandboxStatus('NOT')
-    } catch (err) {
-      setSandboxStatus('')
-    }
-  }, [])
-
-  return (
-    <Paragraph my="medium">
-      This extension is <b>{sandboxStatus}</b> sandboxed.
-    </Paragraph>
-  )
-}
+export const AsyncExternalApiFunctions: React.FC = () => (
+  <Suspense fallback={<></>}>
+    <ExternalApiFunctions />
+  </Suspense>
+)

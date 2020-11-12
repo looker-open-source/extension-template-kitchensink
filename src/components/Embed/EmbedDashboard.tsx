@@ -33,7 +33,7 @@ import { Button, Heading, Label, ToggleSwitch } from '@looker/components'
 import { SandboxStatus } from '../SandboxStatus'
 import { EmbedContainer } from './components/EmbedContainer'
 
-export const EmbedDashboard: React.FC<EmbedProps> = ({ id }) => {
+const EmbedDashboard: React.FC<EmbedProps> = ({ id }) => {
   const [dashboardNext, setDashboardNext] = React.useState(true)
   const [running, setRunning] = React.useState(true)
   const [dashboard, setDashboard] = React.useState<LookerEmbedDashboard>()
@@ -69,10 +69,34 @@ export const EmbedDashboard: React.FC<EmbedProps> = ({ id }) => {
           .on('dashboard:loaded', updateRunButton.bind(null, false))
           .on('dashboard:run:start', updateRunButton.bind(null, true))
           .on('dashboard:run:complete', updateRunButton.bind(null, false))
-          .on('drillmenu:click', canceller)
-          .on('drillmodal:explore', canceller)
-          .on('dashboard:tile:explore', canceller)
-          .on('dashboard:tile:view', canceller)
+          .on('drillmenu:click', (e: any) => {
+            console.log('drillmenu:click (e)=>', e)
+            switch (e.link_type) {
+              case 'url':
+                console.log('url - open in new window')
+                extensionContext.extensionSDK.openBrowserWindow(e.url)
+                break
+              case 'dashboard':
+                console.log('dashboard - navigate to link')
+                extensionContext.extensionSDK.updateLocation(e.url)
+                break
+              case 'measure_default':
+                console.log('measure_default: let the modal open')
+                extensionContext.extensionSDK
+                break
+              default:
+                console.log(
+                  'unhandled drillmenu:click event type:',
+                  e.link_type
+                )
+            }
+            return undefined
+          })
+          // .on('drillmodal:explore', (e) => console.log('drillmodal:explore (e)=>', e))
+          // .on('drillmenu:click', canceller)
+          // .on('drillmodal:explore', canceller)
+          // .on('dashboard:tile:explore', canceller)
+          // .on('dashboard:tile:view', canceller)
           .build()
           .connect()
           .then(setupDashboard)
@@ -110,3 +134,5 @@ export const EmbedDashboard: React.FC<EmbedProps> = ({ id }) => {
     </>
   )
 }
+
+export default EmbedDashboard

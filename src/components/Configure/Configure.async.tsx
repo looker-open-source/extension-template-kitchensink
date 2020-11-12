@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Looker Data Sciences, Inc.
+ * Copyright (c) 2020 Looker Data Sciences, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,4 +22,17 @@
  * THE SOFTWARE.
  */
 
-export * from "./EmbedDashboard"
+import React, { lazy, Suspense } from 'react'
+import { ConfigureProps } from './types'
+
+const Configure = lazy<any>(
+  async () => import(/* webpackChunkName: "configure" */ './Configure')
+)
+
+export const AsyncConfigure: React.FC<ConfigureProps> = ({
+  configurationData,
+}) => (
+  <Suspense fallback={<></>}>
+    <Configure configurationData={configurationData} />
+  </Suspense>
+)

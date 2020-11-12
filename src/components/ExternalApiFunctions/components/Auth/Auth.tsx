@@ -24,7 +24,7 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import * as semver from 'semver'
+import { intersects } from 'semver'
 import {
   Box,
   Button,
@@ -587,7 +587,7 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
     authMessage = 'You are not authorized!'
   }
 
-  const oauthCodeChallengeSupported = semver.intersects(
+  const oauthCodeChallengeSupported = intersects(
     '>=7.17.0',
     extensionSDK.lookerHostData?.lookerVersion || '7.0.0',
     true

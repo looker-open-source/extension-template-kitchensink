@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Heading, Paragraph, SpaceVertical } from '@looker/components'
 import { SandboxStatus } from '../SandboxStatus'
 import { HomeProps } from './types'
 
-export const Home: React.FC<HomeProps> = () => {
+const Home: React.FC<HomeProps> = () => {
   return (
     <>
       <Heading mt="xlarge">Home</Heading>
@@ -45,7 +45,7 @@ export const Home: React.FC<HomeProps> = () => {
           The <b>Core Functions view</b> demonstrates using the Looker core API.
         </Paragraph>
         <Paragraph>
-          The <b>Embed Dashbbord view</b> demonstrates using the embed SDK to
+          The <b>Embed Dashboard view</b> demonstrates using the embed SDK to
           display an embedded dashboard in an extension.
         </Paragraph>
         <Paragraph>
@@ -81,3 +81,5 @@ export const Home: React.FC<HomeProps> = () => {
     </>
   )
 }
+
+export default Home

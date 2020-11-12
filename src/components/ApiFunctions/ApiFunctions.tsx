@@ -24,9 +24,7 @@
 
 import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Heading, Box } from '@looker/components'
-import styled from 'styled-components'
-import { ExtensionButton } from '../ExtensionButton'
+import { Heading, Box, ButtonOutline, TextArea } from '@looker/components'
 import { SandboxStatus } from '../SandboxStatus'
 import { ApiFunctionsProps } from './types'
 import {
@@ -35,13 +33,16 @@ import {
 } from '@looker/extension-sdk-react'
 import { ROUTES } from '../../KitchenSink'
 
-export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
+const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   const history = useHistory()
   const [messages, setMessages] = useState('')
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK } = extensionContext
 
-  const uaName = `${extensionSDK.lookerHostData?.extensionId.replace(/(::|-)/g, '_')}_user_value`
+  const uaName = `${extensionSDK.lookerHostData?.extensionId.replace(
+    /(::|-)/g,
+    '_'
+  )}_user_value`
 
   const updateMessages = (message: string) => {
     setMessages((prevMessages) => {
@@ -137,7 +138,9 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       const value = await extensionSDK.userAttributeGetItem('user_value')
       updateMessages(`User attribute 'user_value' is ${value}`)
     } catch (error) {
-      updateMessages(`Create a user attribute named "${uaName}" and reload to use this attribute`)
+      updateMessages(
+        `Create a user attribute named "${uaName}" and reload to use this attribute`
+      )
       console.error(error)
     }
     try {
@@ -151,14 +154,18 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
 
   const setUserAttributeClick = async () => {
     try {
-      const value = await extensionSDK
-        .userAttributeSetItem('user_value', new Date().toString())
+      const value = await extensionSDK.userAttributeSetItem(
+        'user_value',
+        new Date().toString()
+      )
       if (value) {
         updateMessages(`Updated 'user_value' to '${value}'`)
       }
     } catch (error) {
-        updateMessages(`Create a user attribute named "${uaName}" and reload to use this attribute`)
-        console.error(error)
+      updateMessages(
+        `Create a user attribute named "${uaName}" and reload to use this attribute`
+      )
+      console.error(error)
     }
     // This will fail because global user attributes cannot by modified by an extension
     try {
@@ -178,7 +185,9 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       await extensionSDK.userAttributeResetItem('user_value')
       updateMessages(`Reset 'user_value' to default`)
     } catch (error) {
-      updateMessages(`Create a user attribute named "${uaName}" and reload to use this attribute`)
+      updateMessages(
+        `Create a user attribute named "${uaName}" and reload to use this attribute`
+      )
       console.error(error)
     }
     // This will fail because global user attributes cannot by modified by an extension
@@ -201,119 +210,58 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       <SandboxStatus />
       <Box display="flex" flexDirection="row">
         <Box display="flex" flexDirection="column" width="50%" maxWidth="40vw">
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={updateTitleButtonClick}
-          >
+          <ButtonOutline mt="small" onClick={updateTitleButtonClick}>
             Update title
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={goToBrowseButtonClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={goToBrowseButtonClick}>
             Go to browse (update location)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={goToMarketplaceButtonClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={goToMarketplaceButtonClick}>
             Go to Marketplace (update location)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={openMarketplaceButtonClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={openMarketplaceButtonClick}>
             Open marketplace new window
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={verifyHostConnectionClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={verifyHostConnectionClick}>
             Verify host connection
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={localStorageSet}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={localStorageSet}>
             Set local storage
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={localStorageGet}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={localStorageGet}>
             Get local storage
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={localStorageRemove}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={localStorageRemove}>
             Remove local storage
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={trackActionClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={trackActionClick}>
             Pinger action
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={generateUnhandledErrorClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={generateUnhandledErrorClick}>
             Generate unhandled error
-          </ExtensionButton>
-          <ExtensionButton mt="small" variant="outline" onClick={testRouting}>
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={testRouting}>
             Route test
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={getUserAttributeClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={getUserAttributeClick}>
             Get User Attribute
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={setUserAttributeClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={setUserAttributeClick}>
             Set User Attribute
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={resetUserAttributeClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={resetUserAttributeClick}>
             Reset User Attribute
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={clearMessagesClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={clearMessagesClick}>
             Clear messages
-          </ExtensionButton>
+          </ButtonOutline>
         </Box>
-        <Box width="50%" pr="large" maxWidth="40vw">
-          <StyledPre>{messages}</StyledPre>
+        <Box width="50%" p="small" maxWidth="40vw">
+          <TextArea height="60vh" readOnly value={messages} />
         </Box>
       </Box>
     </>
   )
 }
 
-const StyledPre = styled.pre`
-  margin: 0 0 0 20px;
-  border: 1px solid #c1c6cc;
-  height: 100%;
-  padding: 20px;
-`
+export default ApiFunctions

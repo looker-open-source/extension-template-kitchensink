@@ -22,9 +22,11 @@
  * THE SOFTWARE.
  */
 
-const path = require("path")
-const webpack = require("webpack")
+const path = require('path')
+const webpack = require('webpack')
 const env_config = require('./env_config')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin
 
 const PATHS = {
   app: path.join(__dirname, 'src/index.tsx'),
@@ -46,7 +48,7 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         include: /src/,
-        sideEffects: false
+        sideEffects: false,
       },
       {
         test: /\.css$/i,
@@ -57,7 +59,15 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
+  optimization: {
+    usedExports: true,
+    chunkIds: 'named',
+    minimize: true,
+  },
   plugins: [
-    new webpack.DefinePlugin(env_config())
-  ]
+    new webpack.DefinePlugin(env_config()),
+    new BundleAnalyzerPlugin({
+      analyzerMode: process.env.ANALYZE_MODE || 'disabled',
+    }),
+  ],
 }

@@ -22,9 +22,6 @@
  * THE SOFTWARE.
  */
 
-export * from './ExternalApiFunctions'
-export * from './types'
-
 // Authorization options
 export enum AuthOption {
   Custom = 'Custom',

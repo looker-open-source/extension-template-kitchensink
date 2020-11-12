@@ -22,5 +22,16 @@
  * THE SOFTWARE.
  */
 
-export * from './Home'
-export * from './types'
+import React, { lazy, Suspense } from 'react'
+import { EmbedProps } from './types'
+
+const EmbedDashboard = lazy<any>(
+  async () =>
+    import(/* webpackChunkName: "embed_dashboard" */ './EmbedDashboard')
+)
+
+export const AsyncEmbedDashboard: React.FC<EmbedProps> = ({ id }) => (
+  <Suspense fallback={<></>}>
+    <EmbedDashboard id={id} />
+  </Suspense>
+)

@@ -22,4 +22,15 @@
  * THE SOFTWARE.
  */
 
-export * from "./MiscFunctions"
+import React, { lazy, Suspense } from 'react'
+import { EmbedProps } from './types'
+
+const EmbedExplore = lazy<any>(
+  async () => import(/* webpackChunkName: "embed_explore" */ './EmbedExplore')
+)
+
+export const AsyncEmbedExplore: React.FC<EmbedProps> = ({ id }) => (
+  <Suspense fallback={<></>}>
+    <EmbedExplore id={id} />
+  </Suspense>
+)

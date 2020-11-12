@@ -25,9 +25,7 @@
 import isEqual from 'lodash/isEqual'
 import React, { useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Heading, Box } from '@looker/components'
-import styled from 'styled-components'
-import { ExtensionButton } from '../ExtensionButton'
+import { Heading, Box, ButtonOutline, TextArea } from '@looker/components'
 import { SandboxStatus } from '../SandboxStatus'
 import {
   ExtensionContext,
@@ -35,7 +33,7 @@ import {
   getCore40SDK,
 } from '@looker/extension-sdk-react'
 
-export const CoreSDKFunctions = () => {
+const CoreSDKFunctions = () => {
   const [imageData, setImageData] = useState<string>()
   const location = useLocation()
   const [routeData, setRouteData] = useState<any>({})
@@ -114,6 +112,17 @@ export const CoreSDKFunctions = () => {
     }
   }
 
+  const updateUserClick = async () => {
+    try {
+      const value = await sdk.ok(
+        sdk.update_user(200000, { first_name: 'John' })
+      )
+      updateMessages(JSON.stringify(value, null, 2))
+    } catch (error) {
+      updateMessages('Error invoking search folders', error)
+    }
+  }
+
   const inlineQueryClick = async () => {
     // alternate mechanism to get sdk. Note getCore31SDK is also available
     // but getCore40SDK provides access to newer functionality
@@ -149,54 +158,32 @@ export const CoreSDKFunctions = () => {
       <SandboxStatus />
       <Box display="flex" flexDirection="row">
         <Box display="flex" flexDirection="column" width="50%" maxWidth="40vw">
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={allConnectionsClick}
-          >
+          <ButtonOutline mt="small" onClick={allConnectionsClick}>
             All connections (get method)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={searchFoldersClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={searchFoldersClick}>
             Search folders (get method with parameters)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={inlineQueryClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={inlineQueryClick}>
             Inline query (post method)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={rawLookImageClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={updateUserClick}>
+            Update user
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={rawLookImageClick}>
             Render Look image
-          </ExtensionButton>
+          </ButtonOutline>
           {imageData && <img src={imageData} />}
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={clearMessagesClick}
-          >
+          <ButtonOutline mt="small" onClick={clearMessagesClick}>
             Clear messages
-          </ExtensionButton>
+          </ButtonOutline>
         </Box>
-        <Box width="50%" pr="large" maxWidth="40vw">
-          <StyledPre>{messages}</StyledPre>
+        <Box width="50%" p="small" maxWidth="40vw">
+          <TextArea height="60vh" readOnly value={messages} />
         </Box>
       </Box>
     </>
   )
 }
 
-const StyledPre = styled.pre`
-  margin: 0 0 0 20px;
-  border: 1px solid #c1c6cc;
-  height: 100%;
-  padding: 20px;
-`
+export default CoreSDKFunctions

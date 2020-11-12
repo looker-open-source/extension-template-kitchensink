@@ -33,7 +33,7 @@ import {
 } from '@looker/extension-sdk-react'
 import { Button, Heading } from '@looker/components'
 
-export const EmbedExplore: React.FC<EmbedProps> = ({ id }) => {
+const EmbedExplore: React.FC<EmbedProps> = ({ id }) => {
   const [running, setRunning] = React.useState(true)
   const [explore, setExplore] = React.useState<LookerEmbedExplore>()
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
@@ -81,3 +81,5 @@ export const EmbedExplore: React.FC<EmbedProps> = ({ id }) => {
     </>
   )
 }
+
+export default EmbedExplore
