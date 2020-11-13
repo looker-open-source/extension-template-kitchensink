@@ -2,7 +2,7 @@
 
 This version and versions going forward demonstrate the use of code splitting. You must be on Looker version 7.21 or above for code splitting to work correctly.
 
-To remove code splitting you will need to modify the `KitchenSink.tsx`. Instructions are provided in this file to show how to do remove code splitting.
+To remove code splitting you will need to modify `KitchenSink.tsx`. Instructions are provided in this file to show how to fall back to building a single monolithic JavaScript bundle.
 
 # Looker Extension Kitchensink Template (React & TypeScript)
 
@@ -348,10 +348,10 @@ const auth0Signin = async () => {
 
 ## Deployment
 
-The process above requires your local development server to be running to load the extension code. To allow other people to use the extension, a production build of the extension needs to be run. As the kitchensink uses code splitting to reduce the size of the initially loaded bundle, multiple javascript files are generated.
+The process above requires your local development server to be running to load the extension code. To allow other people to use the extension, a production build of the extension needs to be run. As the kitchensink uses code splitting to reduce the size of the initially loaded bundle, multiple JavaScript files are generated.
 
 1. In your extension project directory on your development machine, build the extension by running the command `yarn build`.
-2. Drag and drop ALL of the generated javascript files contained in the `dist` directory into the Looker project interface.
+2. Drag and drop ALL of the generated JavaScript files contained in the `dist` directory into the Looker project interface.
 3. Modify your `manifest.lkml` to use `file` instead of `url` and point it at the `bundle.js` file:
    ```
    application: kitchensink {
@@ -370,7 +370,7 @@ The process above requires your local development server to be running to load t
    }
    ```
 
-Note that the additional javascript files generated during the production build process do not have to be mentioned in the manifest. These files will be loaded dynamically by the extension as and when they are needed. Note that to utilize code splitting, the Looker server must be at version 7.21 or above.
+Note that the additional JavaScript files generated during the production build process do not have to be mentioned in the manifest. These files will be loaded dynamically by the extension as and when they are needed. Note that to utilize code splitting, the Looker server must be at version 7.21 or above.
 
 ## Notes
 
