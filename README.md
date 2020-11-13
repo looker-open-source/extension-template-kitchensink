@@ -346,6 +346,41 @@ const auth0Signin = async () => {
 }
 ```
 
+## Code Splitting
+
+Code splitting relies on React.lazy and Suspense to render dynamic imports of a component. The name of the generated JavaScript file can be influenced by specifying a webpackChunkName comment,
+
+Example:
+
+```typescript
+import React, { lazy, Suspense } from 'react'
+
+const Home = lazy<any>(
+  async () => import(/* webpackChunkName: "home" */ './Home')
+)
+
+export const AsyncHome: React.FC = () => (
+  <Suspense fallback={<></>}>
+    <Home />
+  </Suspense>
+)
+```
+
+Note that the imported component MUST be the default export for the module.
+
+```typescript
+import React from 'react'
+import { Heading, Paragraph, SpaceVertical } from '@looker/components'
+import { SandboxStatus } from '../SandboxStatus'
+import { HomeProps } from './types'
+
+const Home: React.FC<HomeProps> = () => {
+  return <>. . .</>
+}
+
+export default Home
+```
+
 ## Deployment
 
 The process above requires your local development server to be running to load the extension code. To allow other people to use the extension, a production build of the extension needs to be run. As the kitchensink uses code splitting to reduce the size of the initially loaded bundle, multiple JavaScript files are generated.
