@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-const path = require("path")
-const webpack = require("webpack")
+const path = require('path')
+const webpack = require('webpack')
 const env_config = require('./env_config')
 
 const PATHS = {
@@ -37,7 +37,7 @@ module.exports = {
   output: {
     path: __dirname + '/dist',
     filename: 'bundle.js',
-    publicPath: "http://localhost:8080/"
+    publicPath: 'http://localhost:8080/',
   },
   mode: 'development',
   module: {
@@ -46,17 +46,14 @@ module.exports = {
         test: /\.(js|jsx|ts|tsx)$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
-        include: /src/
+        include: /src/,
       },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
-      },
+
       {
         test: /\.(js|jsx|ts|tsx)?$/,
         use: 'react-hot-loader/webpack',
         include: /node_modules/,
-      }
+      },
     ],
   },
   resolve: {
@@ -65,13 +62,12 @@ module.exports = {
   devServer: {
     index: 'index.html',
     headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
-    }
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers':
+        'X-Requested-With, content-type, Authorization',
+    },
   },
   devtool: 'inline-source-map',
-  plugins: [
-    new webpack.DefinePlugin(env_config())
-  ]
+  plugins: [new webpack.DefinePlugin(env_config())],
 }

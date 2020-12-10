@@ -22,34 +22,29 @@
  * THE SOFTWARE.
  */
 
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import {
-  ActionList,
-  ActionListItemAction,
-  ActionListColumns,
-  ActionListItem,
-  ActionListItemColumn,
+  DataTable,
+  DataTableAction,
+  DataTableColumns,
+  DataTableItem,
+  DataTableCell,
   Box,
   Button,
   FieldText,
   Form,
   Text,
-} from "@looker/components"
-import { DataServerDemoProps } from "./types"
+} from '@looker/components'
+import { DataServerDemoProps } from './types'
 import {
   ExtensionContext,
-  ExtensionContextData
-} from "@looker/extension-sdk-react"
-import {
-  updatePosts,
-  updateTitle,
-} from '../../data/DataReducer'
+  ExtensionContextData,
+} from '@looker/extension-sdk-react'
+import { updatePosts, updateTitle } from '../../data/DataReducer'
 import { handleResponse, handleError } from '../../utils/validate_data_response'
 import { getDataServerFetchProxy } from '../../utils/fetch_proxy'
-import {
-  POSTS_SERVER_URL,
-} from '../..'
+import { POSTS_SERVER_URL } from '../..'
 
 /**
  * Demonstration of Looker extension SDK external API use, fetchProxy
@@ -65,7 +60,10 @@ import {
  * A note on data. A simple json server is provided. This server must be
  * started in order for this demo to work.
  */
-export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, dataState }) => {
+export const DataServerDemo: React.FC<DataServerDemoProps> = ({
+  dataDispatch,
+  dataState,
+}) => {
   // Get access to the extension SDK and the looker API SDK.
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK } = extensionContext
@@ -93,24 +91,28 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
       // will not process it otherwise.
       // Note the that JSON object in the string MUST be converted to
       // a string.
-      const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
+      const dataServerFetchProxy = getDataServerFetchProxy(
+        extensionSDK,
+        location.state
+      )
       let response = await dataServerFetchProxy.fetchProxy(
         `${POSTS_SERVER_URL}/posts`,
         {
           method: 'POST',
           headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             title,
-            author: name
-          })
-        })
-      if (handleResponse(response, dataDispatch, "Failed to create post")) {
-        updateTitle(dataDispatch, "")
+            author: name,
+          }),
+        }
+      )
+      if (handleResponse(response, dataDispatch, 'Failed to create post')) {
+        updateTitle(dataDispatch, '')
         fetchPosts()
       }
-    } catch(error) {
+    } catch (error) {
       handleError(error, dataDispatch)
     }
   }
@@ -120,18 +122,21 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
     // Slightly more complex use of the fetch method. In this case
     // the DELETE method is used.
     try {
-      const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
+      const dataServerFetchProxy = getDataServerFetchProxy(
+        extensionSDK,
+        location.state
+      )
       let response = await dataServerFetchProxy.fetchProxy(
         `${POSTS_SERVER_URL}/posts/${post.id}`,
         {
           method: 'DELETE',
-        })
-      if (handleResponse(response, dataDispatch, "Failed to delete post")) {
-        updateTitle(dataDispatch, "")
+        }
+      )
+      if (handleResponse(response, dataDispatch, 'Failed to delete post')) {
+        updateTitle(dataDispatch, '')
         fetchPosts()
       }
-    }
-    catch(error) {
+    } catch (error) {
       handleError(error, dataDispatch)
     }
   }
@@ -143,12 +148,17 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
       // Note the response body is determined from the fetch response. The
       // fetch call can take a third argument that indicates what type of
       // response is expected.
-      const dataServerFetchProxy  = getDataServerFetchProxy(extensionSDK, location.state)
-      const response = await dataServerFetchProxy.fetchProxy(`${POSTS_SERVER_URL}/posts`)
+      const dataServerFetchProxy = getDataServerFetchProxy(
+        extensionSDK,
+        location.state
+      )
+      const response = await dataServerFetchProxy.fetchProxy(
+        `${POSTS_SERVER_URL}/posts`
+      )
       if (handleResponse(response, dataDispatch, undefined, firstTime)) {
         updatePosts(dataDispatch, response.body.reverse())
       }
-    } catch(error) {
+    } catch (error) {
       handleError(error, dispatchEvent, firstTime)
     }
   }
@@ -159,65 +169,85 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({ dataDispatch, da
   }
 
   // Post column definitions for action list
-  const postsColumns = [
+  const postsColumns: DataTableColumns = [
     {
       id: 'id',
-      primaryKey: true,
       title: 'ID',
       type: 'number',
-      widthPercent: 10,
+      size: 10,
     },
     {
       id: 'title',
       title: 'Title',
       type: 'string',
-      widthPercent: 60,
+      size: 60,
     },
     {
       id: 'author',
       title: 'Author',
       type: 'string',
-      widthPercent: 30,
+      size: 30,
     },
-  ] as ActionListColumns
+  ]
 
   // render posts action list columns
   const postsItems = posts.map((post: any) => {
     // Action column, posts may be deleted
     const actions = (
       <>
-        <ActionListItemAction onClick={onPostDelete.bind(null, post)}>
+        <DataTableAction onClick={onPostDelete.bind(null, post)}>
           Delete
-        </ActionListItemAction>
+        </DataTableAction>
       </>
     )
 
     // The columns
     const { id, title, author } = post
     return (
-      <ActionListItem key={id} id={id} actions={actions}>
-        <ActionListItemColumn>{id}</ActionListItemColumn>
-        <ActionListItemColumn>{title}</ActionListItemColumn>
-        <ActionListItemColumn>{author}</ActionListItemColumn>
-      </ActionListItem>
+      <DataTableItem key={id} id={id} actions={actions}>
+        <DataTableCell>{id}</DataTableCell>
+        <DataTableCell>{title}</DataTableCell>
+        <DataTableCell>{author}</DataTableCell>
+      </DataTableItem>
     )
   })
 
   return (
     <>
-      <Box display="flex" flexDirection="row" justifyContent="space-between" mb="medium" alignItems="baseline">
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="space-between"
+        mb="medium"
+        alignItems="baseline"
+      >
         <Text>Posts data is being served from {POSTS_SERVER_URL}</Text>
         <Box display="flex" flexDirection="row" alignItems="baseline">
-          <Button ml="small" onClick={ () => fetchPosts() }>Refresh data</Button>
+          <Button ml="small" onClick={() => fetchPosts()}>
+            Refresh data
+          </Button>
         </Box>
       </Box>
-      <Box mb="medium" px="xlarge" pt="small" border="1px solid" borderColor="palette.charcoal200" borderRadius="4px">
+      <Box
+        mb="medium"
+        px="xlarge"
+        pt="small"
+        border="1px solid"
+        borderColor="palette.charcoal200"
+        borderRadius="4px"
+      >
         <Form onSubmit={onCreatePostSubmit}>
-          <FieldText label="Title" name="title" value={title} onChange={onTitleChange} required />
+          <FieldText
+            label="Title"
+            name="title"
+            value={title}
+            onChange={onTitleChange}
+            required
+          />
           <Button disabled={title.length === 0}>Create Post</Button>
         </Form>
       </Box>
-      <ActionList columns={postsColumns}>{postsItems}</ActionList>
+      <DataTable columns={postsColumns}>{postsItems}</DataTable>
     </>
   )
 }
