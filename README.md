@@ -24,19 +24,19 @@ This version of the Kitchen sink requires Looker 7.9 or above.
 4) Start the development server
 
    ```
-   yarn start
+   yarn develop
    ```
 
    Great! Your extension is now running and serving the JavaScript at http://localhost:8080/bundle.js.
 
    > **Note well:** The webpack development server also supports https. To use, add the parameter --https to the start command
-   > `"start": "webpack-dev-server --hot --disable-host-check --https"`
+   > `"start": "webpack serve --disable-host-check --https"`
    > Should you decide to use https, you should visit the bundle URL you are running as there will likely be a certificate warning. The development server runs with a self-signed SSL certificate, so you will need to accept this to allow your browser to connect to it.
 
    The default yarn start command runs with hot module replacement working. Some changes will cause a full reload of the extension iframe. When this happens the extension framework connection will break. You will need to do a full page reload of the outer page to restart
    the extension.
 
-   To run without hot module replacement run `yarn start-no-hot`
+   To run without hot module replacement run `yarn develop --no-hot`
 
 5) Now log in to Looker and create a new project.
 
@@ -141,7 +141,7 @@ There are three Embed demonstrations:
 The fetch proxy demonstration requires that a json data server be running. To start the server run the command
 
 ```
-yarn start-data-server
+yarn data-server
 ```
 
 An error message will be displayed if the server is not running OR if the required entitlements are not defined.

@@ -4,12 +4,15 @@
   "description": "Looker Extension SDK functionality demonstration",
   "main": "dist/bundle.js",
   "scripts": {
+    "analyze": "export ANALYZE_MODE=static && yarn build",
+    "build": "export BABEL_ENV=build && webpack",
     "clean": "rm -rf dist",
-    "start": "webpack serve --hot --port 8080 --disable-host-check",
-    "start-no-hot": "yarn start --no-inline --no-hot",
-    "build": "export BABEL_ENV=build && tsc --skipLibCheck --noEmit && webpack --mode=production --config webpack.prod.config.js",
+    "develop": "webpack serve --hot --port 8080 --disable-host-check --config webpack.develop.js",
+    "prebuild": "yarn clean",
+    "lint": "run-p -c lint:*",
+    "lint:ts": "tsc --skipLibCheck --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-data-server": "cp db.json temp_db.json && nodemon server/index.js"
+    "data-server": "cp db.json temp_db.json && nodemon server/index.js"
   },
   "author": "Looker",
   "license": "MIT",
@@ -59,9 +62,11 @@
     "json-server": "^0.16.3",
     "minimist": "^1.2.2",
     "nodemon": "^2.0.6",
+    "npm-run-all": "^4.1.5",
     "react-hot-loader": "^4.12.20",
     "typescript": "4.1.2",
-    "webpack":  "^4.44.2",
+    "webpack": "^4.44.2",
+    "webpack-bundle-analyzer": "^4.2.0",
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.10.3"
   },
