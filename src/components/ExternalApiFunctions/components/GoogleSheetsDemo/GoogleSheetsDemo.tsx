@@ -22,34 +22,32 @@
  * THE SOFTWARE.
  */
 
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import {
-  ActionList,
-  ActionListColumns,
-  ActionListItem,
-  ActionListItemColumn,
-} from "@looker/components"
-import { GoogleSheetsDemoProps } from "./types"
+  DataTable,
+  DataTableColumns,
+  DataTableItem,
+  DataTableCell,
+} from '@looker/components'
+import { GoogleSheetsDemoProps } from './types'
 import {
   ExtensionContext,
-  ExtensionContextData
-} from "@looker/extension-sdk-react"
-import {
-  updateErrorMessage,
-  updateSheetData,
-} from '../../data/DataReducer'
+  ExtensionContextData,
+} from '@looker/extension-sdk-react'
+import { updateErrorMessage, updateSheetData } from '../../data/DataReducer'
 import { GOOGLE_CLIENT_ID, AuthOption } from '../..'
 import { handleResponse, handleError } from '../../utils/validate_data_response'
 import { getDataServerFetchProxy } from '../../utils/fetch_proxy'
-import {
-  POSTS_SERVER_URL,
-} from '../..'
+import { POSTS_SERVER_URL } from '../..'
 
 /**
  * Demonstrate usage of the google sheets API via the extension sdk fetch proxy
  */
-export const GoogleSheetsDemo: React.FC<GoogleSheetsDemoProps> = ({ dataDispatch, dataState }) => {
+export const GoogleSheetsDemo: React.FC<GoogleSheetsDemoProps> = ({
+  dataDispatch,
+  dataState,
+}) => {
   // Get access to the extension SDK and the looker API SDK.
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK } = extensionContext
@@ -62,7 +60,10 @@ export const GoogleSheetsDemo: React.FC<GoogleSheetsDemoProps> = ({ dataDispatch
     const fetchData = async () => {
       // Make sure the google client id has been defined
       if (GOOGLE_CLIENT_ID === '') {
-        updateErrorMessage(dataDispatch, 'Google client id has not been defined. Please see README.md for instructions.')
+        updateErrorMessage(
+          dataDispatch,
+          'Google client id has not been defined. Please see README.md for instructions.'
+        )
       } else {
         const { googleAccessToken, authOption } = location.state as any
         const spreadsheetId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
@@ -77,24 +78,31 @@ export const GoogleSheetsDemo: React.FC<GoogleSheetsDemoProps> = ({ dataDispatch
               // Read the spread sheet. Note that the spreadsheet id comes from the Google Sheets
               // Browser quick start demo
               // https://developers.google.com/sheets/api/quickstart/js
-                const response = await extensionSDK.fetchProxy(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?access_token=${googleAccessToken}`)
-                if (handleResponse(response, dataDispatch)) {
-                  const values: any[] = response.body?.values || []
-                  updateSheetData(dataDispatch, values)
-                }
+              const response = await extensionSDK.fetchProxy(
+                `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?access_token=${googleAccessToken}`
+              )
+              if (handleResponse(response, dataDispatch)) {
+                const values: any[] = response.body?.values || []
+                updateSheetData(dataDispatch, values)
+              }
             }
           } else {
-            // If use is not logged in using google OAUTH the sheet is read using a 
+            // If use is not logged in using google OAUTH the sheet is read using a
             // proxy call to the data server. The data server will check to see if the
             // user is authorized to make the call by checking the JWT token.
-            const dataServerFetchProxy = getDataServerFetchProxy(extensionSDK, location.state)
-            const response = await dataServerFetchProxy.fetchProxy(`${POSTS_SERVER_URL}/sheets/${spreadsheetId}/${range}`)
+            const dataServerFetchProxy = getDataServerFetchProxy(
+              extensionSDK,
+              location.state
+            )
+            const response = await dataServerFetchProxy.fetchProxy(
+              `${POSTS_SERVER_URL}/sheets/${spreadsheetId}/${range}`
+            )
             if (handleResponse(response, dataDispatch)) {
               const values: any[] = response.body?.values || []
               updateSheetData(dataDispatch, values)
             }
           }
-        } catch(error) {
+        } catch (error) {
           handleError(error, dispatchEvent)
         }
       }
@@ -107,59 +115,57 @@ export const GoogleSheetsDemo: React.FC<GoogleSheetsDemoProps> = ({ dataDispatch
   const { sheetData } = dataState
 
   // Sheet column definitions for action list
-  const sheetColumns = [
+  const sheetColumns: DataTableColumns = [
     {
       id: 'name',
-      primaryKey: true,
       title: 'Name',
       type: 'string',
-      widthPercent: 20,
+      size: 'medium',
     },
     {
       id: 'sex',
       title: 'Sex',
       type: 'string',
-      widthPercent: 20,
+      size: 'medium',
     },
     {
       id: 'collegeYear',
       title: 'Year',
       type: 'string',
-      widthPercent: 20,
+      size: 'medium',
     },
     {
       id: 'state',
       title: 'State',
       type: 'string',
-      widthPercent: 20,
+      size: 'medium',
     },
     {
       id: 'major',
       title: 'Major',
       type: 'string',
-      widthPercent: 20,
+      size: 'medium',
     },
-  ] as ActionListColumns
+  ]
 
   // render posts action list columns
   const sheetItems = (sheetData || []).map((sheetRow: any[]) => {
     // The column data
-    const [ name, sex, collegeYear, state, major ] = sheetRow
+    const [name, sex, collegeYear, state, major] = sheetRow
     return (
-      <ActionListItem key={name} id={name}>
-        <ActionListItemColumn>{name}</ActionListItemColumn>
-        <ActionListItemColumn>{sex}</ActionListItemColumn>
-        <ActionListItemColumn>{collegeYear}</ActionListItemColumn>
-        <ActionListItemColumn>{state}</ActionListItemColumn>
-        <ActionListItemColumn>{major}</ActionListItemColumn>
-      </ActionListItem>
+      <DataTableItem key={name} id={name}>
+        <DataTableCell>{name}</DataTableCell>
+        <DataTableCell>{sex}</DataTableCell>
+        <DataTableCell>{collegeYear}</DataTableCell>
+        <DataTableCell>{state}</DataTableCell>
+        <DataTableCell>{major}</DataTableCell>
+      </DataTableItem>
     )
   })
 
-  return(
+  return (
     <>
-      {sheetData && <ActionList columns={sheetColumns}>{sheetItems}</ActionList> }
+      {sheetData && <DataTable columns={sheetColumns}>{sheetItems}</DataTable>}
     </>
   )
 }
-
