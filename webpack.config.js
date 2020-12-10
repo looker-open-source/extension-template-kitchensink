@@ -53,6 +53,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    fallback: { buffer: false },
   },
   plugins: [
     new BundleAnalyzerPlugin({
