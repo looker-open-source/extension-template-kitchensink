@@ -23,8 +23,6 @@
  */
 
 const commonConfig = require('./webpack.config')
-const webpack = require('webpack')
-const env_config = require('./env_config')
 
 module.exports = {
   ...commonConfig,
@@ -53,5 +51,5 @@ module.exports = {
     },
   },
   devtool: 'inline-source-map',
-  plugins: [...commonConfig.plugins, new webpack.DefinePlugin(env_config())],
+  plugins: [...commonConfig.plugins],
 }

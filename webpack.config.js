@@ -23,6 +23,8 @@
  */
 
 const path = require('path')
+const webpack = require('webpack')
+const env_config = require('./env_config')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin
 
@@ -56,5 +58,6 @@ module.exports = {
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.ANALYZE_MODE || 'disabled',
     }),
+    new webpack.DefinePlugin(env_config()),
   ],
 }
