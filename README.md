@@ -157,7 +157,10 @@ GOOGLE_API_KEY=
 GITHUB_CLIENT_ID=
 AUTH0_CLIENT_ID=
 AUTH0_BASE_URL=
+POSTS_SERVER_URL=http://127.0.0.1:3000
 ```
+
+POSTS_SERVER_URL is the URL of the data server.
 
 ##### Custom API setup
 
