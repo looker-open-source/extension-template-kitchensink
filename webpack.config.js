@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+const fs = require('fs')
 const path = require('path')
 const webpack = require('webpack')
 const dotenv = require('dotenv')
@@ -29,6 +30,10 @@ const dotenv = require('dotenv')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin
 
+// Create .env file if it does not exist
+if (!fs.existsSync('.env')) {
+  fs.copyFileSync('.env_example', '.env')
+}
 dotenv.config()
 if (!process.env.POSTS_SERVER_URL) {
   // webpack 5 is stricter about environment variables. The POSTS_SERVER_URL
