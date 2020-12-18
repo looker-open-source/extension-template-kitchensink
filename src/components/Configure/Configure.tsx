@@ -33,9 +33,10 @@ import {
   SpaceVertical,
   ValidationMessages,
 } from '@looker/components'
+import { Looker40SDK } from '@looker/sdk/lib/4.0/methods'
 import {
-  ExtensionContext,
-  ExtensionContextData,
+  ExtensionContext2,
+  ExtensionContextData2,
 } from '@looker/extension-sdk-react'
 import { SandboxStatus } from '../SandboxStatus'
 import { ConfigureProps } from './types'
@@ -46,10 +47,17 @@ export const Configure: React.FC<ConfigureProps> = ({
   configurationData,
   updateConfigurationData,
 }) => {
-  const [localConfigurationData, setLocalConfigurationData] = useState<
-    ConfigurationData
-  >({ dashboardId: '', exploreId: '', lookId: '' } as ConfigurationData)
-  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
+  const [
+    localConfigurationData,
+    setLocalConfigurationData,
+  ] = useState<ConfigurationData>({
+    dashboardId: '',
+    exploreId: '',
+    lookId: '',
+  } as ConfigurationData)
+  const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
+    ExtensionContext2
+  )
   const { extensionSDK } = extensionContext
 
   useEffect(() => {

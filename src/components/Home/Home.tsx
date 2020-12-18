@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Heading, Paragraph, SpaceVertical } from '@looker/components'
 import { SandboxStatus } from '../SandboxStatus'
 import { HomeProps } from './types'

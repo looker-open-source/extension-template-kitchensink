@@ -24,7 +24,7 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import * as semver from 'semver'
+import { intersects } from 'semver'
 import {
   Box,
   Button,
@@ -35,9 +35,10 @@ import {
   SpaceVertical,
   Text,
 } from '@looker/components'
+import { Looker40SDK } from '@looker/sdk/lib/4.0/methods'
 import {
-  ExtensionContext,
-  ExtensionContextData,
+  ExtensionContext2,
+  ExtensionContextData2,
 } from '@looker/extension-sdk-react'
 import { AuthProps } from './types'
 import {
@@ -66,8 +67,10 @@ import { getDataServerFetchProxy } from '../../utils/fetch_proxy'
  */
 export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
   // Get access to the extension SDK and the looker API SDK.
-  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-  const { extensionSDK, core40SDK } = extensionContext
+  const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
+    ExtensionContext2
+  )
+  const { extensionSDK, coreSDK } = extensionContext
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -469,7 +472,7 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
     let id: string | number = 'Unknown'
     try {
       // Get information about user from Looker
-      const value = await core40SDK.ok(core40SDK.me())
+      const value = await coreSDK.ok(coreSDK.me())
       name = value.display_name || 'Unknown'
       id = value.id || 'Unknown'
     } catch (error) {
@@ -587,7 +590,7 @@ export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
     authMessage = 'You are not authorized!'
   }
 
-  const oauthCodeChallengeSupported = semver.intersects(
+  const oauthCodeChallengeSupported = intersects(
     '>=7.17.0',
     extensionSDK.lookerHostData?.lookerVersion || '7.0.0',
     true

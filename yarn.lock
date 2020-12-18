@@ -1213,30 +1213,42 @@
   dependencies:
     "@looker/chatty" "^2.2.0"
 
-"@looker/extension-sdk-react@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@looker/extension-sdk-react/-/extension-sdk-react-0.7.1.tgz#3d9569e19293d5867f8a108c91aa9017179e5ffa"
-  integrity sha512-idd8g2AX5Wmnm1GT/b2ZxmPgSgR2nXuzuoN+jMVugDtIzKy0xQsKzMm3tqSWunzpDkYG+5I3F9UP0r3yaudKSw==
+"@looker/extension-sdk-react@0.10.0-alpha.18":
+  version "0.10.0-alpha.18"
+  resolved "https://registry.yarnpkg.com/@looker/extension-sdk-react/-/extension-sdk-react-0.10.0-alpha.18.tgz#56b71af3ab407918acca465f823e43d060877c6b"
+  integrity sha512-po4Tu2upwBVGvNQIsVdWVSE3GbP5an5L/mvjcPaIkvru46MJdG/kPkreF95d+pyi+74qBv56fRd3TmbnyIKTbA==
   dependencies:
     ts-loader "^6.1.2"
 
-"@looker/extension-sdk@^0.13.1":
-  version "0.13.1"
-  resolved "https://registry.yarnpkg.com/@looker/extension-sdk/-/extension-sdk-0.13.1.tgz#c6b340bf38500f83cd9ed8de86fd99c8991c7488"
-  integrity sha512-yRj+DugiiwvVLCA7qZLZbx/r8SOD73hLsLzvwgaVAOr+2N1GReeQv4eR8rPwxxiRM7xo9dJsVYIVuPpSRqiCqA==
+"@looker/extension-sdk@0.16.0-alpha.10":
+  version "0.16.0-alpha.10"
+  resolved "https://registry.yarnpkg.com/@looker/extension-sdk/-/extension-sdk-0.16.0-alpha.10.tgz#6a6f754f6a9c77f27125725d7327107ddb0b4ff0"
+  integrity sha512-0lfiGrzpGNhzh2mMuQBZxReZF35xw5Tt1OWU3vVjLToBTmQX17CxdqLXYdcNafP5gxc+FEb9gud+ZN37WmSLag==
   dependencies:
     "@looker/chatty" "^2.2.0"
-    "@looker/sdk" "^0.3.7-beta.5"
-    "@looker/sdk-rtl" "^0.3.7-beta.5"
+    "@looker/sdk" "0.3.0-alpha.152+837940f"
+    "@looker/sdk-rtl" "0.3.7-alpha.970+837940f"
     deepmerge "^4.2.2"
-    semver "^6.3.0"
+    semver "^7.3.4"
 
 "@looker/icons@^0.9.23":
   version "0.9.23"
   resolved "https://registry.yarnpkg.com/@looker/icons/-/icons-0.9.23.tgz#86463531bfe5af83c8bb29d92ac1ae36f4bdf57e"
   integrity sha512-BTHw4W+ovyK2pvgv7cVjtG8YJDeRUd/prbZvju9sK1hBTU24TeLbhuViZVktlZDGprTXuBAc96QDhnEaEyaoxA==
 
-"@looker/sdk-rtl@^0.3.7-beta.4", "@looker/sdk-rtl@^0.3.7-beta.5":
+"@looker/sdk-rtl@0.3.7-alpha.970+837940f":
+  version "0.3.7-alpha.970"
+  resolved "https://registry.yarnpkg.com/@looker/sdk-rtl/-/sdk-rtl-0.3.7-alpha.970.tgz#6e04f49933793eac6f7732e5aeb9425f95ef19c2"
+  integrity sha512-5fo4IKdjYz/nD2gifkNhrSOdOSqe+LPx/WsVsN3Fy5ZSDwJzrxhofoIE4eApq2jdDLie6hU+HxwupSF8Nz+7rg==
+  dependencies:
+    ini "^1.3.5"
+    readable-stream "^3.4.0"
+    request "^2.88.0"
+    request-promise-native "^1.0.8"
+    ts-node "^8.4.1"
+    typescript "^3.8.2"
+
+"@looker/sdk-rtl@^0.3.7-alpha.970+837940f":
   version "0.3.7-beta.5"
   resolved "https://registry.yarnpkg.com/@looker/sdk-rtl/-/sdk-rtl-0.3.7-beta.5.tgz#ade26b25bf116a58e1c117319ce7d59db9afff47"
   integrity sha512-sFS09hswBcCkSfaUou2LI0wRPeijgbrqN/VrEeJSySn+3nrDGV6XMGp1jjcJH9HHusJit+EW/Tuhhi1f1HekLQ==
@@ -1248,12 +1260,12 @@
     ts-node "^8.4.1"
     typescript "^3.8.2"
 
-"@looker/sdk@^0.3.7-beta.5":
-  version "0.3.7-beta.5"
-  resolved "https://registry.yarnpkg.com/@looker/sdk/-/sdk-0.3.7-beta.5.tgz#de26db6172786ae510ddbb1d73ebde570ea2ba6e"
-  integrity sha512-oajoL6IAd+OYqWDTWHMM3COSCDS+4Wd//Hl5ORATLGsq3rIn7qInNSBqsSA2NadSfQFCc2jopIZOB/+8h8La0A==
+"@looker/sdk@0.3.0-alpha.152+837940f":
+  version "0.3.0-alpha.152"
+  resolved "https://registry.yarnpkg.com/@looker/sdk/-/sdk-0.3.0-alpha.152.tgz#d67fe39544d7b1dbe4dbfba71d2115a1e16a828a"
+  integrity sha512-tGsq9FQD0RZfSq4/s45tVPQeE6T3AyUAAwV1QtHcTqcRz6whm7NrakehF5KqnXygxm/KpTrknvnqRV4F4Hoxpw==
   dependencies:
-    "@looker/sdk-rtl" "^0.3.7-beta.4"
+    "@looker/sdk-rtl" "^0.3.7-alpha.970+837940f"
     ini "^1.3.5"
     readable-stream "^3.4.0"
     request "^2.88.0"
