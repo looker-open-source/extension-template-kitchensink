@@ -23,27 +23,19 @@
  */
 
 import isEqual from 'lodash/isEqual'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Heading, Box } from '@looker/components'
-import styled from 'styled-components'
-import { ExtensionButton } from '../ExtensionButton'
+import { Heading, Box, ButtonOutline, TextArea } from '@looker/components'
 import { SandboxStatus } from '../SandboxStatus'
-import {
-  ExtensionContext,
-  ExtensionContextData,
-  getCore40SDK,
-} from '@looker/extension-sdk-react'
+import { getCoreSDK2 } from '@looker/extension-sdk-react'
+import { Looker40SDK } from '@looker/sdk/lib/4.0/methods'
 
 export const CoreSDKFunctions = () => {
   const [imageData, setImageData] = useState<string>()
   const location = useLocation()
   const [routeData, setRouteData] = useState<any>({})
   const [messages, setMessages] = useState('')
-  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-  const sdk = extensionContext.core40SDK
-  const sdk31 = extensionContext.core31SDK
-  const extensionSDK = extensionContext.extensionSDK
+  const sdk = getCoreSDK2<Looker40SDK>()
 
   useEffect(() => {
     if (location.search || location.pathname.includes('?')) {
@@ -73,7 +65,7 @@ export const CoreSDKFunctions = () => {
   const allConnectionsClick = async () => {
     try {
       const value = await sdk.ok(sdk.all_connections())
-      value.forEach((connection) => {
+      value.forEach((connection: any) => {
         updateMessages(connection.name || '')
       })
     } catch (error) {
@@ -115,12 +107,9 @@ export const CoreSDKFunctions = () => {
   }
 
   const inlineQueryClick = async () => {
-    // alternate mechanism to get sdk. Note getCore31SDK is also available
-    // but getCore40SDK provides access to newer functionality
-    const core40SDK = getCore40SDK()
     try {
-      const value = await core40SDK.ok(
-        core40SDK.run_inline_query({
+      const value = await sdk.ok(
+        sdk.run_inline_query({
           result_format: 'json_detail',
           limit: 10,
           body: {
@@ -149,54 +138,27 @@ export const CoreSDKFunctions = () => {
       <SandboxStatus />
       <Box display="flex" flexDirection="row">
         <Box display="flex" flexDirection="column" width="50%" maxWidth="40vw">
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={allConnectionsClick}
-          >
+          <ButtonOutline mt="small" onClick={allConnectionsClick}>
             All connections (get method)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={searchFoldersClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={searchFoldersClick}>
             Search folders (get method with parameters)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={inlineQueryClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={inlineQueryClick}>
             Inline query (post method)
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={rawLookImageClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={rawLookImageClick}>
             Render Look image
-          </ExtensionButton>
+          </ButtonOutline>
           {imageData && <img src={imageData} />}
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={clearMessagesClick}
-          >
+          <ButtonOutline mt="small" onClick={clearMessagesClick}>
             Clear messages
-          </ExtensionButton>
+          </ButtonOutline>
         </Box>
-        <Box width="50%" pr="large" maxWidth="40vw">
-          <StyledPre>{messages}</StyledPre>
+        <Box width="50%" p="small" maxWidth="40vw">
+          <TextArea height="60vh" readOnly value={messages} />
         </Box>
       </Box>
     </>
   )
 }
-
-const StyledPre = styled.pre`
-  margin: 0 0 0 20px;
-  border: 1px solid #c1c6cc;
-  height: 100%;
-  padding: 20px;
-`

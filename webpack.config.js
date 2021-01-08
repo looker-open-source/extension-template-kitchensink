@@ -69,6 +69,7 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
     fallback: { buffer: false },
   },
+  devtool: 'source-map',
   plugins: [
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.ANALYZE_MODE || 'disabled',

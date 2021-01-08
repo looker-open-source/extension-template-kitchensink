@@ -23,20 +23,27 @@
  */
 
 import React, { useContext, useState } from 'react'
-import { Heading, Box, Paragraph } from '@looker/components'
-import styled from 'styled-components'
-import { ExtensionButton } from '../ExtensionButton'
+import {
+  Heading,
+  Box,
+  Paragraph,
+  ButtonOutline,
+  TextArea,
+} from '@looker/components'
+import { Looker40SDK } from '@looker/sdk/lib/4.0/methods'
+import {
+  ExtensionContext2,
+  ExtensionContextData2,
+} from '@looker/extension-sdk-react'
 import { SandboxStatus } from '../SandboxStatus'
 import { MiscFunctionsProps } from './types'
-import {
-  ExtensionContext,
-  ExtensionContextData,
-} from '@looker/extension-sdk-react'
 import { ExtensionHostApi } from '@looker/extension-sdk'
 
 export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
   const [messages, setMessages] = useState('')
-  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
+  const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
+    ExtensionContext2
+  )
   const extensionSDK = extensionContext.extensionSDK as ExtensionHostApi
 
   const updateMessages = (message: string) => {
@@ -90,35 +97,20 @@ export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
             this by pressing the button 4 times within the 30 second window (you
             have to wait for the extension to reload).
           </Paragraph>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={navigateAwayClick}
-          >
+          <ButtonOutline mt="small" onClick={navigateAwayClick}>
             Change extension window location
-          </ExtensionButton>
-          <ExtensionButton
-            mt="small"
-            variant="outline"
-            onClick={clearMessagesClick}
-          >
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={clearMessagesClick}>
             Clear messages
-          </ExtensionButton>
-          <ExtensionButton onClick={logout}>
+          </ButtonOutline>
+          <ButtonOutline mt="small" onClick={logout}>
             Logout of Looker (only in /spartan mode)
-          </ExtensionButton>
+          </ButtonOutline>
         </Box>
-        <Box width="50%" pr="large" maxWidth="40vw">
-          <StyledPre>{messages}</StyledPre>
+        <Box width="50%" p="small" maxWidth="40vw">
+          <TextArea height="60vh" readOnly value={messages} />
         </Box>
       </Box>
     </>
   )
 }
-
-const StyledPre = styled.pre`
-  margin: 0 0 0 20px;
-  border: 1px solid #c1c6cc;
-  height: 100%;
-  padding: 20px;
-`

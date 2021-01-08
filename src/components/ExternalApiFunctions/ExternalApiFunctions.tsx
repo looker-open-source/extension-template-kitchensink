@@ -33,7 +33,6 @@ import {
   Tab,
   TabPanels,
   TabPanel,
-  Text,
 } from '@looker/components'
 import { SandboxStatus } from '../SandboxStatus'
 import { ExternalApiFunctionsProps } from './types'
@@ -44,7 +43,6 @@ import {
   initialState as dataInitialState,
   reducer as dataReducer,
   updateErrorMessage,
-  DataState,
 } from './data/DataReducer'
 
 /**

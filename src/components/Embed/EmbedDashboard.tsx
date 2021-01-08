@@ -23,21 +23,24 @@
  */
 
 import React, { useCallback, useContext } from 'react'
-import { EmbedProps } from './types'
-import { LookerEmbedSDK, LookerEmbedDashboard } from '@looker/embed-sdk'
-import {
-  ExtensionContext,
-  ExtensionContextData,
-} from '@looker/extension-sdk-react'
 import { Button, Heading, Label, ToggleSwitch } from '@looker/components'
+import { LookerEmbedSDK, LookerEmbedDashboard } from '@looker/embed-sdk'
+import { Looker40SDK } from '@looker/sdk/lib/4.0/methods'
+import {
+  ExtensionContext2,
+  ExtensionContextData2,
+} from '@looker/extension-sdk-react'
 import { SandboxStatus } from '../SandboxStatus'
 import { EmbedContainer } from './components/EmbedContainer'
+import { EmbedProps } from './types'
 
 export const EmbedDashboard: React.FC<EmbedProps> = ({ id }) => {
   const [dashboardNext, setDashboardNext] = React.useState(true)
   const [running, setRunning] = React.useState(true)
   const [dashboard, setDashboard] = React.useState<LookerEmbedDashboard>()
-  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
+  const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
+    ExtensionContext2
+  )
 
   const toggleDashboard = () => {
     setDashboardNext(!dashboardNext)
