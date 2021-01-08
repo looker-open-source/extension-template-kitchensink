@@ -1213,10 +1213,10 @@
   dependencies:
     "@looker/chatty" "^2.2.0"
 
-"@looker/extension-sdk-react@0.10.0-alpha.19":
-  version "0.10.0-alpha.19"
-  resolved "https://registry.yarnpkg.com/@looker/extension-sdk-react/-/extension-sdk-react-0.10.0-alpha.19.tgz#f62c67960abc9a31c3958fc0de01d2afe0709c93"
-  integrity sha512-OQ70zp1LMITj665Q4i4TXAYDALeH46PDNiZc4sWcfEnLCEGaqz9BUXCu4/8q7u+mHSH88JVXwtHsv52oD6albA==
+"@looker/extension-sdk-react@0.10.0-alpha.20":
+  version "0.10.0-alpha.20"
+  resolved "https://registry.yarnpkg.com/@looker/extension-sdk-react/-/extension-sdk-react-0.10.0-alpha.20.tgz#53a452f3c0caa787522b219b256565e7c7a66c72"
+  integrity sha512-0j/4vspUkAcvnkCXY308t854zop23HS35mnf1t0N5vcsKEoilMDgynDi7TWqlh4ghZIo9JB8NuWvDHkaTEzMQw==
   dependencies:
     ts-loader "^6.1.2"
 
