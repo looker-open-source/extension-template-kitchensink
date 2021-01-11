@@ -22,27 +22,46 @@
  * THE SOFTWARE.
  */
 
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, Suspense } from 'react'
 import { Switch, Route } from 'react-router-dom'
-import styled from 'styled-components'
 import { intersects } from 'semver'
 import { Looker40SDK } from '@looker/sdk/lib/4.0/methods'
-import { Box, ComponentsProvider } from '@looker/components'
+import {
+  ComponentsProvider,
+  Layout,
+  Page,
+  Aside,
+  Section,
+} from '@looker/components'
 import {
   ExtensionContext2,
   ExtensionContextData2,
 } from '@looker/extension-sdk-react'
 import { Sidebar } from './components/Sidebar'
-import { CoreSDKFunctions } from './components/CoreSDKFunctions'
-import { ApiFunctions } from './components/ApiFunctions'
-import { Home } from './components/Home'
-import { EmbedDashboard } from './components/Embed'
-import { EmbedExplore } from './components/Embed/EmbedExplore'
-import { EmbedLook } from './components/Embed/EmbedLook'
-import { ExternalApiFunctions } from './components/ExternalApiFunctions'
-import { MiscFunctions } from './components/MiscFunctions'
-import { Configure } from './components/Configure'
 import { KitchenSinkProps, ConfigurationData } from './types'
+
+// Components loaded using code splitting
+import { AsyncCoreSDKFunctions as CoreSDKFunctions } from './components/CoreSDKFunctions/CoreSDKFunctions.async'
+import { AsyncApiFunctions as ApiFunctions } from './components/ApiFunctions/ApiFunctions.async'
+import { AsyncHome as Home } from './components/Home/Home.async'
+import { AsyncEmbedDashboard as EmbedDashboard } from './components/Embed/EmbedDashboard.async'
+import { AsyncEmbedExplore as EmbedExplore } from './components/Embed/EmbedExplore.async'
+import { AsyncEmbedLook as EmbedLook } from './components/Embed/EmbedLook.async'
+import { AsyncExternalApiFunctions as ExternalApiFunctions } from './components/ExternalApiFunctions/ExternalApiFunctions.async'
+import { AsyncMiscFunctions as MiscFunctions } from './components/MiscFunctions/MiscFunctions.async'
+import { AsyncConfigure as Configure } from './components/Configure/Configure.async'
+
+// If the Looker server does not support code splitting (version 7.20 and below) replace the above
+// imports with the imports below:
+// import CoreSDKFunctions from './components/CoreSDKFunctions/CoreSDKFunctions'
+// import ApiFunctions from './components/ApiFunctions/ApiFunctions'
+// import Home from './components/Home/Home'
+// import EmbedDashboard from './components/Embed/EmbedDashboard'
+// import EmbedExplore from './components/Embed/EmbedExplore'
+// import EmbedLook from './components/Embed/EmbedLook'
+// import ExternalApiFunctions from './components/ExternalApiFunctions/ExternalApiFunctions'
+// import MiscFunctions from './components/MiscFunctions/MiscFunctions'
+// import Configure from './components/Configure/Configure'
 
 export enum ROUTES {
   HOME_ROUTE = '/',
@@ -128,76 +147,87 @@ export const KitchenSink: React.FC<KitchenSinkProps> = ({
     <>
       {configurationData && (
         <ComponentsProvider>
-          <Layout>
-            <Sidebar
-              route={route}
-              routeState={routeState}
-              configurationData={configurationData}
-            />
-            <Box>
-              <Switch>
-                {configurationData.showApiFunctions && (
-                  <Route path={ROUTES.API_ROUTE}>
-                    <ApiFunctions />
-                  </Route>
-                )}
-                {configurationData.showCoreSdkFunctions && (
-                  <Route
-                    path={[
-                      ROUTES.CORESDK_ROUTE,
-                      `${ROUTES.CORESDK_ROUTE}?test=abcd`,
-                    ]}
-                  >
-                    <CoreSDKFunctions />
-                  </Route>
-                )}
-                {configurationData.showEmbedDashboard && (
-                  <Route path={ROUTES.EMBED_DASHBOARD}>
-                    <EmbedDashboard id={configurationData.dashboardId} />
-                  </Route>
-                )}
-                {configurationData.showEmbedExplore && (
-                  <Route path={ROUTES.EMBED_EXPLORE}>
-                    <EmbedExplore id={configurationData.exploreId} />
-                  </Route>
-                )}
-                {configurationData.showEmbedLook && (
-                  <Route path={ROUTES.EMBED_LOOK}>
-                    <EmbedLook id={configurationData.lookId} />
-                  </Route>
-                )}
-                {configurationData.showExternalApiFunctions && (
-                  <Route path={ROUTES.EXTERNAL_API_ROUTE}>
-                    <ExternalApiFunctions />
-                  </Route>
-                )}
-                {configurationData.showMiscFunctions && (
-                  <Route path={ROUTES.MISC_ROUTE}>
-                    <MiscFunctions />
-                  </Route>
-                )}
-                <Route path={ROUTES.CONFIG_ROUTE}>
-                  <Configure
-                    configurationData={configurationData}
-                    updateConfigurationData={updateConfigurationData}
-                    canPersistContextData={canPersistContextData}
-                  />
-                </Route>
-                <Route>
-                  <Home />
-                </Route>
-              </Switch>
-            </Box>
-          </Layout>
+          <Page>
+            <Layout hasAside>
+              <Aside>
+                <Sidebar
+                  route={route}
+                  routeState={routeState}
+                  configurationData={configurationData}
+                />
+              </Aside>
+              <Section>
+                <Suspense fallback={<></>}>
+                  <Switch>
+                    {configurationData.showApiFunctions && (
+                      <Route path={ROUTES.API_ROUTE}>
+                        <ApiFunctions />
+                      </Route>
+                    )}
+                    {configurationData.showCoreSdkFunctions && (
+                      <Route
+                        path={[
+                          ROUTES.CORESDK_ROUTE,
+                          `${ROUTES.CORESDK_ROUTE}?test=abcd`,
+                        ]}
+                      >
+                        <CoreSDKFunctions />
+                      </Route>
+                    )}
+                    {configurationData.showEmbedDashboard && (
+                      <Route path={ROUTES.EMBED_DASHBOARD}>
+                        <EmbedDashboard id={configurationData.dashboardId} />
+                      </Route>
+                    )}
+                    {configurationData.showEmbedExplore && (
+                      <Route path={ROUTES.EMBED_EXPLORE}>
+                        <EmbedExplore id={configurationData.exploreId} />
+                      </Route>
+                    )}
+                    {configurationData.showEmbedLook && (
+                      <Route path={ROUTES.EMBED_LOOK}>
+                        <EmbedLook id={configurationData.lookId} />
+                      </Route>
+                    )}
+                    {configurationData.showExternalApiFunctions && (
+                      <Route path={ROUTES.EXTERNAL_API_ROUTE}>
+                        <ExternalApiFunctions />
+                      </Route>
+                    )}
+                    {configurationData.showMiscFunctions && (
+                      <Route path={ROUTES.MISC_ROUTE}>
+                        <MiscFunctions />
+                      </Route>
+                    )}
+                    <Route path={ROUTES.CONFIG_ROUTE}>
+                      <Configure
+                        configurationData={configurationData}
+                        updateConfigurationData={updateConfigurationData}
+                        canPersistContextData={canPersistContextData}
+                      />
+                    </Route>
+                    {configurationData.showMiscFunctions && (
+                      <Route path={ROUTES.MISC_ROUTE}>
+                        <MiscFunctions />
+                      </Route>
+                    )}
+                    <Route path={ROUTES.CONFIG_ROUTE}>
+                      <Configure
+                        configurationData={configurationData}
+                        updateConfigurationData={updateConfigurationData}
+                        canPersistContextData={canPersistContextData}
+                      />
+                    </Route>
+                    <Route>
+                      <Home />
+                    </Route>
+                  </Switch>
+                </Suspense>
+              </Section>
+            </Layout>
+          </Page>
         </ComponentsProvider>
       )}
     </>
   )
 }
-
-export const Layout = styled(Box)`
-  display: grid;
-  grid-gap: 20px;
-  grid-template-columns: 200px auto;
-  width: 100vw;
-`

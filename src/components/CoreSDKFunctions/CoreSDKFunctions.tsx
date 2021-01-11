@@ -30,7 +30,7 @@ import { SandboxStatus } from '../SandboxStatus'
 import { getCoreSDK2 } from '@looker/extension-sdk-react'
 import { Looker40SDK } from '@looker/sdk/lib/4.0/methods'
 
-export const CoreSDKFunctions = () => {
+const CoreSDKFunctions = () => {
   const [imageData, setImageData] = useState<string>()
   const location = useLocation()
   const [routeData, setRouteData] = useState<any>({})
@@ -162,3 +162,5 @@ export const CoreSDKFunctions = () => {
     </>
   )
 }
+
+export default CoreSDKFunctions

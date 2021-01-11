@@ -28,6 +28,7 @@ import {
   Box,
   Paragraph,
   ButtonOutline,
+  SpaceVertical,
   TextArea,
 } from '@looker/components'
 import { Looker40SDK } from '@looker/sdk/lib/4.0/methods'
@@ -39,7 +40,7 @@ import { SandboxStatus } from '../SandboxStatus'
 import { MiscFunctionsProps } from './types'
 import { ExtensionHostApi } from '@looker/extension-sdk'
 
-export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
+const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
   const [messages, setMessages] = useState('')
   const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
     ExtensionContext2
@@ -81,13 +82,13 @@ export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
       <Heading mt="xlarge">Miscellaneous Functions</Heading>
       <SandboxStatus />
       <Box display="flex" flexDirection="row">
-        <Box display="flex" flexDirection="column" width="50%" maxWidth="40vw">
+        <SpaceVertical width="50%" maxWidth="40vw">
           <Paragraph>
             Clicking the button below will cause the extension to try and
             navigate to a new location within the extension window (not the
             owning window for which there is an extension SDK method). This is
             not allowed (extensions MUST be single page applications). The
-            extension will be reloaded if window location does change.
+            extension will be reloaded if the window location does change.
           </Paragraph>
           <Paragraph>
             A circuit breaker has been built into the extension reload
@@ -104,9 +105,9 @@ export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
             Clear messages
           </ButtonOutline>
           <ButtonOutline mt="small" onClick={logout}>
-            Logout of Looker (only in /spartan mode)
+            Logout of Looker (only in spartan mode)
           </ButtonOutline>
-        </Box>
+        </SpaceVertical>
         <Box width="50%" p="small" maxWidth="40vw">
           <TextArea height="60vh" readOnly value={messages} />
         </Box>
@@ -114,3 +115,5 @@ export const MiscFunctions: React.FC<MiscFunctionsProps> = () => {
     </>
   )
 }
+
+export default MiscFunctions

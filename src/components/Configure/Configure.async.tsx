@@ -22,5 +22,13 @@
  * THE SOFTWARE.
  */
 
-export * from './Home'
-export * from './types'
+import React, { lazy } from 'react'
+import { ConfigureProps } from './types'
+
+const Configure = lazy<any>(
+  async () => import(/* webpackChunkName: "configure" */ './Configure')
+)
+
+export const AsyncConfigure: React.FC<ConfigureProps> = ({
+  configurationData,
+}) => <Configure configurationData={configurationData} />

@@ -22,4 +22,11 @@
  * THE SOFTWARE.
  */
 
-export * from "./CoreSDKFunctions"
+const commonConfig = require('./webpack.config')
+
+module.exports = {
+  ...commonConfig,
+  optimization: {
+    chunkIds: 'named',
+  },
+}

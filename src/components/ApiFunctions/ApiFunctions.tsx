@@ -34,7 +34,7 @@ import { SandboxStatus } from '../SandboxStatus'
 import { ApiFunctionsProps } from './types'
 import { ROUTES } from '../../KitchenSink'
 
-export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
+const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   const history = useHistory()
   const [messages, setMessages] = useState('')
   const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
@@ -266,3 +266,5 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     </>
   )
 }
+
+export default ApiFunctions

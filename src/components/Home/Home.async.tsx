@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Looker Data Sciences, Inc.
+ * Copyright (c) 2020 Looker Data Sciences, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,4 +22,10 @@
  * THE SOFTWARE.
  */
 
-export * from "./ApiFunctions"
+import React, { lazy } from 'react'
+
+const Home = lazy<any>(
+  async () => import(/* webpackChunkName: "home" */ './Home')
+)
+
+export const AsyncHome: React.FC = () => <Home />
