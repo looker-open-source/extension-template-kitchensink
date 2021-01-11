@@ -380,6 +380,42 @@ const Home: React.FC<HomeProps> = () => {
 export default Home
 ````
 
+## Tree Shaking
+
+The following packages now support tree shaking which reduces the size the bundle generated:
+
+1. `@looker/sdk`
+2. `@looker/sdk-rtl`
+3. `@looker/extension-sdk`
+4. `@looker/extension-sdk-react`
+
+Note that the `@looker/components` does not yet support tree shaking but when it does bundle sizes should be reduced even further.
+
+To fully take advantage of tree shaking, the extension should use a single SDK and use `ExtensionProvider2` which only pulls in dependent code for the chosen SDK.
+
+Example setup (see `App.tsx`):
+
+```typescript
+return (
+  <ExtensionProvider2 onRouteChange={onRouteChange} type={Looker40SDK}>
+    <KitchenSink route={route} routeState={routeState} />
+  </ExtensionProvider2>
+)
+```
+
+Example usage:
+
+```typescript
+const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
+  ExtensionContext2
+)
+const { extensionSDK, coreSDK } = extensionContext
+
+OR
+
+const sdk = getCoreSDK2<Looker40SDK>()
+```
+
 ## Deployment
 
 The process above requires your local development server to be running to load the extension code. To allow other people to use the extension, a production build of the extension needs to be run. As the kitchensink uses code splitting to reduce the size of the initially loaded bundle, multiple JavaScript files are generated.
