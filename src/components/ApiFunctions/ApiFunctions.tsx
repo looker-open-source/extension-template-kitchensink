@@ -120,11 +120,6 @@ const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     }
   }
 
-  const trackActionClick = () => {
-    extensionSDK.track('click', 'kitchensink-action-tracked')
-    updateMessages('Action tracked')
-  }
-
   const generateUnhandledErrorClick = () => {
     updateMessages('About to generate error')
     // const badApi: any = {}
@@ -236,9 +231,6 @@ const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
           </ButtonOutline>
           <ButtonOutline mt="small" onClick={localStorageRemove}>
             Remove local storage
-          </ButtonOutline>
-          <ButtonOutline mt="small" onClick={trackActionClick}>
-            Pinger action
           </ButtonOutline>
           <ButtonOutline mt="small" onClick={generateUnhandledErrorClick}>
             Generate unhandled error
