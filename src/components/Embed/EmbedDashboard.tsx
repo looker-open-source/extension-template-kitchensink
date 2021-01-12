@@ -34,7 +34,7 @@ import { SandboxStatus } from '../SandboxStatus'
 import { EmbedContainer } from './components/EmbedContainer'
 import { EmbedProps } from './types'
 
-export const EmbedDashboard: React.FC<EmbedProps> = ({ id }) => {
+const EmbedDashboard: React.FC<EmbedProps> = ({ id }) => {
   const [dashboardNext, setDashboardNext] = React.useState(true)
   const [running, setRunning] = React.useState(true)
   const [dashboard, setDashboard] = React.useState<LookerEmbedDashboard>()
@@ -113,3 +113,5 @@ export const EmbedDashboard: React.FC<EmbedProps> = ({ id }) => {
     </>
   )
 }
+
+export default EmbedDashboard

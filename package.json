@@ -1,11 +1,11 @@
 {
   "name": "extension-template-kitchensink",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Looker Extension SDK functionality demonstration",
   "main": "dist/bundle.js",
   "scripts": {
     "analyze": "export ANALYZE_MODE=static && yarn build",
-    "build": "export BABEL_ENV=build && webpack",
+    "build": "export BABEL_ENV=build && webpack --config webpack.prod.js",
     "clean": "rm -rf dist",
     "develop": "webpack serve --hot --port 8080 --disable-host-check --config webpack.develop.js",
     "prebuild": "yarn clean",
@@ -26,7 +26,7 @@
     "@looker/extension-sdk-react": "0.10.1",
     "@looker/sdk-rtl": "7.20.0",
     "@looker/sdk": "7.20.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "date-fns": "^2.12.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",

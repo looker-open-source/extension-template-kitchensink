@@ -22,4 +22,13 @@
  * THE SOFTWARE.
  */
 
-export * from "./MiscFunctions"
+import React, { lazy } from 'react'
+import { EmbedProps } from './types'
+
+const EmbedExplore = lazy<any>(
+  async () => import(/* webpackChunkName: "embed_explore" */ './EmbedExplore')
+)
+
+export const AsyncEmbedExplore: React.FC<EmbedProps> = ({ id }) => (
+  <EmbedExplore id={id} />
+)

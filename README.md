@@ -1,3 +1,9 @@
+# IMPORTANT NOTE - PLEASE READ
+
+This version and versions going forward demonstrate the use of code splitting. You must be on Looker version 21.0 or above for code splitting to work correctly.
+
+To remove code splitting you will need to modify `KitchenSink.tsx`. Instructions are provided in this file to show how to fall back to building a single monolithic JavaScript bundle.
+
 # Looker Extension Kitchensink Template (React & TypeScript)
 
 This repository demonstrates functionality that is available to the Extension SDK. It can be used as a starting point for developing
@@ -343,13 +349,80 @@ const auth0Signin = async () => {
 }
 ```
 
+## Code Splitting
+
+Code splitting relies on `React.lazy` and `Suspense` to render dynamic imports of a component. The name of the generated JavaScript file can be influenced by specifying a webpackChunkName comment. Note that the `Suspense` component is rendered by the `KitchenSink` component.
+
+Example:
+
+````typescript
+import React, { lazy, Suspense } from 'react'
+
+const Home = lazy<any>(
+  async () => import(/* webpackChunkName: "home" */ './Home')
+)
+
+export const AsyncHome: React.FC = () => <Home />
+```
+
+Note that the imported component MUST be the default export for the module.
+
+```typescript
+import React from 'react'
+import { Heading, Paragraph, SpaceVertical } from '@looker/components'
+import { SandboxStatus } from '../SandboxStatus'
+import { HomeProps } from './types'
+
+const Home: React.FC<HomeProps> = () => {
+  return <>. . .</>
+}
+
+export default Home
+````
+
+## Tree Shaking
+
+The following packages now support tree shaking which reduces the size the bundle generated:
+
+1. `@looker/sdk`
+2. `@looker/sdk-rtl`
+3. `@looker/extension-sdk`
+4. `@looker/extension-sdk-react`
+
+Note that the `@looker/components` does not yet support tree shaking but when it does bundle sizes should be reduced even further.
+
+To fully take advantage of tree shaking, the extension should use a single SDK and use `ExtensionProvider2` which only pulls in dependent code for the chosen SDK.
+
+Example setup (see `App.tsx`):
+
+```typescript
+return (
+  <ExtensionProvider2 onRouteChange={onRouteChange} type={Looker40SDK}>
+    <KitchenSink route={route} routeState={routeState} />
+  </ExtensionProvider2>
+)
+```
+
+Example usage:
+
+```typescript
+const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
+  ExtensionContext2
+)
+const { extensionSDK, coreSDK } = extensionContext
+
+OR
+
+const sdk = getCoreSDK2<Looker40SDK>()
+```
+
 ## Deployment
 
-The process above requires your local development server to be running to load the extension code. To allow other people to use the extension, we can build the JavaScript file and include it in the project directly.
+The process above requires your local development server to be running to load the extension code. To allow other people to use the extension, a production build of the extension needs to be run. As the kitchensink uses code splitting to reduce the size of the initially loaded bundle, multiple JavaScript files are generated.
 
-1. In your extension project directory on your development machine you can build the extension with `yarn build`.
-2. Drag and drop the generated `dist/bundle.js` file into the Looker project interface
-3. Modify your `manifest.lkml` to use `file` instead of `url`:
+1. In your extension project directory on your development machine, build the extension by running the command `yarn build`.
+2. Drag and drop ALL of the generated JavaScript files contained in the `dist` directory into the Looker project interface.
+3. Modify your `manifest.lkml` to use `file` instead of `url` and point it at the `bundle.js` file:
    ```
    application: kitchensink {
      label: "Kitchen sink"
@@ -367,9 +440,10 @@ The process above requires your local development server to be running to load t
    }
    ```
 
+Note that the additional JavaScript files generated during the production build process do not have to be mentioned in the manifest. These files will be loaded dynamically by the extension as and when they are needed. Note that to utilize code splitting, the Looker server must be at version 7.21 or above.
+
 ## Notes
 
-- Webpack's module splitting is not currently supported.
 - The template uses Looker's component library and styled components. Neither of these libraries are required so you may remove and replace them with a component library of your own choice,
 
 ## Related Projects

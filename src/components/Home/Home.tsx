@@ -27,7 +27,7 @@ import { Heading, Paragraph, SpaceVertical } from '@looker/components'
 import { SandboxStatus } from '../SandboxStatus'
 import { HomeProps } from './types'
 
-export const Home: React.FC<HomeProps> = () => {
+const Home: React.FC<HomeProps> = () => {
   return (
     <>
       <Heading mt="xlarge">Home</Heading>
@@ -39,10 +39,10 @@ export const Home: React.FC<HomeProps> = () => {
         </Paragraph>
         <Paragraph>
           The <b>Api Functions view</b> demonstrates the basic capabilties of
-          the extension, for example navigation, local storage access.
+          the extension, for example navigation and local storage access.
         </Paragraph>
         <Paragraph>
-          The <b>Core Functions view</b> demonstrates using the Looker core API.
+          The <b>Core Functions view</b> demonstrates using the Looker core SDK.
         </Paragraph>
         <Paragraph>
           The <b>Embed Dashbbord view</b> demonstrates using the embed SDK to
@@ -58,7 +58,7 @@ export const Home: React.FC<HomeProps> = () => {
         </Paragraph>
         <Paragraph>
           The <b>External Api Functions view</b> demonstrates various ways to
-          access external APIs from an extrnsion. It also demonstrates how to
+          access external APIs from an extension. It also demonstrates how to
           integrate with OAUTH2 providers. Note that a data server is required
           to exercise this functionality. Running{' '}
           <code>yarn start-data-server</code> from your work space starts the
@@ -69,15 +69,17 @@ export const Home: React.FC<HomeProps> = () => {
           functionality of the extension layout. An example is how the framework
           handles an attempt to navigate away from the initial extension page
           (it reloads the extension). It also shows a specialized logout button
-          for <b>Spartan</b> extensions (extensions that run with the Looker
+          for <b>Spartan</b> extensions (extensions that run without the Looker
           chrome).
         </Paragraph>
         <Paragraph>
           The <b>Configuration view</b> demonstrates how to use the extension
           context API to save configuration data. Basically views can be hidden
-          or shown. Default ids can be overridden for embed views.
+          or shown. Default ids can be overridden for embedded views.
         </Paragraph>
       </SpaceVertical>
     </>
   )
 }
+
+export default Home

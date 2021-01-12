@@ -22,5 +22,11 @@
  * THE SOFTWARE.
  */
 
-export * from './Configure'
-export * from './types'
+import React, { lazy } from 'react'
+
+const CoreSDKFunctions = lazy<any>(
+  async () =>
+    import(/* webpackChunkName: "coresdk_functions" */ './CoreSDKFunctions')
+)
+
+export const AsyncCoreSDKFunctions: React.FC = () => <CoreSDKFunctions />

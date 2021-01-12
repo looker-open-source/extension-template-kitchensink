@@ -42,7 +42,7 @@ import { SandboxStatus } from '../SandboxStatus'
 import { ConfigureProps } from './types'
 import { ConfigurationData } from '../../types'
 
-export const Configure: React.FC<ConfigureProps> = ({
+const Configure: React.FC<ConfigureProps> = ({
   canPersistContextData,
   configurationData,
   updateConfigurationData,
@@ -261,3 +261,5 @@ export const Configure: React.FC<ConfigureProps> = ({
     </>
   )
 }
+
+export default Configure

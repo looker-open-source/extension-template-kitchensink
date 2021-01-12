@@ -34,7 +34,7 @@ import { SandboxStatus } from '../SandboxStatus'
 import { EmbedContainer } from './components/EmbedContainer'
 import { EmbedProps } from './types'
 
-export const EmbedLook: React.FC<EmbedProps> = ({ id }) => {
+const EmbedLook: React.FC<EmbedProps> = ({ id }) => {
   const [running, setRunning] = React.useState(true)
   const [look, setLook] = React.useState<LookerEmbedLook>()
   const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
@@ -84,3 +84,5 @@ export const EmbedLook: React.FC<EmbedProps> = ({ id }) => {
     </>
   )
 }
+
+export default EmbedLook

@@ -34,7 +34,7 @@ import { SandboxStatus } from '../SandboxStatus'
 import { ApiFunctionsProps } from './types'
 import { ROUTES } from '../../KitchenSink'
 
-export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
+const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
   const history = useHistory()
   const [messages, setMessages] = useState('')
   const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
@@ -118,11 +118,6 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
       updateMessages(error)
       console.error(error)
     }
-  }
-
-  const trackActionClick = () => {
-    extensionSDK.track('click', 'kitchensink-action-tracked')
-    updateMessages('Action tracked')
   }
 
   const generateUnhandledErrorClick = () => {
@@ -237,9 +232,6 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
           <ButtonOutline mt="small" onClick={localStorageRemove}>
             Remove local storage
           </ButtonOutline>
-          <ButtonOutline mt="small" onClick={trackActionClick}>
-            Pinger action
-          </ButtonOutline>
           <ButtonOutline mt="small" onClick={generateUnhandledErrorClick}>
             Generate unhandled error
           </ButtonOutline>
@@ -266,3 +258,5 @@ export const ApiFunctions: React.FC<ApiFunctionsProps> = () => {
     </>
   )
 }
+
+export default ApiFunctions
