@@ -250,7 +250,9 @@ export const DataServerDemo: React.FC<DataServerDemoProps> = ({
           <Button disabled={title.length === 0}>Create Post</Button>
         </Form>
       </Box>
-      <DataTable columns={postsColumns}>{postsItems}</DataTable>
+      <DataTable columns={postsColumns} caption="Posts">
+        {postsItems}
+      </DataTable>
     </>
   )
 }
