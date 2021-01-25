@@ -168,7 +168,11 @@ export const GoogleSheetsDemo: React.FC<GoogleSheetsDemoProps> = ({
 
   return (
     <>
-      {sheetData && <DataTable columns={sheetColumns}>{sheetItems}</DataTable>}
+      {sheetData && (
+        <DataTable columns={sheetColumns} caption="Sheet items">
+          {sheetItems}
+        </DataTable>
+      )}
     </>
   )
 }
