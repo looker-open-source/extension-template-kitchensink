@@ -35,7 +35,7 @@ import {
   SpaceVertical,
   Text,
 } from '@looker/components'
-import { Looker40SDK } from '@looker/sdk/lib/4.0/methods'
+import { Looker40SDK } from '@looker/sdk'
 import {
   ExtensionContext2,
   ExtensionContextData2,
