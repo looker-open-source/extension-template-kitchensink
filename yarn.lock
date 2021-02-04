@@ -1242,7 +1242,7 @@
   resolved "https://registry.yarnpkg.com/@looker/icons/-/icons-0.10.2.tgz#1e10a2172a8b44c50a174ca109ca54ea6cf613b2"
   integrity sha512-Mpt3LBcuX+903s0732J+DG6cCcHtQzmfDE0fbUmn7ghxsQa3nEEHzJ94M9ebKih6DiLVcHEdNlyBGc8qHc4EBA==
 
-"@looker/sdk-rtl@^21.0.1", "@looker/sdk-rtl@^21.0.4":
+"@looker/sdk-rtl@^21.0.4":
   version "21.0.4"
   resolved "https://registry.yarnpkg.com/@looker/sdk-rtl/-/sdk-rtl-21.0.4.tgz#5823b3b336e56b03075eb09a34354c670e786996"
   integrity sha512-t8FTATPcMkXpk6QDppBgBAtM43qXvcO3foWeAvkEqpJKFERs6dWLYvIiqAhs4T+vQFEdEXiLMeBXSYxtN3dR+w==
@@ -1252,7 +1252,7 @@
     request "^2.88.0"
     request-promise-native "^1.0.8"
 
-"@looker/sdk@^21.0.1", "@looker/sdk@^21.0.4":
+"@looker/sdk@^21.0.4":
   version "21.0.4"
   resolved "https://registry.yarnpkg.com/@looker/sdk/-/sdk-21.0.4.tgz#45baa7df56ed614d21809f5c9c1ce7d24b15c4ee"
   integrity sha512-m/Gl1yDezkHofSu5ytPSQKFwJhmlf+xkCNw73sdXivuKxcyUqaXfzXEthPyuGFtQDRZnZHwU0ZuI+WTJFnCm0Q==
