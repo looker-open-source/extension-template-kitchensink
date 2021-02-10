@@ -211,13 +211,6 @@ export const KitchenSink: React.FC<KitchenSinkProps> = ({
                         <MiscFunctions />
                       </Route>
                     )}
-                    <Route path={ROUTES.CONFIG_ROUTE}>
-                      <Configure
-                        configurationData={configurationData}
-                        updateConfigurationData={updateConfigurationData}
-                        canPersistContextData={canPersistContextData}
-                      />
-                    </Route>
                     <Route>
                       <Home />
                     </Route>
