@@ -67,10 +67,9 @@ import { getDataServerFetchProxy } from '../../utils/fetch_proxy'
  */
 export const Auth: React.FC<AuthProps> = ({ dataState, dataDispatch }) => {
   // Get access to the extension SDK and the looker API SDK.
-  const extensionContext = useContext<ExtensionContextData2<Looker40SDK>>(
-    ExtensionContext2
-  )
-  const { extensionSDK, coreSDK } = extensionContext
+  const { extensionSDK, coreSDK } = useContext<
+    ExtensionContextData2<Looker40SDK>
+  >(ExtensionContext2)
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false)
