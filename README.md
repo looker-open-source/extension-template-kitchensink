@@ -1,3 +1,6 @@
+# This repository is archived
+The [extension-examples](https://github.com/looker-open-source/extension-examples) repository is the new home of Looker's Extension examples.
+
 # IMPORTANT NOTE - PLEASE READ
 
 This version and versions going forward demonstrate the use of code splitting. You must be on Looker version 21.0 or above for code splitting to work correctly.
